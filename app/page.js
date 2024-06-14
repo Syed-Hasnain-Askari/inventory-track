@@ -10,6 +10,7 @@ import {
 	SelectTrigger,
 	SelectValue
 } from "@/components/ui/select";
+import Footer from "./components/Footer";
 export default function OrderPage() {
 	return (
 		<RootLayout>
@@ -248,6 +249,7 @@ export default function OrderPage() {
 					</div>
 				</section>
 			</main>
+			<Footer />
 		</RootLayout>
 	);
 }

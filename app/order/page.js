@@ -9,6 +9,7 @@ import {
 	SelectValue
 } from "@/components/ui/select";
 import Table from "../components/Table";
+import Footer from "../components/Footer";
 
 export default function OrderPage() {
 	return (
@@ -61,6 +62,7 @@ export default function OrderPage() {
 					<Table />
 				</div>
 			</div>
+			<Footer />
 		</RootLayout>
 	);
 }
