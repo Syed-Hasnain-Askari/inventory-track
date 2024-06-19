@@ -10,8 +10,9 @@ import {
 } from "@/components/ui/select";
 import Table from "../components/Table";
 import Footer from "../components/Footer";
-
-export default function OrderPage() {
+import { getProducts } from "../../lib/methods";
+export default async function OrderPage() {
+	const response = await getProducts();
 	return (
 		<RootLayout>
 			<Header />

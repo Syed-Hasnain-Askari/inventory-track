@@ -1,5 +1,5 @@
-import connectDB from "../../lib/db";
-const Product = require("../../models/products");
+import connectDB from "../../../lib/db";
+const Product = require("../../../models/products");
 export default async function handler(req, res) {
 	await connectDB();
 	if (req.method == "POST") {

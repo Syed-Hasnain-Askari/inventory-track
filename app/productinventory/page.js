@@ -3,17 +3,27 @@ import RootLayout from "../layout";
 import { Header } from "../components/Header";
 import Footer from "../components/Footer";
 import ProductCard from "../components/ProductCard";
-
-export default function ProductInventoryPage() {
+import { getCategories, getProducts } from "../../lib/methods";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue
+} from "@/components/ui/select";
+import Link from "next/link";
+export default async function ProductInventoryPage() {
+	const response = await getProducts();
+	const categories = await getCategories();
 	return (
 		<RootLayout>
 			<Header />
-			<section className="container mt-10">
-				<h1 className="xl:text-center md:text-center max-w-lg text-xl font-bold text-gray-800 xl:text-2xl">
-					Product InventoryPage
-				</h1>
-				<div className="flex justify-center items-center">
-					<div className="relative mt-1 w-full sm:w-auto">
+			<section className="max-w-screen-xl mx-auto mt-10">
+				<div className="flex justify-between items-center">
+					<h1 className="xl:text-center md:text-center max-w-lg text-xl font-bold text-gray-800 xl:text-2xl">
+						Product Inventory
+					</h1>
+					<div className="relative w-full sm:w-auto">
 						<div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
 							<svg
 								className="w-5 h-5 text-gray-500 dark:text-gray-400"
@@ -35,13 +45,74 @@ export default function ProductInventoryPage() {
 							placeholder="Search for items"
 						/>
 					</div>
+					<Link
+						href={"/addproduct"}
+						className="middle none center mr-4 rounded-lg bg-blue-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none w-full sm:w-auto mt-4 sm:mt-0"
+					>
+						Add Product
+					</Link>
 				</div>
-				<section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-					<ProductCard />
-					<ProductCard />
-					<ProductCard />
-					<ProductCard />
-				</section>
+
+				<div className="grid grid-cols-12 gap-4 mt-10">
+					<div className="lg:col-span-3 col-span-12 px-10 w-full sm:w-auto">
+						<div>
+							<lable className="font-semibold text-sm">Type</lable>
+							<Select>
+								<SelectTrigger className="w-full sm:w-[200px] mt-3">
+									<SelectValue placeholder="Select" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="light">Accessories</SelectItem>
+									<SelectItem value="dark">Desktop-PC</SelectItem>
+									<SelectItem value="system">Head Phone</SelectItem>
+									<SelectItem value="system">Laptop</SelectItem>
+									<SelectItem value="system">Keyboard</SelectItem>
+									<SelectItem value="system">Mouse</SelectItem>
+									<SelectItem value="system">Smartphone</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
+						<div className="mt-10">
+							<lable className="font-semibold text-sm">Manufacture</lable>
+							<Select>
+								<SelectTrigger className="w-full sm:w-[200px] mt-3">
+									<SelectValue placeholder="Select" />
+								</SelectTrigger>
+								<SelectContent>
+									{categories?.result?.map((category) => {
+										return (
+											<SelectItem value={category.name}>
+												{category.name}
+											</SelectItem>
+										);
+									})}
+								</SelectContent>
+							</Select>
+						</div>
+					</div>
+					<div className="col-span-9">
+						<section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+							{response.result?.length > 0 ? (
+								response?.result?.map((item) => {
+									console.log(item, "item======");
+									return (
+										<div className="flex justify-center items-center">
+											<ProductCard
+												key={item._id}
+												name={item.name}
+												description={item.description}
+												image={item.image}
+												price={item.price}
+											/>
+										</div>
+									);
+								})
+							) : (
+								<p>No products found</p>
+							)}
+						</section>
+					</div>
+				</div>
 			</section>
 			<Footer />
 		</RootLayout>

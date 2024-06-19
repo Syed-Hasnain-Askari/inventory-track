@@ -11,16 +11,27 @@ import {
 	SelectValue
 } from "@/components/ui/select";
 import Footer from "./components/Footer";
-export default function OrderPage() {
+import { getProducts } from "../lib/methods";
+export default async function OrderPage() {
+	const response = await getProducts();
+	console.log(response, "response");
 	return (
 		<RootLayout>
 			<Header />
 			<main className="container mt-10">
 				<section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-					<ProductCard />
-					<ProductCard />
-					<ProductCard />
-					<ProductCard />
+					{response?.result?.map((item) => {
+						console.log(item, "item!!!");
+						return (
+							<ProductCard
+								key={item._id}
+								name={item.name}
+								description={item.description}
+								image={item.image}
+								price={item.price}
+							/>
+						);
+					})}
 				</section>
 				<section className="mt-10">
 					<div className="flex flex-col sm:flex-row items-center justify-center">

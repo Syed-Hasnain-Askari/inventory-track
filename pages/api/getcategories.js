@@ -8,7 +8,10 @@ export default async function handler(req, res) {
 	}
 	try {
 		const categories = await Category.find({});
-		res.status(200).json(categories);
+		res.status(200).json({
+			message: "Category fetched successfully",
+			result: categories
+		});
 	} catch (error) {
 		res
 			.status(500)
