@@ -1,5 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getInvetryProducts } from "../reducer/inventryReducer";
+import {
+	getInvetryProducts,
+	getInvetryProductsByManufacture
+} from "../reducer/inventryReducer";
 const initialState = {
 	inventryProducts: [],
 	isLoading: false,
@@ -20,14 +23,23 @@ export const inventryProductSlice = createSlice({
 		}
 	},
 	extraReducers: (builder) => {
-		builder
-			.addCase(getInvetryProducts.pending, (state) => {
-				state.isLoading = true;
-			})
-			.addCase(getInvetryProducts.fulfilled, (state, action) => {
+		builder.addCase(getInvetryProducts.pending, (state) => {
+			state.isLoading = true;
+		});
+		builder.addCase(getInvetryProducts.fulfilled, (state, action) => {
+			state.isLoading = false;
+			state.inventryProducts = action.payload;
+		});
+		builder.addCase(getInvetryProductsByManufacture.pending, (state) => {
+			state.isLoading = true;
+		});
+		builder.addCase(
+			getInvetryProductsByManufacture.fulfilled,
+			(state, action) => {
 				state.isLoading = false;
 				state.inventryProducts = action.payload;
-			});
+			}
+		);
 	}
 });
 export const { clearState, clearSuccess } = inventryProductSlice.actions;

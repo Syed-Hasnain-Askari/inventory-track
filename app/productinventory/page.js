@@ -13,7 +13,10 @@ import {
 } from "@/components/ui/select";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
-import { getInvetryProducts } from "../../redux/feature/reducer/inventryReducer";
+import {
+	getInvetryProducts,
+	getInvetryProductsByManufacture
+} from "../../redux/feature/reducer/inventryReducer";
 import { getCategories } from "../../redux/feature/reducer/categoryReducer";
 export default function ProductInventoryPage() {
 	const dispatch = useDispatch();
@@ -83,7 +86,11 @@ export default function ProductInventoryPage() {
 						</div>
 						<div className="mt-10">
 							<lable className="font-semibold text-sm">Category</lable>
-							<Select>
+							<Select
+								onValueChange={(e) => {
+									dispatch(getInvetryProductsByManufacture(e));
+								}}
+							>
 								<SelectTrigger className="w-full sm:w-[200px] mt-3">
 									<SelectValue placeholder="Select" />
 								</SelectTrigger>
