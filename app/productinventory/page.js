@@ -1,9 +1,9 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import RootLayout from "../layout";
 import { Header } from "../components/Header";
 import Footer from "../components/Footer";
 import ProductCard from "../components/ProductCard";
-import { getCategories, getProducts } from "../../lib/methods";
 import {
 	Select,
 	SelectContent,
@@ -12,9 +12,18 @@ import {
 	SelectValue
 } from "@/components/ui/select";
 import Link from "next/link";
-export default async function ProductInventoryPage() {
-	const response = await getProducts();
-	const categories = await getCategories();
+import { useDispatch, useSelector } from "react-redux";
+import { getInvetryProducts } from "../../redux/feature/reducer/inventryReducer";
+import { getCategories } from "../../redux/feature/reducer/categoryReducer";
+export default function ProductInventoryPage() {
+	const dispatch = useDispatch();
+	const { inventryProducts, isLoading, isSuccess } = useSelector(
+		(state) => state.inventry
+	);
+	const { categories } = useSelector((state) => state.category);
+	useEffect(() => {
+		Promise.all([dispatch(getInvetryProducts()), dispatch(getCategories())]);
+	}, [dispatch]);
 	return (
 		<RootLayout>
 			<Header />
@@ -56,7 +65,7 @@ export default async function ProductInventoryPage() {
 				<div className="grid grid-cols-12 gap-4 mt-10">
 					<div className="lg:col-span-3 col-span-12 px-10 w-full sm:w-auto">
 						<div>
-							<lable className="font-semibold text-sm">Type</lable>
+							<lable className="font-semibold text-sm">Manufacture</lable>
 							<Select>
 								<SelectTrigger className="w-full sm:w-[200px] mt-3">
 									<SelectValue placeholder="Select" />
@@ -73,7 +82,7 @@ export default async function ProductInventoryPage() {
 							</Select>
 						</div>
 						<div className="mt-10">
-							<lable className="font-semibold text-sm">Manufacture</lable>
+							<lable className="font-semibold text-sm">Category</lable>
 							<Select>
 								<SelectTrigger className="w-full sm:w-[200px] mt-3">
 									<SelectValue placeholder="Select" />
@@ -92,23 +101,23 @@ export default async function ProductInventoryPage() {
 					</div>
 					<div className="col-span-9">
 						<section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-							{response.result?.length > 0 ? (
-								response?.result?.map((item) => {
-									console.log(item, "item======");
+							{isLoading ? (
+								<div className="flex justify-center items-center">
+									<h1 className="text-center">Loading...</h1>
+								</div>
+							) : (
+								inventryProducts?.result?.map((product) => {
 									return (
-										<div className="flex justify-center items-center">
-											<ProductCard
-												key={item._id}
-												name={item.name}
-												description={item.description}
-												image={item.image}
-												price={item.price}
-											/>
-										</div>
+										<ProductCard
+											key={product._id}
+											name={product.name}
+											description={product.description}
+											image={product.image}
+											price={product.price}
+											category={product.category}
+										/>
 									);
 								})
-							) : (
-								<p>No products found</p>
 							)}
 						</section>
 					</div>

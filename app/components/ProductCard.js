@@ -2,14 +2,21 @@ import { Nanum_Myeongjo } from "next/font/google";
 import Image from "next/image";
 import React from "react";
 
-export default function ProductCard({ key, name, description, image, price }) {
+export default function ProductCard({
+	key,
+	name,
+	description,
+	image,
+	price,
+	category
+}) {
 	return (
 		<div
 			key={key}
 			className="cursor-pointer shadow-xl mx-auto w-80 transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 duration-300 hover:scale-105 hover:shadow-lg"
 		>
 			<Image
-				height={200}
+				height={300}
 				width={300}
 				className="w-full object-cover object-center"
 				src={image}
@@ -20,7 +27,7 @@ export default function ProductCard({ key, name, description, image, price }) {
 					{name}
 				</h2>
 				<p className="mb-2 text-base dark:text-gray-300 text-gray-700">
-					{description}
+					{category}
 				</p>
 				<div className="flex justify-between items-center">
 					<p className="mr-2 text-lg font-semibold text-gray-900 dark:text-white">

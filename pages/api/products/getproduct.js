@@ -3,8 +3,75 @@ const Product = require("../../../models/products");
 export default async function handler(req, res) {
 	await connectDB();
 	if (req.method == "GET") {
+		console.log(req.query, "req.params");
 		try {
-			const products = await Product.find();
+			if (req.query.category) {
+				const products = await Product.aggregate([
+					{
+						$lookup: {
+							from: "categories",
+							localField: "category",
+							foreignField: "_id",
+							as: "result"
+						}
+					},
+					{
+						$unwind: {
+							path: "$result"
+						}
+					},
+					{
+						$project: {
+							_id: 1,
+							name: 1,
+							description: 1,
+							price: 1,
+							image: 1,
+							stock: 1,
+							manufacturePrice: 1,
+							category: "$result.name"
+						}
+					},
+					{
+						$match: {
+							category: req.query.category
+						}
+					}
+				]);
+				return res.status(200).json({
+					message: "Product fetched successfully",
+					result: products
+				});
+			}
+			const products = await Product.aggregate([
+				{
+					$lookup: {
+						from: "categories",
+						localField: "category",
+						foreignField: "_id",
+						as: "result"
+					}
+				},
+				{
+					$unwind: {
+						path: "$result"
+					}
+				},
+				{
+					$project: {
+						_id: 1,
+						name: 1,
+						description: 1,
+						price: 1,
+						image: 1,
+						stock: 1,
+						manufacturePrice: 1,
+						category: "$result.name"
+					}
+				}
+			]);
+			// .sort({ createdAt: -1 })
+			// .exec();
 			return res.status(200).json({
 				message: "Product fetched successfully",
 				result: products
