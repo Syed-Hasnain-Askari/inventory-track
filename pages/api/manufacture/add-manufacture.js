@@ -7,37 +7,34 @@ export default async function handler(req, res) {
 			if (!req.body) {
 				return res.status(400).json({ message: "No data found" });
 			}
-			const {
-				name,
-				description,
-				location,
-				image,
-				address,
-				mail,
-				phone,
-				contactName
-			} = req.body;
-			const product = new Manufacture({
-				name,
-				description,
-				location,
-				image,
-				address,
-				mail,
-				phone,
-				contactName
-			});
-			const response = await Manufacture.save();
-			return res.status(200).json({
-				message: "Manufacture added successfully",
+			const { name, location, image, email, phoneNumber, contactName } =
+				req.body;
+			// Ensure all fields are present
+			if (
+				!name ||
+				!location ||
+				!image ||
+				!email ||
+				!phoneNumber ||
+				!contactName
+			) {
+				return res.status(400).json({ message: "Missing fields" });
+			}
+			const manufacture = new Manufacture(req.body);
+			const response = await manufacture.save();
+			return res.json({
+				message: "Manufacture added",
 				result: response
 			});
 		} catch (error) {
-			res
-				.status(500)
-				.json({ message: "Error fetching products", error: error.message });
+			res.status(500).json({
+				message: "Error is adding manufacture",
+				error: error.message
+			});
 		}
 	} else {
-		res.status(500).json({ message: "This method is not allowed" });
+		// Handle any other HTTP method
+		res.setHeader("Allow", ["POST"]);
+		res.status(405).end(`Method ${req.method} Not Allowed`);
 	}
 }

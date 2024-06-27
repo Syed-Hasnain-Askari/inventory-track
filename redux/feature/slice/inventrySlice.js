@@ -33,13 +33,6 @@ export const inventryProductSlice = createSlice({
 		builder.addCase(getInvetryProductsByManufacture.pending, (state) => {
 			state.isLoading = true;
 		});
-		builder.addCase(
-			getInvetryProductsByManufacture.fulfilled,
-			(state, action) => {
-				state.isLoading = false;
-				state.inventryProducts = action.payload;
-			}
-		);
 	}
 });
 export const { clearState, clearSuccess } = inventryProductSlice.actions;

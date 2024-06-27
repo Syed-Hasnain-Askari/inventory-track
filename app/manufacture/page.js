@@ -18,14 +18,15 @@ import {
 	getInvetryProductsByManufacture
 } from "../../redux/feature/reducer/inventryReducer";
 import { getCategories } from "../../redux/feature/reducer/categoryReducer";
-export default function ProductInventoryPage() {
+import { getManufacture } from "@/redux/feature/reducer/manufactureReducer";
+import ManufactureCard from "../components/ManufactureCard";
+export default function ManufacturePage() {
 	const dispatch = useDispatch();
-	const { inventryProducts, isLoading, isSuccess } = useSelector(
-		(state) => state.inventry
+	const { manufactures, isLoading, isError } = useSelector(
+		(state) => state.manufacture
 	);
-	const { categories } = useSelector((state) => state.category);
 	useEffect(() => {
-		Promise.all([dispatch(getInvetryProducts()), dispatch(getCategories())]);
+		dispatch(getManufacture());
 	}, [dispatch]);
 	return (
 		<RootLayout>
@@ -33,7 +34,7 @@ export default function ProductInventoryPage() {
 			<section className="max-w-screen-xl mx-auto mt-10">
 				<div className="flex justify-between items-center">
 					<h1 className="xl:text-center md:text-center max-w-lg text-xl font-bold text-gray-800 xl:text-2xl">
-						Product Inventory
+						Manufactures
 					</h1>
 					<div className="relative w-full sm:w-auto">
 						<div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -58,10 +59,10 @@ export default function ProductInventoryPage() {
 						/>
 					</div>
 					<Link
-						href={"/addproduct"}
+						href={"/addmanufacture"}
 						className="middle none center mr-4 rounded-lg bg-blue-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none w-full sm:w-auto mt-4 sm:mt-0"
 					>
-						Add Product
+						Add Manufacture
 					</Link>
 				</div>
 
@@ -85,27 +86,6 @@ export default function ProductInventoryPage() {
 								</SelectContent>
 							</Select>
 						</div>
-						<div className="mt-10">
-							<lable className="font-semibold text-sm">Category</lable>
-							<Select
-								onValueChange={(e) => {
-									dispatch(getInvetryProductsByManufacture(e));
-								}}
-							>
-								<SelectTrigger className="w-full sm:w-[200px] mt-3">
-									<SelectValue placeholder="Select" />
-								</SelectTrigger>
-								<SelectContent>
-									{categories?.result?.map((category) => {
-										return (
-											<SelectItem value={category.name}>
-												{category.name}
-											</SelectItem>
-										);
-									})}
-								</SelectContent>
-							</Select>
-						</div>
 					</div>
 					<div className="col-span-9">
 						<section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
@@ -114,15 +94,16 @@ export default function ProductInventoryPage() {
 									<h1 className="text-center">Loading...</h1>
 								</div>
 							) : (
-								inventryProducts?.result?.map((product) => {
+								manufactures?.result?.map((item) => {
 									return (
-										<ProductCard
-											key={product._id}
-											name={product.name}
-											description={product.description}
-											image={product.image}
-											price={product.price}
-											category={product.category}
+										<ManufactureCard
+											key={item?._id}
+											name={item?.name}
+											email={item?.email}
+											image={item?.image}
+											location={item?.location}
+											contactName={item?.contactName}
+											phoneNumber={item?.phoneNumber}
 										/>
 									);
 								})

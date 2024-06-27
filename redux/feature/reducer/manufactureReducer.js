@@ -2,26 +2,34 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 const dotenv = require("dotenv");
 dotenv.config();
 const BASE_URL = process.env.DEV_URL || "";
-export const getInvetryProducts = createAsyncThunk(
-	"InventryProduct/getInvetryProducts",
+export const getManufacture = createAsyncThunk(
+	"Manufacture/getManufacture",
 	async (thunkAPI) => {
 		try {
-			const response = await fetch(`${BASE_URL}/api/products/getproduct`, {
-				cache: "no-cache"
-			});
+			const response = await fetch(
+				`${BASE_URL}/api/manufacture/get-manufacture`,
+				{
+					cache: "no-cache"
+				}
+			);
 			return await response.json();
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error.response);
 		}
 	}
 );
-export const getInvetryProductsByManufacture = createAsyncThunk(
-	"InventryProduct/getInvetryProductsByManufacture",
+export const addManufacture = createAsyncThunk(
+	"Manufacture/addManufacture",
 	async (payload, thunkAPI) => {
 		try {
 			const response = await fetch(
-				`${process.env.DEV_URL}/api/products/getproduct?category=${payload}`,
+				`${BASE_URL}/api/manufacture/add-manufacture`,
 				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(payload),
 					cache: "no-cache"
 				}
 			);

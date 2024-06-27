@@ -4,7 +4,6 @@ export default async function handler(req, res) {
 	await connectDB();
 	if (req.method === "POST") {
 		try {
-			console.log(req.body, "req.body");
 			const {
 				name,
 				price,
@@ -22,8 +21,7 @@ export default async function handler(req, res) {
 				!description ||
 				!stock ||
 				!category ||
-				!manufacturePrice ||
-				!image
+				!manufacturePrice
 			) {
 				return res.status(400).json({ message: "Missing fields" });
 			}
