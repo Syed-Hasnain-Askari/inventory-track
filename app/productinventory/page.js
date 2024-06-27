@@ -14,10 +14,12 @@ import {
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import {
+	generalSearch,
 	getInvetryProducts,
 	getInvetryProductsByManufacture
 } from "../../redux/feature/reducer/inventryReducer";
 import { getCategories } from "../../redux/feature/reducer/categoryReducer";
+import Spinner from "../components/Spinner";
 export default function ProductInventoryPage() {
 	const dispatch = useDispatch();
 	const { inventryProducts, isLoading, isSuccess } = useSelector(
@@ -30,7 +32,7 @@ export default function ProductInventoryPage() {
 	return (
 		<RootLayout>
 			<Header />
-			<section className="max-w-screen-xl mx-auto mt-10">
+			<section className="max-w-screen-xl h-screen mx-auto mt-10">
 				<div className="flex justify-between items-center">
 					<h1 className="xl:text-center md:text-center max-w-lg text-xl font-bold text-gray-800 xl:text-2xl">
 						Product Inventory
@@ -53,6 +55,11 @@ export default function ProductInventoryPage() {
 						<input
 							type="text"
 							id="table-search"
+							onChange={(e) => {
+								setTimeout(() => {
+									dispatch(generalSearch(e.target.value));
+								}, 2000);
+							}}
 							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-none block w-full sm:w-96 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500"
 							placeholder="Search for items"
 						/>
@@ -110,11 +117,9 @@ export default function ProductInventoryPage() {
 					<div className="col-span-9">
 						<section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
 							{isLoading ? (
-								<div className="flex justify-center items-center">
-									<h1 className="text-center">Loading...</h1>
-								</div>
+								<Spinner />
 							) : (
-								inventryProducts?.result?.map((product) => {
+								inventryProducts?.map((product) => {
 									return (
 										<ProductCard
 											key={product._id}

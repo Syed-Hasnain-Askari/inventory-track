@@ -19,6 +19,8 @@ import {
 } from "../../redux/feature/reducer/manufactureReducer";
 import ManufactureCard from "../components/ManufactureCard";
 import { useToast } from "@/components/ui/use-toast";
+import { clearSuccess } from "@/redux/feature/slice/manufactureSlice";
+import Spinner from "../components/Spinner";
 export default function ManufacturePage() {
 	const { toast } = useToast();
 	const dispatch = useDispatch();
@@ -44,11 +46,11 @@ export default function ManufacturePage() {
 	}, []);
 	useEffect(() => {
 		if (isSuccess) {
-			clearSuccess();
 			toast({
 				title: "Success!",
 				description: "Manufacture deleted successfully!"
 			});
+			clearSuccess();
 		}
 	}, [isSuccess]);
 	console.log(manufactures, "manufactures");
@@ -56,7 +58,7 @@ export default function ManufacturePage() {
 	return (
 		<RootLayout>
 			<Header />
-			<section className="max-w-screen-xl mx-auto mt-10">
+			<section className="max-w-screen-xl max-h-screen mx-auto mt-10">
 				<div className="flex justify-between items-center">
 					<h1 className="xl:text-center md:text-center max-w-lg text-xl font-bold text-gray-800 xl:text-2xl">
 						Manufactures
@@ -92,8 +94,8 @@ export default function ManufacturePage() {
 						</Link>
 					</div>
 				</div>
-
-				<div className="grid grid-cols-12 gap-4 mt-10">
+				<hr className="mt-5 justify-center" />
+				<div className="grid grid-cols-12 gap-4 mt-10 h-1/2">
 					<div className="lg:col-span-3 col-span-12 px-10 w-full sm:w-auto">
 						<div>
 							<lable className="font-semibold text-sm">Manufacture</lable>
@@ -117,24 +119,7 @@ export default function ManufacturePage() {
 					<div className="col-span-9 px-10 lg:px-0">
 						<section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
 							{isLoading ? (
-								<div className="flex items-center justify-center w-full h-full">
-									<div className="flex justify-center items-center space-x-1 text-sm text-gray-700">
-										<svg
-											fill="none"
-											className="w-6 h-6 animate-spin"
-											viewBox="0 0 32 32"
-											xmlns="http://www.w3.org/2000/svg"
-										>
-											<path
-												clipRule="evenodd"
-												d="M15.165 8.53a.5.5 0 01-.404.58A7 7 0 1023 16a.5.5 0 011 0 8 8 0 11-9.416-7.874.5.5 0 01.58.404z"
-												fill="currentColor"
-												fillRule="evenodd"
-											/>
-										</svg>
-										<div>Loading ...</div>
-									</div>
-								</div>
+								<Spinner />
 							) : (
 								manufactures?.map((item) => {
 									return (

@@ -37,11 +37,11 @@ export default function AddManufacturePage() {
 	};
 	useEffect(() => {
 		if (isSuccess) {
+			clearSuccess();
 			toast({
 				title: "Success!",
 				description: "Manufacture added successfully!"
 			});
-			clearSuccess();
 			setUserInput({
 				name: "",
 				image: "",

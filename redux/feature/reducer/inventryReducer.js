@@ -20,7 +20,25 @@ export const getInvetryProductsByManufacture = createAsyncThunk(
 	async (payload, thunkAPI) => {
 		try {
 			const response = await fetch(
-				`${process.env.DEV_URL}/api/products/getproduct?category=${payload}`,
+				`/api/products/getproduct?category=${payload}`,
+				{
+					next: { revalidate: 3600 }
+				}
+			);
+			return await response.json();
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error.response);
+		}
+	}
+);
+
+export const generalSearch = createAsyncThunk(
+	"InventryProduct/generalSearch",
+	async (payload, thunkAPI) => {
+		try {
+			console.log(payload, "payload");
+			const response = await fetch(
+				`/api/products/getproduct?search=${payload}`,
 				{
 					cache: "no-cache"
 				}

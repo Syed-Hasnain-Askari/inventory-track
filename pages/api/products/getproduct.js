@@ -42,7 +42,51 @@ export default async function handler(req, res) {
 					message: "Product fetched successfully",
 					result: products
 				});
+			} else if (req.query.search) {
+				const products = await Product.aggregate([
+					{
+						$search: {
+							index: "searchproducts",
+							text: {
+								query: `{"name":${req.query.search}}`,
+								path: {
+									wildcard: "*"
+								}
+							}
+						}
+					},
+					{
+						$lookup: {
+							from: "categories",
+							localField: "category",
+							foreignField: "_id",
+							as: "result"
+						}
+					},
+					{
+						$unwind: {
+							path: "$result"
+						}
+					},
+					{
+						$project: {
+							_id: 1,
+							name: 1,
+							description: 1,
+							price: 1,
+							image: 1,
+							stock: 1,
+							manufacturePrice: 1,
+							category: "$result.name"
+						}
+					}
+				]);
+				return res.status(200).json({
+					message: "Product fetched successfully",
+					result: products
+				});
 			}
+
 			const products = await Product.aggregate([
 				{
 					$lookup: {
