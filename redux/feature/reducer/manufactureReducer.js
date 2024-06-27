@@ -39,3 +39,20 @@ export const addManufacture = createAsyncThunk(
 		}
 	}
 );
+export const deleteManufacture = createAsyncThunk(
+	"Manufacture/deleteManufacture",
+	async (id, thunkAPI) => {
+		try {
+			const response = await fetch(
+				`${BASE_URL}/api/manufacture/delete-manufacture/${id}`,
+				{
+					method: "DELETE",
+					cache: "no-cache"
+				}
+			);
+			return await response.json();
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error.response);
+		}
+	}
+);

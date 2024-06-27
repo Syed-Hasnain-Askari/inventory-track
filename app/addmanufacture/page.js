@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import Label from "../components/Label";
 import { addManufacture } from "@/redux/feature/reducer/manufactureReducer";
 import { useDispatch, useSelector } from "react-redux";
+import { clearSuccess } from "../../redux/feature/slice/manufactureSlice";
 export default function AddManufacturePage() {
 	const { isSuccess } = useSelector((state) => state.manufacture);
 	const { toast } = useToast();
@@ -40,8 +41,18 @@ export default function AddManufacturePage() {
 				title: "Success!",
 				description: "Manufacture added successfully!"
 			});
+			clearSuccess();
+			setUserInput({
+				name: "",
+				image: "",
+				location: "",
+				contactName: "",
+				email: "",
+				phoneNumber: ""
+			});
 		}
 	}, [isSuccess]);
+	console.log(isSuccess, "clearSuccess");
 	return (
 		<RootLayout>
 			<Header />
@@ -52,6 +63,7 @@ export default function AddManufacturePage() {
 						<input
 							type="text"
 							name="name"
+							value={userInput.name}
 							onChange={(e) => handleChange("name", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 						/>
@@ -60,6 +72,7 @@ export default function AddManufacturePage() {
 						<Label text={"Image"} />
 						<input
 							type="text"
+							value={userInput.image}
 							name="image"
 							onChange={(e) => handleChange("image", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
@@ -70,6 +83,7 @@ export default function AddManufacturePage() {
 						<input
 							type="text"
 							name="location"
+							value={userInput.location}
 							onChange={(e) => handleChange("location", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 						/>
@@ -79,6 +93,7 @@ export default function AddManufacturePage() {
 						<input
 							type="text"
 							name="contactName"
+							value={userInput.contactName}
 							onChange={(e) => handleChange("contactName", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 						/>
@@ -88,6 +103,7 @@ export default function AddManufacturePage() {
 						<input
 							type="email"
 							name="email"
+							value={userInput.email}
 							onChange={(e) => handleChange("email", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 						/>
@@ -97,6 +113,7 @@ export default function AddManufacturePage() {
 						<input
 							type="text"
 							name="phoneNumber"
+							value={userInput.phoneNumber}
 							onChange={(e) => handleChange("phoneNumber", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 						/>

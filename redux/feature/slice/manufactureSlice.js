@@ -1,5 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { addManufacture, getManufacture } from "../reducer/manufactureReducer";
+import {
+	addManufacture,
+	deleteManufacture,
+	getManufacture
+} from "../reducer/manufactureReducer";
 const initialState = {
 	manufactures: [],
 	isLoading: false,
@@ -26,7 +30,7 @@ export const manufactureSlice = createSlice({
 		});
 		builder.addCase(getManufacture.fulfilled, (state, action) => {
 			state.isLoading = false;
-			state.manufactures = action.payload;
+			state.manufactures = action.payload.result;
 		});
 		builder.addCase(getManufacture.rejected, (state, action) => {
 			state.isLoading = false;
@@ -42,9 +46,30 @@ export const manufactureSlice = createSlice({
 			console.log(action.payload);
 			state.isLoading = false;
 			state.isSuccess = true;
-			state.manufactures.unshift(action.payload);
+			state.manufactures = [...state.manufactures, action.payload.result];
 		});
 		builder.addCase(addManufacture.rejected, (state, action) => {
+			state.isLoading = false;
+			state.isError = true;
+			state.error = action.payload;
+		});
+		// Add the pending, fulfilled, and rejected cases for delete manufacture
+		builder.addCase(deleteManufacture.pending, (state) => {
+			state.isLoading = true;
+			state.isSuccess = false;
+		});
+		builder.addCase(deleteManufacture.fulfilled, (state, action) => {
+			console.log(action.payload, "delete=======");
+			const index = state.manufactures?.findIndex(
+				(manufacture) => manufacture._id === action?.payload?.result?._id
+			);
+			if (index !== -1) {
+				state.manufactures?.splice(index, 1);
+			}
+			state.isLoading = false;
+			state.isSuccess = true;
+		});
+		builder.addCase(deleteManufacture.rejected, (state, action) => {
 			state.isLoading = false;
 			state.isError = true;
 			state.error = action.payload;

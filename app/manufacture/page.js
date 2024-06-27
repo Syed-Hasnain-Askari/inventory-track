@@ -14,20 +14,45 @@ import {
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import {
-	getInvetryProducts,
-	getInvetryProductsByManufacture
-} from "../../redux/feature/reducer/inventryReducer";
-import { getCategories } from "../../redux/feature/reducer/categoryReducer";
-import { getManufacture } from "@/redux/feature/reducer/manufactureReducer";
+	getManufacture,
+	deleteManufacture
+} from "../../redux/feature/reducer/manufactureReducer";
 import ManufactureCard from "../components/ManufactureCard";
+import { useToast } from "@/components/ui/use-toast";
 export default function ManufacturePage() {
+	const { toast } = useToast();
 	const dispatch = useDispatch();
-	const { manufactures, isLoading, isError } = useSelector(
+	const { manufactures, isLoading, isSuccess } = useSelector(
 		(state) => state.manufacture
 	);
+	const handleDeleteManufacture = (id) => {
+		try {
+			dispatch(deleteManufacture(id));
+			toast({
+				title: "Success!",
+				description: "Manufacture deleted successfully!"
+			});
+		} catch (error) {
+			toast({
+				title: "Uh oh! Something went wrong.",
+				description: "There was a problem with your request."
+			});
+		}
+	};
 	useEffect(() => {
 		dispatch(getManufacture());
-	}, [dispatch]);
+	}, []);
+	useEffect(() => {
+		if (isSuccess) {
+			clearSuccess();
+			toast({
+				title: "Success!",
+				description: "Manufacture deleted successfully!"
+			});
+		}
+	}, [isSuccess]);
+	console.log(manufactures, "manufactures");
+	console.log(isSuccess, "isSuccess");
 	return (
 		<RootLayout>
 			<Header />
@@ -58,12 +83,14 @@ export default function ManufacturePage() {
 							placeholder="Search for items"
 						/>
 					</div>
-					<Link
-						href={"/addmanufacture"}
-						className="middle none center mr-4 rounded-lg bg-blue-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none w-full sm:w-auto mt-4 sm:mt-0"
-					>
-						Add Manufacture
-					</Link>
+					<div>
+						<Link
+							href={"/addmanufacture"}
+							className="middle none center mr-4 rounded-lg bg-blue-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none w-full sm:w-auto mt-4 sm:mt-0"
+						>
+							Add Manufacture
+						</Link>
+					</div>
 				</div>
 
 				<div className="grid grid-cols-12 gap-4 mt-10">
@@ -87,23 +114,39 @@ export default function ManufacturePage() {
 							</Select>
 						</div>
 					</div>
-					<div className="col-span-9">
+					<div className="col-span-9 px-10 lg:px-0">
 						<section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
 							{isLoading ? (
-								<div className="flex justify-center items-center">
-									<h1 className="text-center">Loading...</h1>
+								<div className="flex items-center justify-center w-full h-full">
+									<div className="flex justify-center items-center space-x-1 text-sm text-gray-700">
+										<svg
+											fill="none"
+											className="w-6 h-6 animate-spin"
+											viewBox="0 0 32 32"
+											xmlns="http://www.w3.org/2000/svg"
+										>
+											<path
+												clipRule="evenodd"
+												d="M15.165 8.53a.5.5 0 01-.404.58A7 7 0 1023 16a.5.5 0 011 0 8 8 0 11-9.416-7.874.5.5 0 01.58.404z"
+												fill="currentColor"
+												fillRule="evenodd"
+											/>
+										</svg>
+										<div>Loading ...</div>
+									</div>
 								</div>
 							) : (
-								manufactures?.result?.map((item) => {
+								manufactures?.map((item) => {
 									return (
 										<ManufactureCard
-											key={item?._id}
+											id={item?._id}
 											name={item?.name}
 											email={item?.email}
 											image={item?.image}
 											location={item?.location}
 											contactName={item?.contactName}
 											phoneNumber={item?.phoneNumber}
+											handleDeleteManufacture={handleDeleteManufacture}
 										/>
 									);
 								})
@@ -112,6 +155,7 @@ export default function ManufacturePage() {
 					</div>
 				</div>
 			</section>
+
 			<Footer />
 		</RootLayout>
 	);
