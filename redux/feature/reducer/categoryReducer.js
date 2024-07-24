@@ -7,7 +7,7 @@ export const getCategories = createAsyncThunk(
 	async (thunkAPI) => {
 		try {
 			const response = await fetch(`${BASE_URL}/api/getcategories`, {
-				cache: "no-cache"
+				next: { revalidate: 3600 }
 			});
 			return await response.json();
 		} catch (error) {

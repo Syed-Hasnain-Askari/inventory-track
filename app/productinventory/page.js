@@ -117,7 +117,11 @@ export default function ProductInventoryPage() {
 					<div className="col-span-9">
 						<section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
 							{isLoading ? (
-								<Spinner />
+								<div className="col-span-3 h-96">
+									<div className="flex items-center justify-center h-full">
+										<Spinner />
+									</div>
+								</div>
 							) : (
 								inventryProducts?.map((product) => {
 									return (
@@ -131,6 +135,15 @@ export default function ProductInventoryPage() {
 										/>
 									);
 								})
+							)}
+							{inventryProducts?.length === 0 && (
+								<div className="col-span-3 h-96">
+									<div className="flex justify-center items-center h-full">
+										<p className="text-center text-gray-500 font-semibold">
+											No products found
+										</p>
+									</div>
+								</div>
 							)}
 						</section>
 					</div>

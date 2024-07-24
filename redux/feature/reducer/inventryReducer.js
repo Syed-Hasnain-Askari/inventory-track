@@ -7,7 +7,7 @@ export const getInvetryProducts = createAsyncThunk(
 	async (thunkAPI) => {
 		try {
 			const response = await fetch(`${BASE_URL}/api/products/getproduct`, {
-				cache: "no-cache"
+				next: { revalidate: 3600 }
 			});
 			return await response.json();
 		} catch (error) {
@@ -22,7 +22,7 @@ export const getInvetryProductsByManufacture = createAsyncThunk(
 			const response = await fetch(
 				`/api/products/getproduct?category=${payload}`,
 				{
-					next: { revalidate: 3600 }
+					cache: "no-cache"
 				}
 			);
 			return await response.json();

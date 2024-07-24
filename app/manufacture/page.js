@@ -15,7 +15,8 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	getManufacture,
-	deleteManufacture
+	deleteManufacture,
+	getManufactureByName
 } from "../../redux/feature/reducer/manufactureReducer";
 import ManufactureCard from "../components/ManufactureCard";
 import { useToast } from "@/components/ui/use-toast";
@@ -53,12 +54,11 @@ export default function ManufacturePage() {
 			clearSuccess();
 		}
 	}, [isSuccess]);
-	console.log(manufactures, "manufactures");
-	console.log(isSuccess, "isSuccess");
+
 	return (
 		<RootLayout>
 			<Header />
-			<section className="max-w-screen-xl max-h-screen mx-auto mt-10">
+			<section className="max-w-screen-xl mx-auto mt-10">
 				<div className="flex justify-between items-center">
 					<h1 className="xl:text-center md:text-center max-w-lg text-xl font-bold text-gray-800 xl:text-2xl">
 						Manufactures
@@ -81,6 +81,11 @@ export default function ManufacturePage() {
 						<input
 							type="text"
 							id="table-search"
+							onChange={(e) => {
+								setTimeout(() => {
+									dispatch(getManufactureByName(e.target.value));
+								}, 2000);
+							}}
 							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-none block w-full sm:w-96 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500"
 							placeholder="Search for items"
 						/>
@@ -103,23 +108,24 @@ export default function ManufacturePage() {
 								<SelectTrigger className="w-full sm:w-[200px] mt-3">
 									<SelectValue placeholder="Select" />
 								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="light">Accessories</SelectItem>
-									<SelectItem value="light">Accessories</SelectItem>
-									<SelectItem value="dark">Desktop-PC</SelectItem>
-									<SelectItem value="system">Head Phone</SelectItem>
-									<SelectItem value="system">Laptop</SelectItem>
-									<SelectItem value="system">Keyboard</SelectItem>
-									<SelectItem value="system">Mouse</SelectItem>
-									<SelectItem value="system">Smartphone</SelectItem>
-								</SelectContent>
+								{manufactures?.map((item) => {
+									return (
+										<SelectContent>
+											<SelectItem value="light">{item?.location}</SelectItem>
+										</SelectContent>
+									);
+								})}
 							</Select>
 						</div>
 					</div>
 					<div className="col-span-9 px-10 lg:px-0">
 						<section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
 							{isLoading ? (
-								<Spinner />
+								<div className="col-span-3 h-96">
+									<div className="flex items-center justify-center h-full">
+										<Spinner />
+									</div>
+								</div>
 							) : (
 								manufactures?.map((item) => {
 									return (
@@ -135,6 +141,15 @@ export default function ManufacturePage() {
 										/>
 									);
 								})
+							)}
+							{manufactures?.length === 0 && (
+								<div className="col-span-3 h-96">
+									<div className="flex items-center justify-center h-full">
+										<p className="text-center text-gray-500 font-semibold">
+											No results found, try adjusting your search and filters.
+										</p>
+									</div>
+								</div>
 							)}
 						</section>
 					</div>

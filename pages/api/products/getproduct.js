@@ -3,7 +3,6 @@ const Product = require("../../../models/products");
 export default async function handler(req, res) {
 	await connectDB();
 	if (req.method == "GET") {
-		console.log(req.query, "req.params");
 		try {
 			if (req.query.category) {
 				const products = await Product.aggregate([
@@ -48,7 +47,7 @@ export default async function handler(req, res) {
 						$search: {
 							index: "searchproducts",
 							text: {
-								query: `{"name":${req.query.search}}`,
+								query: req.query.search,
 								path: {
 									wildcard: "*"
 								}
@@ -112,6 +111,9 @@ export default async function handler(req, res) {
 						manufacturePrice: 1,
 						category: "$result.name"
 					}
+				},
+				{
+					$limit: 10
 				}
 			]);
 			// .sort({ createdAt: -1 })

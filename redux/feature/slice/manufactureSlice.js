@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
 	addManufacture,
 	deleteManufacture,
-	getManufacture
+	getManufacture,
+	getManufactureByName
 } from "../reducer/manufactureReducer";
 const initialState = {
 	manufactures: [],
@@ -33,6 +34,19 @@ export const manufactureSlice = createSlice({
 			state.manufactures = action.payload.result;
 		});
 		builder.addCase(getManufacture.rejected, (state, action) => {
+			state.isLoading = false;
+			state.isError = true;
+			state.error = action.payload;
+		});
+		// Add the pending, fulfilled, and rejected cases for get manufacturebyname
+		builder.addCase(getManufactureByName.pending, (state) => {
+			state.isLoading = true;
+		});
+		builder.addCase(getManufactureByName.fulfilled, (state, action) => {
+			state.isLoading = false;
+			state.manufactures = action.payload.result;
+		});
+		builder.addCase(getManufactureByName.rejected, (state, action) => {
 			state.isLoading = false;
 			state.isError = true;
 			state.error = action.payload;

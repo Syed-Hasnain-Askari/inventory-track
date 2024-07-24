@@ -9,6 +9,22 @@ export const getManufacture = createAsyncThunk(
 			const response = await fetch(
 				`${BASE_URL}/api/manufacture/get-manufacture`,
 				{
+					next: { revalidate: 3600 }
+				}
+			);
+			return await response.json();
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error.response);
+		}
+	}
+);
+export const getManufactureByName = createAsyncThunk(
+	"Manufacture/getManufactureByName",
+	async (query, thunkAPI) => {
+		try {
+			const response = await fetch(
+				`${BASE_URL}/api/manufacture/get-manufacturebyname?search=${query}`,
+				{
 					cache: "no-cache"
 				}
 			);
