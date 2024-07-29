@@ -6,7 +6,7 @@ export const getInvetryProducts = createAsyncThunk(
 	"InventryProduct/getInvetryProducts",
 	async (thunkAPI) => {
 		try {
-			const response = await fetch(`${BASE_URL}/api/products/getproduct`, {
+			const response = await fetch(`/api/products/getproduct`, {
 				next: { revalidate: 3600 }
 			});
 			return await response.json();
@@ -15,12 +15,30 @@ export const getInvetryProducts = createAsyncThunk(
 		}
 	}
 );
-export const getInvetryProductsByManufacture = createAsyncThunk(
-	"InventryProduct/getInvetryProductsByManufacture",
+export const getInvetryProductsByCategory = createAsyncThunk(
+	"InventryProduct/getInvetryProductsByCategory",
 	async (payload, thunkAPI) => {
 		try {
 			const response = await fetch(
 				`/api/products/getproduct?category=${payload}`,
+				{
+					cache: "no-cache"
+				}
+			);
+			return await response.json();
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error.response);
+		}
+	}
+);
+
+export const getInvetryProductsByManufacture = createAsyncThunk(
+	"InventryProduct/getInvetryProductsByManufacture",
+	async (payload, thunkAPI) => {
+		console.log(payload);
+		try {
+			const response = await fetch(
+				`/api/products/get-productsbymanufacture?manufacture=${payload}`,
 				{
 					cache: "no-cache"
 				}

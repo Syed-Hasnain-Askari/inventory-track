@@ -10,13 +10,18 @@ import {
 	SelectValue
 } from "@/components/ui/select";
 import { getCategories } from "@/lib/methods";
+import { getManufacture } from "@/redux/feature/reducer/manufactureReducer";
+import { useDispatch, useSelector } from "react-redux";
 export default function page() {
+	const dispatch = useDispatch();
+	const { manufactures } = useSelector((state) => state.manufacture);
 	const [categories, setCategories] = useState(null);
 	const [userInput, setUserInput] = useState({
 		name: "",
 		description: "",
 		price: "",
 		category: "",
+		manufacture: "",
 		image:
 			"https://images.unsplash.com/photo-1625842268584-8f3296236761?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 		manufacturePrice: "",
@@ -45,8 +50,6 @@ export default function page() {
 		};
 		fetchData();
 	}, []);
-	console.log(userInput);
-	console.log(categories);
 	const handleSubmit = async (e) => {
 		const response = await fetch("/api/products/addproduct", {
 			method: "POST",
@@ -60,13 +63,17 @@ export default function page() {
 				category: userInput.category,
 				image: userInput.image,
 				stock: Number(userInput.stock),
+				manufacture: userInput.manufacture,
 				manufacturePrice: Number(userInput.manufacturePrice)
 			})
 		});
 		const result = await response.json();
 		console.log(result);
 	};
-
+	useEffect(() => {
+		dispatch(getManufacture());
+	}, [dispatch]);
+	console.log(userInput, "userInput");
 	return (
 		<RootLayout>
 			<Header />
@@ -96,6 +103,20 @@ export default function page() {
 						<textarea
 							name="description"
 							onChange={(e) => handleChange("description", e)}
+							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+						/>
+					</div>
+					<div className="mb-3">
+						<label
+							htmlFor="guest"
+							className="mb-3 block text-base font-medium text-[#07074D]"
+						>
+							Image
+						</label>
+						<input
+							type="text"
+							name="image"
+							onChange={(e) => handleChange("image", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 						/>
 					</div>
@@ -135,6 +156,28 @@ export default function page() {
 											{category.name}
 										</SelectItem>
 									);
+								})}
+							</SelectContent>
+						</Select>
+					</div>
+					<div className="mb-3">
+						<label
+							htmlFor="guest"
+							className="mb-3 block text-base font-medium text-[#07074D]"
+						>
+							Manufacture
+						</label>
+						<Select
+							onValueChange={(e) => {
+								handleSelectChange("manufacture", e);
+							}}
+						>
+							<SelectTrigger className="w-full h-[50px] mt-3">
+								<SelectValue placeholder="Select" />
+							</SelectTrigger>
+							<SelectContent>
+								{manufactures?.map((item) => {
+									return <SelectItem value={item._id}>{item.name}</SelectItem>;
 								})}
 							</SelectContent>
 						</Select>

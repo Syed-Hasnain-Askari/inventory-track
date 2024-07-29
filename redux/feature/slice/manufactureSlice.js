@@ -7,6 +7,7 @@ import {
 } from "../reducer/manufactureReducer";
 const initialState = {
 	manufactures: [],
+	manufactureList: [],
 	isLoading: false,
 	isSuccess: false,
 	isError: false,
@@ -32,6 +33,7 @@ export const manufactureSlice = createSlice({
 		builder.addCase(getManufacture.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.manufactures = action.payload.result;
+			state.manufactureList = action.payload.result;
 		});
 		builder.addCase(getManufacture.rejected, (state, action) => {
 			state.isLoading = false;

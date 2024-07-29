@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { getInvetryProductsByManufacture } from "../slice/inventrySlice";
 const dotenv = require("dotenv");
 dotenv.config();
 const BASE_URL = process.env.DEV_URL || "";
@@ -20,7 +21,7 @@ export const getManufacture = createAsyncThunk(
 );
 export const getManufactureByName = createAsyncThunk(
 	"Manufacture/getManufactureByName",
-	async (query, thunkAPI) => {
+	async (query, { dispatch }, thunkAPI) => {
 		try {
 			const response = await fetch(
 				`${BASE_URL}/api/manufacture/get-manufacturebyname?search=${query}`,
@@ -28,6 +29,9 @@ export const getManufactureByName = createAsyncThunk(
 					cache: "no-cache"
 				}
 			);
+			const result = await response.json();
+			console.log(result, "result====");
+			dispatch(getInvetryProductsByManufacture());
 			return await response.json();
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error.response);

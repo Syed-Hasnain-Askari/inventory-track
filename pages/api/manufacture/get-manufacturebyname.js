@@ -4,7 +4,8 @@ export default async function handler(req, res) {
 	await connectDB();
 	if (req.method == "GET") {
 		try {
-			if (req.query.search != "") {
+			const searchQuery = req.query.search?.trim();
+			if (searchQuery) {
 				const manufacture = await Manufacture.aggregate([
 					{
 						$search: {

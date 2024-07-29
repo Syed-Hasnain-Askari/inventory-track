@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
 	generalSearch,
 	getInvetryProducts,
+	getInvetryProductsByCategory,
 	getInvetryProductsByManufacture
 } from "../reducer/inventryReducer";
 const initialState = {
@@ -23,6 +24,7 @@ export const inventryProductSlice = createSlice({
 			};
 		}
 	},
+
 	extraReducers: (builder) => {
 		//get inventry products
 		builder.addCase(getInvetryProducts.pending, (state) => {
@@ -33,12 +35,28 @@ export const inventryProductSlice = createSlice({
 			state.inventryProducts = action.payload.result;
 		});
 		//search product by category
+		builder.addCase(getInvetryProductsByCategory.pending, (state) => {
+			state.isLoading = true;
+		});
+		builder.addCase(getInvetryProductsByCategory.fulfilled, (state, action) => {
+			console.log(action, "getInvetryProductsByCategory.fulfilled");
+			state.isLoading = false;
+			state.inventryProducts = action.payload.result;
+		});
+		builder.addCase(getInvetryProductsByCategory.rejected, (state, action) => {
+			state.isLoading = false;
+			state.isError = true;
+			state.error = action.payload;
+		});
+
+		//search product by manufacture
 		builder.addCase(getInvetryProductsByManufacture.pending, (state) => {
 			state.isLoading = true;
 		});
 		builder.addCase(
 			getInvetryProductsByManufacture.fulfilled,
 			(state, action) => {
+				console.log(action, "getInvetryProductsByManufacture.fulfilled");
 				state.isLoading = false;
 				state.inventryProducts = action.payload.result;
 			}

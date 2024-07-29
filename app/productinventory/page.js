@@ -16,18 +16,25 @@ import { useDispatch, useSelector } from "react-redux";
 import {
 	generalSearch,
 	getInvetryProducts,
-	getInvetryProductsByManufacture
+	getInvetryProductsByCategory
 } from "../../redux/feature/reducer/inventryReducer";
 import { getCategories } from "../../redux/feature/reducer/categoryReducer";
 import Spinner from "../components/Spinner";
+import { getManufacture } from "../../redux/feature/reducer/manufactureReducer";
+import { getInvetryProductsByManufacture } from "../../redux/feature/reducer/inventryReducer";
 export default function ProductInventoryPage() {
 	const dispatch = useDispatch();
-	const { inventryProducts, isLoading, isSuccess } = useSelector(
+	const { inventryProducts, isLoading } = useSelector(
 		(state) => state.inventry
 	);
 	const { categories } = useSelector((state) => state.category);
+	const { manufactureList } = useSelector((state) => state.manufacture);
 	useEffect(() => {
-		Promise.all([dispatch(getInvetryProducts()), dispatch(getCategories())]);
+		Promise.all([
+			dispatch(getInvetryProducts()),
+			dispatch(getCategories()),
+			dispatch(getManufacture())
+		]);
 	}, [dispatch]);
 	return (
 		<RootLayout>
@@ -76,19 +83,20 @@ export default function ProductInventoryPage() {
 					<div className="lg:col-span-3 col-span-12 px-10 w-full sm:w-auto">
 						<div>
 							<lable className="font-semibold text-sm">Manufacture</lable>
-							<Select>
+							<Select
+								onValueChange={(e) => {
+									dispatch(getInvetryProductsByManufacture(e));
+								}}
+							>
 								<SelectTrigger className="w-full sm:w-[200px] mt-3">
 									<SelectValue placeholder="Select" />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="light">Accessories</SelectItem>
-									<SelectItem value="light">Accessories</SelectItem>
-									<SelectItem value="dark">Desktop-PC</SelectItem>
-									<SelectItem value="system">Head Phone</SelectItem>
-									<SelectItem value="system">Laptop</SelectItem>
-									<SelectItem value="system">Keyboard</SelectItem>
-									<SelectItem value="system">Mouse</SelectItem>
-									<SelectItem value="system">Smartphone</SelectItem>
+									{manufactureList?.map((item) => {
+										return (
+											<SelectItem value={item?.name}>{item?.name}</SelectItem>
+										);
+									})}
 								</SelectContent>
 							</Select>
 						</div>
@@ -96,7 +104,7 @@ export default function ProductInventoryPage() {
 							<lable className="font-semibold text-sm">Category</lable>
 							<Select
 								onValueChange={(e) => {
-									dispatch(getInvetryProductsByManufacture(e));
+									dispatch(getInvetryProductsByCategory(e));
 								}}
 							>
 								<SelectTrigger className="w-full sm:w-[200px] mt-3">
@@ -132,12 +140,13 @@ export default function ProductInventoryPage() {
 											image={product.image}
 											price={product.price}
 											category={product.category}
+											manufacture={product.manufacture}
 										/>
 									);
 								})
 							)}
 							{inventryProducts?.length === 0 && (
-								<div className="col-span-3 h-96">
+								<div className="col-span-3">
 									<div className="flex justify-center items-center h-full">
 										<p className="text-center text-gray-500 font-semibold">
 											No products found

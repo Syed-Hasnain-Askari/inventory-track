@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import RootLayout from "../layout";
 import { Header } from "../components/Header";
 import Footer from "../components/Footer";
-import ProductCard from "../components/ProductCard";
+
 import {
 	Select,
 	SelectContent,
@@ -25,7 +25,7 @@ import Spinner from "../components/Spinner";
 export default function ManufacturePage() {
 	const { toast } = useToast();
 	const dispatch = useDispatch();
-	const { manufactures, isLoading, isSuccess } = useSelector(
+	const { manufactures, manufactureList, isLoading, isSuccess } = useSelector(
 		(state) => state.manufacture
 	);
 	const handleDeleteManufacture = (id) => {
@@ -42,6 +42,11 @@ export default function ManufacturePage() {
 			});
 		}
 	};
+	const handleSearchChange = (value) => {
+		setTimeout(() => {
+			dispatch(getManufactureByName(value));
+		}, 2000);
+	};
 	useEffect(() => {
 		dispatch(getManufacture());
 	}, []);
@@ -54,16 +59,15 @@ export default function ManufacturePage() {
 			clearSuccess();
 		}
 	}, [isSuccess]);
-
 	return (
 		<RootLayout>
 			<Header />
 			<section className="max-w-screen-xl mx-auto mt-10">
-				<div className="flex justify-between items-center">
-					<h1 className="xl:text-center md:text-center max-w-lg text-xl font-bold text-gray-800 xl:text-2xl">
+				<div className="flex flex-col lg:flex-row justify-between lg:px-0 px-5">
+					<h1 className="text-xl font-bold text-gray-800 xl:text-2xl">
 						Manufactures
 					</h1>
-					<div className="relative w-full sm:w-auto">
+					<div className="relative w-full sm:w-auto mt-4 sm:mt-0">
 						<div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
 							<svg
 								className="w-5 h-5 text-gray-500 dark:text-gray-400"
@@ -82,39 +86,42 @@ export default function ManufacturePage() {
 							type="text"
 							id="table-search"
 							onChange={(e) => {
-								setTimeout(() => {
-									dispatch(getManufactureByName(e.target.value));
-								}, 2000);
+								handleSearchChange(e.target.value);
 							}}
-							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-none block w-full sm:w-96 pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500"
+							className="border bg-gray-50 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:outline-none block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500"
 							placeholder="Search for items"
 						/>
 					</div>
-					<div>
+					<div className="w-full sm:w-auto mt-4 sm:mt-0">
 						<Link
-							href={"/addmanufacture"}
-							className="middle none center mr-4 rounded-lg bg-blue-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none w-full sm:w-auto mt-4 sm:mt-0"
+							href="/addmanufacture"
+							className="middle none center rounded-lg bg-blue-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none w-full"
 						>
 							Add Manufacture
 						</Link>
 					</div>
 				</div>
+
 				<hr className="mt-5 justify-center" />
-				<div className="grid grid-cols-12 gap-4 mt-10 h-1/2">
-					<div className="lg:col-span-3 col-span-12 px-10 w-full sm:w-auto">
+				<div className="grid grid-cols-12 gap-4 mt-10 h-1/2 lg:px-0 px-5">
+					<div className="lg:col-span-3 col-span-12 w-full sm:w-auto">
 						<div>
 							<lable className="font-semibold text-sm">Manufacture</lable>
-							<Select>
+							<Select
+								onValueChange={(e) => {
+									dispatch(getManufactureByName(e));
+								}}
+							>
 								<SelectTrigger className="w-full sm:w-[200px] mt-3">
 									<SelectValue placeholder="Select" />
 								</SelectTrigger>
-								{manufactures?.map((item) => {
-									return (
-										<SelectContent>
-											<SelectItem value="light">{item?.location}</SelectItem>
-										</SelectContent>
-									);
-								})}
+								<SelectContent>
+									{manufactureList?.map((item) => {
+										return (
+											<SelectItem value={item?.name}>{item?.name}</SelectItem>
+										);
+									})}
+								</SelectContent>
 							</Select>
 						</div>
 					</div>

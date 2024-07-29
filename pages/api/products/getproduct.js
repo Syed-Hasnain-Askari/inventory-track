@@ -11,13 +11,22 @@ export default async function handler(req, res) {
 							from: "categories",
 							localField: "category",
 							foreignField: "_id",
-							as: "result"
+							as: "categoryInfo"
 						}
 					},
 					{
-						$unwind: {
-							path: "$result"
+						$unwind: "$categoryInfo"
+					},
+					{
+						$lookup: {
+							from: "manufactures",
+							localField: "manufacture",
+							foreignField: "_id",
+							as: "manufactureInfo"
 						}
+					},
+					{
+						$unwind: "$manufactureInfo"
 					},
 					{
 						$project: {
@@ -28,7 +37,8 @@ export default async function handler(req, res) {
 							image: 1,
 							stock: 1,
 							manufacturePrice: 1,
-							category: "$result.name"
+							category: "$categoryInfo.name",
+							manufacture: "$manufactureInfo.name"
 						}
 					},
 					{
@@ -44,28 +54,26 @@ export default async function handler(req, res) {
 			} else if (req.query.search) {
 				const products = await Product.aggregate([
 					{
-						$search: {
-							index: "searchproducts",
-							text: {
-								query: req.query.search,
-								path: {
-									wildcard: "*"
-								}
-							}
-						}
-					},
-					{
 						$lookup: {
 							from: "categories",
 							localField: "category",
 							foreignField: "_id",
-							as: "result"
+							as: "categoryInfo"
 						}
 					},
 					{
-						$unwind: {
-							path: "$result"
+						$unwind: "$categoryInfo"
+					},
+					{
+						$lookup: {
+							from: "manufactures",
+							localField: "manufacture",
+							foreignField: "_id",
+							as: "manufactureInfo"
 						}
+					},
+					{
+						$unwind: "$manufactureInfo"
 					},
 					{
 						$project: {
@@ -76,29 +84,44 @@ export default async function handler(req, res) {
 							image: 1,
 							stock: 1,
 							manufacturePrice: 1,
-							category: "$result.name"
+							category: "$categoryInfo.name",
+							manufacture: "$manufactureInfo.name"
+						}
+					},
+					{
+						$match: {
+							category: req.query.category
 						}
 					}
 				]);
+
 				return res.status(200).json({
 					message: "Product fetched successfully",
 					result: products
 				});
 			}
-
 			const products = await Product.aggregate([
 				{
 					$lookup: {
 						from: "categories",
 						localField: "category",
 						foreignField: "_id",
-						as: "result"
+						as: "categoryInfo"
 					}
 				},
 				{
-					$unwind: {
-						path: "$result"
+					$unwind: "$categoryInfo"
+				},
+				{
+					$lookup: {
+						from: "manufactures",
+						localField: "manufacture",
+						foreignField: "_id",
+						as: "manufactureInfo"
 					}
+				},
+				{
+					$unwind: "$manufactureInfo"
 				},
 				{
 					$project: {
@@ -109,15 +132,15 @@ export default async function handler(req, res) {
 						image: 1,
 						stock: 1,
 						manufacturePrice: 1,
-						category: "$result.name"
+						category: "$categoryInfo.name",
+						manufacture: "$manufactureInfo.name",
+						createdAt: 1,
+						updatedAt: 1
 					}
-				},
-				{
-					$limit: 10
 				}
-			]);
-			// .sort({ createdAt: -1 })
-			// .exec();
+			])
+				.sort({ createdAt: -1 })
+				.exec();
 			return res.status(200).json({
 				message: "Product fetched successfully",
 				result: products

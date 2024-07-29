@@ -8,13 +8,19 @@ export default function ProductCard({
 	description,
 	image,
 	price,
-	category
+	category,
+	manufacture
 }) {
 	return (
 		<div
 			key={key}
-			className="cursor-pointer shadow-xl mx-auto w-80 transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 duration-300 hover:scale-105 hover:shadow-lg"
+			className="relative cursor-pointer shadow-xl mx-auto w-80 transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 duration-300 hover:scale-105 hover:shadow-lg"
 		>
+			<div class="absolute bg-yellow-200 mt-3 ml-3 py-1.5 px-6 rounded-full">
+				<p tabindex="0" class="focus:outline-none text-xs text-yellow-700">
+					{manufacture}
+				</p>
+			</div>
 			<Image
 				height={300}
 				width={300}

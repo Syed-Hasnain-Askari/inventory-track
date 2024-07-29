@@ -26,6 +26,11 @@ const ProductSchema = new mongoose.Schema(
 			ref: "Category",
 			required: true
 		},
+		manufacture: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Manufacture",
+			required: true
+		},
 		image: {
 			type: String,
 			required: true
