@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Header } from "./components/Header";
-import ProductCard from "./components/ProductCard";
+import ProductCard from "../components/ProductCard";
 import Table from "./components/Table";
 import RootLayout from "./layout";
 import {

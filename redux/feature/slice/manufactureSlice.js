@@ -23,6 +23,12 @@ export const manufactureSlice = createSlice({
 				...state,
 				isSuccess: false
 			};
+		},
+		setManufacture: (state, action) => {
+			return {
+				...state,
+				manufactures: action.payload
+			};
 		}
 	},
 	extraReducers: (builder) => {
@@ -92,5 +98,6 @@ export const manufactureSlice = createSlice({
 		});
 	}
 });
-export const { clearState, clearSuccess } = manufactureSlice.actions;
+export const { clearState, clearSuccess, setManufacture } =
+	manufactureSlice.actions;
 export default manufactureSlice.reducer;

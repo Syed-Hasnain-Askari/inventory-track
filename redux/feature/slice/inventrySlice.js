@@ -22,9 +22,15 @@ export const inventryProductSlice = createSlice({
 				...state,
 				isSuccess: false
 			};
+		},
+		getProducts: (state, action) => {
+			console.log(action.payload, "payload");
+			return {
+				...state,
+				inventryProducts: action.payload
+			};
 		}
 	},
-
 	extraReducers: (builder) => {
 		//get inventry products
 		builder.addCase(getInvetryProducts.pending, (state) => {
@@ -84,5 +90,6 @@ export const inventryProductSlice = createSlice({
 		});
 	}
 });
-export const { clearState, clearSuccess } = inventryProductSlice.actions;
+export const { clearState, clearSuccess, getProducts } =
+	inventryProductSlice.actions;
 export default inventryProductSlice.reducer;

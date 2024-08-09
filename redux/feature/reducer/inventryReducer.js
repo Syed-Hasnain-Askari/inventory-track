@@ -31,11 +31,9 @@ export const getInvetryProductsByCategory = createAsyncThunk(
 		}
 	}
 );
-
 export const getInvetryProductsByManufacture = createAsyncThunk(
 	"InventryProduct/getInvetryProductsByManufacture",
 	async (payload, thunkAPI) => {
-		console.log(payload);
 		try {
 			const response = await fetch(
 				`/api/products/get-productsbymanufacture?manufacture=${payload}`,
@@ -49,7 +47,6 @@ export const getInvetryProductsByManufacture = createAsyncThunk(
 		}
 	}
 );
-
 export const generalSearch = createAsyncThunk(
 	"InventryProduct/generalSearch",
 	async (payload, thunkAPI) => {

@@ -9,11 +9,13 @@ import {
 	SelectTrigger,
 	SelectValue
 } from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
 import { getCategories } from "@/lib/methods";
 import { getManufacture } from "@/redux/feature/reducer/manufactureReducer";
 import { useDispatch, useSelector } from "react-redux";
 export default function page() {
 	const dispatch = useDispatch();
+	const { toast } = useToast();
 	const { manufactures } = useSelector((state) => state.manufacture);
 	const [categories, setCategories] = useState(null);
 	const [userInput, setUserInput] = useState({
@@ -68,6 +70,21 @@ export default function page() {
 			})
 		});
 		const result = await response.json();
+		if (result) {
+			toast({
+				title: "Success!",
+				description: "Product has been added successfully!"
+			});
+		}
+		setUserInput({
+			name: "",
+			description: "",
+			price: "",
+			category: "",
+			image: "",
+			stock: "",
+			manufacturePrice: ""
+		});
 		console.log(result);
 	};
 	useEffect(() => {
@@ -89,6 +106,7 @@ export default function page() {
 						<input
 							type="text"
 							name="name"
+							value={userInput.name}
 							onChange={(e) => handleChange("name", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 						/>
@@ -116,6 +134,7 @@ export default function page() {
 						<input
 							type="text"
 							name="image"
+							value={userInput.image}
 							onChange={(e) => handleChange("image", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 						/>
@@ -130,6 +149,7 @@ export default function page() {
 						<input
 							type="number"
 							name="price"
+							value={userInput.price}
 							onChange={(e) => handleChange("price", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 						/>
@@ -192,6 +212,7 @@ export default function page() {
 						<input
 							type="number"
 							name="stock"
+							value={userInput.stock}
 							onChange={(e) => handleChange("stock", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 						/>
@@ -205,6 +226,7 @@ export default function page() {
 						</label>
 						<input
 							type="number"
+							value={userInput.manufacturePrice}
 							name="manufacturePrice"
 							onChange={(e) => handleChange("manufacturePrice", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
