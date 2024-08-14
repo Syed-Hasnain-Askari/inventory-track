@@ -13,6 +13,10 @@ const nextConfig = {
 			{
 				protocol: "https",
 				hostname: "www.paklap.pk"
+			},
+			{
+				protocol: "https",
+				hostname: "res.cloudinary.com"
 			}
 		]
 	}

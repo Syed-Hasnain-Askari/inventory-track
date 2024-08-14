@@ -1,13 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 const dotenv = require("dotenv");
 dotenv.config();
-const BASE_URL = process.env.DEV_URL || "";
-export const getInvetryProducts = createAsyncThunk(
-	"InventryProduct/getInvetryProducts",
-	async (thunkAPI) => {
+export const getInventoryProducts = createAsyncThunk(
+	"InventoryProduct/getInventoryProducts",
+	async (payload, thunkAPI) => {
+		const { category, manufacture } = payload;
 		try {
-			const response = await fetch(`/api/products/getproduct`, {
-				next: { revalidate: 3600 }
+			const queryParams = new URLSearchParams();
+			if (category) queryParams.append("category", category);
+			if (manufacture) queryParams.append("manufacture", manufacture);
+			const response = await fetch(`/api/products/?${queryParams.toString()}`, {
+				cache: "no-cache"
 			});
 			return await response.json();
 		} catch (error) {
@@ -15,32 +18,15 @@ export const getInvetryProducts = createAsyncThunk(
 		}
 	}
 );
-export const getInvetryProductsByCategory = createAsyncThunk(
-	"InventryProduct/getInvetryProductsByCategory",
+export const updateProductById = createAsyncThunk(
+	"InventryProduct/updateProductById",
 	async (payload, thunkAPI) => {
 		try {
-			const response = await fetch(
-				`/api/products/getproduct?category=${payload}`,
-				{
-					cache: "no-cache"
-				}
-			);
-			return await response.json();
-		} catch (error) {
-			return thunkAPI.rejectWithValue(error.response);
-		}
-	}
-);
-export const getInvetryProductsByManufacture = createAsyncThunk(
-	"InventryProduct/getInvetryProductsByManufacture",
-	async (payload, thunkAPI) => {
-		try {
-			const response = await fetch(
-				`/api/products/get-productsbymanufacture?manufacture=${payload}`,
-				{
-					cache: "no-cache"
-				}
-			);
+			console.log(payload, "payload");
+			const response = await fetch(`/api/products/${payload._id}`, {
+				method: "PATCH",
+				body: JSON.stringify(payload.userInput)
+			});
 			return await response.json();
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error.response);

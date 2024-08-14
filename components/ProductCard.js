@@ -4,7 +4,6 @@ import React from "react";
 export default function ProductCard({
 	name,
 	id,
-	description,
 	image,
 	price,
 	category,

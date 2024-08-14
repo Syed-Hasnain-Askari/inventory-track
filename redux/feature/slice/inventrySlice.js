@@ -1,9 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
 	generalSearch,
-	getInvetryProducts,
-	getInvetryProductsByCategory,
-	getInvetryProductsByManufacture
+	getInventoryProducts,
+	updateProductById
 } from "../reducer/inventryReducer";
 const initialState = {
 	inventryProducts: [],
@@ -27,59 +26,53 @@ export const inventryProductSlice = createSlice({
 			console.log(action.payload, "payload");
 			return {
 				...state,
-				inventryProducts: action.payload
+				inventryProducts: action.payload.result
 			};
 		}
 	},
 	extraReducers: (builder) => {
 		//get inventry products
-		builder.addCase(getInvetryProducts.pending, (state) => {
+		builder.addCase(getInventoryProducts.pending, (state) => {
 			state.isLoading = true;
 		});
-		builder.addCase(getInvetryProducts.fulfilled, (state, action) => {
+		builder.addCase(getInventoryProducts.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.inventryProducts = action.payload.result;
 		});
-		//search product by category
-		builder.addCase(getInvetryProductsByCategory.pending, (state) => {
-			state.isLoading = true;
-		});
-		builder.addCase(getInvetryProductsByCategory.fulfilled, (state, action) => {
-			console.log(action, "getInvetryProductsByCategory.fulfilled");
-			state.isLoading = false;
-			state.inventryProducts = action.payload.result;
-		});
-		builder.addCase(getInvetryProductsByCategory.rejected, (state, action) => {
+		builder.addCase(getInventoryProducts.rejected, (state, action) => {
 			state.isLoading = false;
 			state.isError = true;
 			state.error = action.payload;
 		});
-
-		//search product by manufacture
-		builder.addCase(getInvetryProductsByManufacture.pending, (state) => {
+		//update inventry products
+		builder.addCase(updateProductById.pending, (state) => {
 			state.isLoading = true;
 		});
-		builder.addCase(
-			getInvetryProductsByManufacture.fulfilled,
-			(state, action) => {
-				console.log(action, "getInvetryProductsByManufacture.fulfilled");
-				state.isLoading = false;
-				state.inventryProducts = action.payload.result;
+		builder.addCase(updateProductById.fulfilled, (state, action) => {
+			state.isLoading = false;
+			state.isSuccess = true;
+			const index = state.inventryProducts.findIndex(
+				(product) => product._id === action.meta.arg._id
+			);
+			if (index !== -1) {
+				// Update the item at the found index
+				state.inventryProducts[index] = {
+					...state.inventryProducts[index],
+					...action.payload.result // Assuming the updated product details are in action.payload
+				};
 			}
-		);
-		builder.addCase(
-			getInvetryProductsByManufacture.rejected,
-			(state, action) => {
-				state.isLoading = false;
-				state.isError = true;
-				state.error = action.payload;
-			}
-		);
+		});
+		builder.addCase(updateProductById.rejected, (state, action) => {
+			state.isLoading = false;
+			state.isError = true;
+			state.error = action.payload;
+		});
 		//general search response
 		builder.addCase(generalSearch.pending, (state) => {
 			state.isLoading = true;
 		});
 		builder.addCase(generalSearch.fulfilled, (state, action) => {
+			console.log(action.payload);
 			state.isLoading = false;
 			state.inventryProducts = action.payload.result;
 		});

@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import RootLayout from "../layout";
-import { Header } from "../components/Header";
+import { Header } from "../../../components/Header";
 import {
 	Select,
 	SelectContent,
@@ -13,12 +12,23 @@ import { useToast } from "@/components/ui/use-toast";
 import { getCategories } from "@/lib/methods";
 import { getManufacture } from "@/redux/feature/reducer/manufactureReducer";
 import { useDispatch, useSelector } from "react-redux";
-export default function page() {
-	const dispatch = useDispatch();
+import RootLayout from "@/app/layout";
+import { useFetch } from "@/hooks/useFetch";
+import { updateProductById } from "../../../../redux/feature/reducer/inventryReducer";
+export default function page({ params }) {
 	const { toast } = useToast();
+	const { manufactures } = useSelector((state) => state.manufacture);
+	const { inventryProducts, isLoading, isSuccess } = useSelector(
+		(state) => state.inventry
+	);
+	const {
+		response,
+		error,
+		loading: hookLoader
+	} = useFetch(`http://localhost:3000/api/products/${params.id}`);
+	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
 	const [image, setImage] = useState("");
-	const { manufactures } = useSelector((state) => state.manufacture);
 	const [categories, setCategories] = useState(null);
 	const [userInput, setUserInput] = useState({
 		name: "",
@@ -42,78 +52,8 @@ export default function page() {
 		});
 	};
 	const handleSubmit = async (e) => {
-		setLoading(true);
-		try {
-			// Create a FormData object and append the image file
-			const formData = new FormData();
-			for (const file of image) {
-				formData.append("file", file);
-			}
-			formData.append("upload_preset", "my-uploads");
-
-			// Upload the image to Cloudinary
-			const cloudinaryResponse = await fetch(
-				"https://api.cloudinary.com/v1_1/hasnainaskari32/image/upload",
-				{
-					method: "POST",
-					body: formData
-				}
-			);
-
-			// Check if the Cloudinary upload was successful
-			if (!cloudinaryResponse.ok) {
-				throw new Error("Failed to upload image to Cloudinary");
-			}
-
-			const cloudinaryResult = await cloudinaryResponse.json();
-			const imageUrl = cloudinaryResult.secure_url;
-
-			// Send the product data to the backend with the Cloudinary image URL
-			const productResponse = await fetch("/api/products", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify({
-					...userInput,
-					image: imageUrl
-				})
-			});
-
-			// Check if the product was successfully added
-			if (!productResponse.ok) {
-				throw new Error("Failed to add product");
-			}
-
-			const productResult = await productResponse.json();
-
-			// Display success toast notification
-			toast({
-				title: "Success!",
-				description: "Product has been added successfully!"
-			});
-
-			// Reset form input fields
-			setUserInput({
-				name: "",
-				description: "",
-				price: "",
-				category: "",
-				image: "",
-				stock: "",
-				manufacturePrice: ""
-			});
-		} catch (error) {
-			console.error("Error:", error);
-			// Display error toast notification
-			toast({
-				title: "Error!",
-				description: error.message,
-				status: "error"
-			});
-		} finally {
-			setLoading(false);
-		}
+		const _id = params.id;
+		dispatch(updateProductById({ _id, userInput }));
 	};
 	const handleFileUpload = (event) => {
 		setImage(event.target.files);
@@ -132,6 +72,29 @@ export default function page() {
 	useEffect(() => {
 		dispatch(getManufacture());
 	}, [dispatch]);
+	// useEffect to update the state once the response is available
+	useEffect(() => {
+		if (response) {
+			setUserInput({
+				name: response?.name || "",
+				description: response?.description || "",
+				price: response?.price || "",
+				category: response?.category || "",
+				manufacture: response?.manufacture || "",
+				manufacturePrice: response?.manufacturePrice || "",
+				stock: response.stock || ""
+			});
+		}
+	}, [response]);
+	useEffect(() => {
+		if (isSuccess) {
+			// Display success toast notification
+			toast({
+				title: "Success!",
+				description: "Product has been updated successfully!"
+			});
+		}
+	}, [isSuccess]);
 	return (
 		<RootLayout>
 			<Header />
@@ -147,7 +110,7 @@ export default function page() {
 						<input
 							type="text"
 							name="name"
-							value={userInput.name}
+							value={userInput?.name}
 							onChange={(e) => handleChange("name", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 						/>
@@ -161,6 +124,7 @@ export default function page() {
 						</label>
 						<textarea
 							name="description"
+							value={userInput?.description}
 							onChange={(e) => handleChange("description", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 						/>
@@ -312,7 +276,7 @@ export default function page() {
 							}}
 							className="hover:shadow-form rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none"
 						>
-							{loading ? "loading" : "Submit"}
+							{isLoading ? "loading" : "Submit"}
 						</button>
 					</div>
 				</div>

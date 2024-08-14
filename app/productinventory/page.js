@@ -6,17 +6,14 @@ import { Sider } from "../../components/ProductInventry/Sider";
 import Footer from "../components/Footer";
 import { Products } from "../../components/ProductInventry/Products";
 async function fetchData() {
-	const response = await fetch(
-		"http://localhost:3000/api/products/getproduct",
-		{
-			cache: "no-store" // This makes sure the fetch does not use any cache
-		}
-	);
+	const response = await fetch("http://localhost:3000/api/products/", {
+		cache: "no-store" // This makes sure the fetch does not use any cache
+	});
 	if (!response.ok) {
 		throw new Error("Failed to fetch data");
 	}
 	const data = await response.json();
-	return data.result;
+	return data;
 }
 
 export default async function ProductInventoryPage() {

@@ -2,14 +2,12 @@ import Footer from "@/app/components/Footer";
 import { Header } from "@/app/components/Header";
 import RootLayout from "@/app/layout";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 async function fetchData(id) {
-	const response = await fetch(
-		`http://localhost:3000/api/products/get-productbyid/${id}`,
-		{
-			cache: "no-store" // This makes sure the fetch does not use any cache
-		}
-	);
+	const response = await fetch(`http://localhost:3000/api/products/${id}`, {
+		cache: "no-store" // This makes sure the fetch does not use any cache
+	});
 	if (!response.ok) {
 		throw new Error("Failed to fetch data");
 	}
@@ -145,7 +143,10 @@ export default async function ProductDetailPage({ params }) {
 								<button className="flex ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">
 									Button
 								</button>
-								<button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
+								<Link
+									href={`/productinventory/edit/${params.id}`}
+									className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4"
+								>
 									<svg
 										fill="currentColor"
 										strokeLinecap="round"
@@ -156,7 +157,7 @@ export default async function ProductDetailPage({ params }) {
 									>
 										<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
 									</svg>
-								</button>
+								</Link>
 							</div>
 						</div>
 					</div>
