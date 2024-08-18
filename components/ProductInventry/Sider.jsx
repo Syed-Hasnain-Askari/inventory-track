@@ -43,7 +43,7 @@ export const Sider = () => {
 	};
 	return (
 		<React.Fragment>
-			<div className="lg:col-span-3 col-span-12 px-10 w-full sm:w-auto">
+			<div className="lg:col-span-3 col-span-12 w-full sm:w-auto">
 				<div>
 					<lable className="font-semibold text-sm">Manufacture</lable>
 					<Select onValueChange={handleManufactureChange}>

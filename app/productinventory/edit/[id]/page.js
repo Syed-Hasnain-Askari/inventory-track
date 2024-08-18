@@ -15,7 +15,9 @@ import { useDispatch, useSelector } from "react-redux";
 import RootLayout from "@/app/layout";
 import { useFetch } from "@/hooks/useFetch";
 import { updateProductById } from "../../../../redux/feature/reducer/inventryReducer";
+import { useRouter } from "next/navigation";
 export default function page({ params }) {
+	const router = useRouter();
 	const { toast } = useToast();
 	const { manufactures } = useSelector((state) => state.manufacture);
 	const { inventryProducts, isLoading, isSuccess } = useSelector(
@@ -84,6 +86,7 @@ export default function page({ params }) {
 				manufacturePrice: response?.manufacturePrice || "",
 				stock: response.stock || ""
 			});
+			setImage(response?.image);
 		}
 	}, [response]);
 	useEffect(() => {
@@ -93,6 +96,7 @@ export default function page({ params }) {
 				title: "Success!",
 				description: "Product has been updated successfully!"
 			});
+			router.push("/productinventory");
 		}
 	}, [isSuccess]);
 	return (

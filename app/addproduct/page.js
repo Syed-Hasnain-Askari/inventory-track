@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import RootLayout from "../layout";
-import { Header } from "../components/Header";
+import Header from "../components/Header";
 import {
 	Select,
 	SelectContent,
@@ -132,9 +132,10 @@ export default function page() {
 	useEffect(() => {
 		dispatch(getManufacture());
 	}, [dispatch]);
+	console.log(image[0]?.name);
 	return (
-		<RootLayout>
-			<Header />
+		<>
+			<Header name={"Add Product"} />
 			<div className="flex items-center justify-center p-12">
 				<div className="mx-auto w-full max-w-[550px]">
 					<div className="mb-3">
@@ -198,7 +199,9 @@ export default function page() {
 											drag and drop
 										</p>
 										<p className="text-xs text-gray-500 dark:text-gray-400">
-											SVG, PNG, JPG or GIF (MAX. 800x400px)
+											{image
+												? image[0]?.name
+												: "SVG, PNG, JPG or GIF (MAX. 800x400px)"}
 										</p>
 									</div>
 									<input
@@ -317,6 +320,6 @@ export default function page() {
 					</div>
 				</div>
 			</div>
-		</RootLayout>
+		</>
 	);
 }

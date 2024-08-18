@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import RootLayout from "../layout";
-import { Header } from "../components/Header";
+import { Header } from "../components/Navbar/Header";
 import { useToast } from "@/components/ui/use-toast";
 import Label from "../components/Label";
 import { addManufacture } from "@/redux/feature/reducer/manufactureReducer";

@@ -39,7 +39,7 @@ export const Products = ({ data }) => {
 					})
 				)}
 				{inventryProducts?.length === 0 && (
-					<div className="col-span-3 py-32">
+					<div className="col-span-12 py-32">
 						<div className="flex justify-center items-center h-full">
 							<p className=" text-gray-500 font-semibold">No products found</p>
 						</div>

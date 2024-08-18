@@ -7,7 +7,7 @@ export const Header = () => {
 	const dispatch = useDispatch();
 	return (
 		<React.Fragment>
-			<div className="flex justify-between items-center">
+			<div className="flex sm:flex-col lg:flex-row justify-between items-center">
 				<h1 className="xl:text-center md:text-center max-w-lg text-xl font-bold text-gray-800 xl:text-2xl">
 					Product Inventory
 				</h1>

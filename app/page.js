@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Header } from "./components/Header";
+import Header from "./components/Header";
 import ProductCard from "../components/ProductCard";
 import Table from "./components/Table";
 import RootLayout from "./layout";
@@ -16,7 +16,7 @@ export default async function OrderPage() {
 	const response = await getProducts();
 	console.log(response, "response");
 	return (
-		<RootLayout>
+		<>
 			<Header />
 			<main className="container mt-10">
 				<section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -261,6 +261,6 @@ export default async function OrderPage() {
 				</section>
 			</main>
 			<Footer />
-		</RootLayout>
+		</>
 	);
 }

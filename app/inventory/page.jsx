@@ -1,6 +1,5 @@
 import React, { Suspense } from "react";
-import RootLayout from "../layout";
-import { Header } from "../components/Header";
+import Header from "../components/Header";
 import { Header as ProductInventryHeader } from "../../components/ProductInventry/Header";
 import { Sider } from "../../components/ProductInventry/Sider";
 import Footer from "../components/Footer";
@@ -16,23 +15,21 @@ async function fetchData() {
 	return data;
 }
 
-export default async function ProductInventoryPage() {
+const InventoryPage = async () => {
 	const data = await fetchData();
 	return (
-		<RootLayout>
-			<Header />
-			<section className="max-w-screen-xl mx-auto mt-10">
-				<ProductInventryHeader />
-				<div className="grid grid-cols-12 mt-10">
-					<div className="lg:col-span-3 col-span-12  sm:w-auto">
-						<Sider />
-					</div>
-					<div className="lg:col-span-9 col-span-12 sm:w-auto">
-						<Products data={data} />
-					</div>
+		<div className="max-w-screen-xl mx-auto">
+			<ProductInventryHeader />
+			<div className="grid grid-cols-12 mt-10">
+				<div className="lg:col-span-3 col-span-12">
+					<Sider />
 				</div>
-			</section>
+				<div className="lg:col-span-9 col-span-12">
+					<Products data={data} />
+				</div>
+			</div>
 			<Footer />
-		</RootLayout>
+		</div>
 	);
-}
+};
+export default InventoryPage;
