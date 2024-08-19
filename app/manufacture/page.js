@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import RootLayout from "../layout";
-import { Header } from "../components/Header";
+import Header from "../components/Header";
 import { Header as ManufactureHeader } from "../../components/Manufacture/Header";
 import Footer from "../components/Footer";
 import { Manufacture } from "../../components/Manufacture/Manufacture";
@@ -21,21 +21,20 @@ async function fetchData() {
 export default async function ManufacturePage() {
 	const response = await fetchData();
 	return (
-		<RootLayout>
+		<React.Fragment>
 			<Header />
-			<section className="max-w-screen-xl mx-auto mt-10">
-				<ManufactureHeader />
-				<hr className="mt-5 justify-center" />
-				<div className="grid grid-cols-12 gap-4 mt-10 h-1/2 lg:px-0 px-5">
-					<div className="lg:col-span-3 col-span-12">
-						<Sider />
-					</div>
-					<div className="lg:col-span-9 col-span-12 px-10 lg:px-0">
-						<Manufacture data={response} />
-					</div>
+			<div className="grid grid-cols-12 gap-4">
+				<div className="col-span-12">
+					<ManufactureHeader />
 				</div>
-			</section>
+				<aside className="col-span-3">
+					<Sider />
+				</aside>
+				<div className="col-span-9">
+					<Manufacture data={response} />
+				</div>
+			</div>
 			<Footer />
-		</RootLayout>
+		</React.Fragment>
 	);
 }

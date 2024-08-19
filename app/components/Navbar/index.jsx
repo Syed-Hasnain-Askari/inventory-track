@@ -25,7 +25,7 @@ const Navbar = () => {
 	console.log(isDarkMode, "isDarkMode");
 	console.log(isSidebarCollapsed, "isSidebarCollapsed");
 	return (
-		<div className="flex justify-between items-center w-full mb-7">
+		<div className="sticky top-5 z-50 flex justify-between items-center w-full mb-7">
 			{/* LEFT SIDE */}
 			<div className="flex justify-between items-center gap-5">
 				<button

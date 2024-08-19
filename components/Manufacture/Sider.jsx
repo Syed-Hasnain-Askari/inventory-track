@@ -22,7 +22,7 @@ export const Sider = () => {
 		dispatch(getManufacture());
 	}, []);
 	return (
-		<React.Fragment>
+		<div className="grid grid-cols-12">
 			<div className="lg:col-span-3 col-span-12 w-full sm:w-auto">
 				<div>
 					<lable className="font-semibold text-sm">Manufacture</lable>
@@ -42,6 +42,6 @@ export const Sider = () => {
 					</Select>
 				</div>
 			</div>
-		</React.Fragment>
+		</div>
 	);
 };

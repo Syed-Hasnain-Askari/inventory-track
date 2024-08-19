@@ -30,38 +30,40 @@ export const Manufacture = ({ data }) => {
 	}, [dispatch, data]);
 	console.log(isLoading, "isLoading");
 	return (
-		<section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+		<>
 			{isLoading ? (
-				<div className="col-span-3 h-96">
+				<div className="col-span-12 h-96">
 					<div className="flex items-center justify-center h-full">
 						<Spinner />
 					</div>
 				</div>
 			) : (
-				manufactures?.map((item) => {
-					return (
-						<ManufactureCard
-							id={item?._id}
-							name={item?.name}
-							email={item?.email}
-							image={item?.image}
-							location={item?.location}
-							contactName={item?.contactName}
-							phoneNumber={item?.phoneNumber}
-							handleDeleteManufacture={handleDeleteManufacture}
-						/>
-					);
-				})
-			)}
-			{manufactures?.length === 0 && (
-				<div className="col-span-3 h-96">
-					<div className="flex items-center justify-center h-full">
-						<p className="text-center text-gray-500 font-semibold">
-							No results found, try adjusting your search and filters.
-						</p>
+				<>
+					{/* Adjusting the grid inside the Manufacture component */}
+					<div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+						{manufactures?.map((item) => (
+							<ManufactureCard
+								key={item?._id}
+								id={item?._id}
+								name={item?.name}
+								email={item?.email}
+								image={item?.image}
+								location={item?.location}
+								contactName={item?.contactName}
+								phoneNumber={item?.phoneNumber}
+								handleDeleteManufacture={handleDeleteManufacture}
+							/>
+						))}
 					</div>
+				</>
+			)}
+			{manufactures?.length === 0 && !isLoading && (
+				<div className="flex items-center justify-center h-full">
+					<p className="text-center text-gray-500 font-semibold">
+						No results found, try adjusting your search and filters.
+					</p>
 				</div>
 			)}
-		</section>
+		</>
 	);
 };

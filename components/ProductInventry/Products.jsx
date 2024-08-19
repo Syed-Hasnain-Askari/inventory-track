@@ -18,7 +18,7 @@ export const Products = ({ data }) => {
 		<React.Fragment>
 			<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
 				{isLoading ? (
-					<div className="col-span-3 h-96">
+					<div className="col-span-12 py-32">
 						<div className="flex items-center justify-center h-full">
 							<Spinner />
 						</div>

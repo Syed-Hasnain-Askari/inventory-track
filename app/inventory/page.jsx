@@ -1,5 +1,4 @@
 import React, { Suspense } from "react";
-import Header from "../components/Header";
 import { Header as ProductInventryHeader } from "../../components/ProductInventry/Header";
 import { Sider } from "../../components/ProductInventry/Sider";
 import Footer from "../components/Footer";
@@ -18,18 +17,20 @@ async function fetchData() {
 const InventoryPage = async () => {
 	const data = await fetchData();
 	return (
-		<div className="max-w-screen-xl mx-auto">
-			<ProductInventryHeader />
-			<div className="grid grid-cols-12 mt-10">
-				<div className="lg:col-span-3 col-span-12">
-					<Sider />
+		<React.Fragment>
+			<div className="grid grid-cols-12 gap-4">
+				<div className="col-span-12">
+					<ProductInventryHeader />
 				</div>
-				<div className="lg:col-span-9 col-span-12">
+				<aside className="col-span-3">
+					<Sider />
+				</aside>
+				<div className="col-span-9">
 					<Products data={data} />
 				</div>
 			</div>
 			<Footer />
-		</div>
+		</React.Fragment>
 	);
 };
 export default InventoryPage;
