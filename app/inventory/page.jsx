@@ -3,6 +3,8 @@ import { Header as ProductInventryHeader } from "../../components/ProductInventr
 import { Sider } from "../../components/ProductInventry/Sider";
 import Footer from "../components/Footer";
 import { Products } from "../../components/ProductInventry/Products";
+import GridListToggle from "../components/GridListToggle";
+import GridList from "../components/GridList";
 async function fetchData() {
 	const response = await fetch("http://localhost:3000/api/products/", {
 		cache: "no-store" // This makes sure the fetch does not use any cache
@@ -26,6 +28,9 @@ const InventoryPage = async () => {
 					<Sider />
 				</aside>
 				<div className="col-span-9">
+					<div className="flex flex-row justify-end">
+						<GridListToggle />
+					</div>
 					<Products data={data} />
 				</div>
 			</div>

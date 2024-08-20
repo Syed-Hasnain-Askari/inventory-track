@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
 	isSidebarCollapsed: false,
-	isDarkMode: false
+	isDarkMode: false,
+	isGrid: false
 };
 export const globalSlice = createSlice({
 	name: "global",
@@ -12,8 +13,12 @@ export const globalSlice = createSlice({
 		},
 		setIsDarkMode: (state, action) => {
 			state.isDarkMode = action.payload;
+		},
+		setIsGrid: (state, action) => {
+			state.isGrid = action.payload;
 		}
 	}
 });
-export const { setIsSidebarCollapsed, setIsDarkMode } = globalSlice.actions;
+export const { setIsSidebarCollapsed, setIsDarkMode, setIsGrid } =
+	globalSlice.actions;
 export default globalSlice.reducer;

@@ -9,7 +9,6 @@ export default function ProductCard({
 	category,
 	manufacture
 }) {
-	console.log(id, "key");
 	return (
 		<React.Fragment>
 			<Link
