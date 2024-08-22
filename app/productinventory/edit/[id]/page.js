@@ -12,7 +12,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { getCategories } from "@/lib/methods";
 import { getManufacture } from "@/redux/feature/reducer/manufactureReducer";
 import { useDispatch, useSelector } from "react-redux";
-import RootLayout from "@/app/layout";
 import { useFetch } from "@/hooks/useFetch";
 import { updateProductById } from "../../../../redux/feature/reducer/inventryReducer";
 import { useRouter } from "next/navigation";
@@ -76,31 +75,34 @@ export default function page({ params }) {
 	}, [dispatch]);
 	// useEffect to update the state once the response is available
 	useEffect(() => {
-		if (response) {
+		const res = inventryProducts?.find((item) => item?._id === params.id);
+		console.log(res, "Res");
+
+		if (res) {
 			setUserInput({
-				name: response?.name || "",
-				description: response?.description || "",
-				price: response?.price || "",
-				category: response?.category || "",
-				manufacture: response?.manufacture || "",
-				manufacturePrice: response?.manufacturePrice || "",
-				stock: response.stock || ""
+				name: res?.name || "",
+				description: res?.description || "",
+				price: res?.price || "",
+				category: res?.category || "",
+				manufacture: res?.manufacture || "",
+				manufacturePrice: res?.manufacturePrice || "",
+				stock: res.stock || ""
 			});
-			setImage(response?.image);
+			setImage(res?.image);
 		}
-	}, [response]);
-	useEffect(() => {
-		if (isSuccess) {
-			// Display success toast notification
-			toast({
-				title: "Success!",
-				description: "Product has been updated successfully!"
-			});
-			router.push("/productinventory");
-		}
-	}, [isSuccess]);
+	}, []);
+	// useEffect(() => {
+	// 	if (isSuccess) {
+	// 		// Display success toast notification
+	// 		toast({
+	// 			title: "Success!",
+	// 			description: "Product has been updated successfully!"
+	// 		});
+	// 		router.push("/productinventory");
+	// 	}
+	// }, [isSuccess]);
 	return (
-		<RootLayout>
+		<React.Fragment>
 			<Header />
 			<div className="flex items-center justify-center p-12">
 				<div className="mx-auto w-full max-w-[550px]">
@@ -285,6 +287,6 @@ export default function page({ params }) {
 					</div>
 				</div>
 			</div>
-		</RootLayout>
+		</React.Fragment>
 	);
 }

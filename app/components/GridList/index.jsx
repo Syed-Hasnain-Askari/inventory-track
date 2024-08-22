@@ -1,7 +1,35 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-export default function GridList({ name, id, image, price, description }) {
+import {
+	Menubar,
+	MenubarContent,
+	MenubarItem,
+	MenubarMenu,
+	MenubarSeparator,
+	MenubarShortcut,
+	MenubarTrigger
+} from "@/components/ui/menubar";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
+import { EllipsisVertical } from "lucide-react";
+export default function GridList({
+	name,
+	id,
+	image,
+	price,
+	description,
+	handleDeleteProduct
+}) {
 	return (
 		<React.Fragment>
 			<Link
@@ -19,9 +47,57 @@ export default function GridList({ name, id, image, price, description }) {
 						src={image}
 					/>
 					<div className="flex flex-col justify-between py-2 w-full">
-						<h2 className="text-lg font-medium text-gray-900 dark:text-white">
-							{name}
-						</h2>
+						<div className="flex justify-between items-center mr-2">
+							<div>
+								<h2 className="text-lg font-medium text-gray-900 dark:text-white">
+									{name}
+								</h2>
+							</div>
+							<div>
+								<AlertDialog>
+									<Menubar className="border-none">
+										<MenubarMenu>
+											<MenubarTrigger>
+												<EllipsisVertical className="w-6 h-6 !text-gray-700 cursor-pointer" />
+											</MenubarTrigger>
+											<MenubarContent>
+												<MenubarItem>
+													<Link href={`/productinventory/${id}`} key={id}>
+														Edit
+													</Link>
+												</MenubarItem>
+
+												<AlertDialogTrigger asChild>
+													<MenubarItem>Delete</MenubarItem>
+												</AlertDialogTrigger>
+											</MenubarContent>
+										</MenubarMenu>
+									</Menubar>
+
+									<AlertDialogContent>
+										<AlertDialogHeader>
+											<AlertDialogTitle>
+												Are you absolutely sure?
+											</AlertDialogTitle>
+											<AlertDialogDescription>
+												This action cannot be undone. This will permanently
+												delete your product from the server
+											</AlertDialogDescription>
+										</AlertDialogHeader>
+										<AlertDialogFooter>
+											<AlertDialogCancel>Cancel</AlertDialogCancel>
+											<AlertDialogAction
+												onClick={() => {
+													handleDeleteProduct(id);
+												}}
+											>
+												Ok
+											</AlertDialogAction>
+										</AlertDialogFooter>
+									</AlertDialogContent>
+								</AlertDialog>
+							</div>
+						</div>
 						<p className="text-sm font-medium text-gray-700 dark:text-gray-300">
 							{description}
 						</p>

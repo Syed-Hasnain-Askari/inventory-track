@@ -66,7 +66,7 @@ export default function ProductCard({
 									<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
 									<AlertDialogDescription>
 										This action cannot be undone. This will permanently delete
-										your account and remove your data from our servers.
+										your product from the server
 									</AlertDialogDescription>
 								</AlertDialogHeader>
 								<AlertDialogFooter>
