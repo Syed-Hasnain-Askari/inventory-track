@@ -1,5 +1,4 @@
-import React, { Suspense } from "react";
-import RootLayout from "../layout";
+import React from "react";
 import Header from "../components/Header";
 import { Header as ManufactureHeader } from "../../components/Manufacture/Header";
 import Footer from "../components/Footer";
@@ -9,7 +8,7 @@ async function fetchData() {
 	const response = await fetch(
 		"http://localhost:3000/api/manufacture/get-manufacture",
 		{
-			cache: "force-cache"
+			cache: "no-cache"
 		}
 	);
 	if (!response.ok) {

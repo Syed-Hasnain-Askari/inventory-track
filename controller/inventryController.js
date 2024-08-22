@@ -95,7 +95,16 @@ export const createProduct = async function handler(req, res) {
 			) {
 				return res.status(400).json({ message: "Missing fields" });
 			}
-			const product = new Product(req.body);
+			const product = new Product({
+				name: name,
+				price: price,
+				description: description,
+				stock: stock,
+				category: category,
+				manufacturePrice: manufacturePrice,
+				manufacture: manufacture,
+				image: image
+			});
 			const response = await product.save();
 			return res.status(200).json({
 				message: "Product added successfully",
@@ -160,5 +169,32 @@ export const updateProductById = async function handler(req, res, id) {
 		}
 	} else {
 		res.status(405).json({ message: "Method not allowed" });
+	}
+};
+export const deleteProductById = async function handler(req, res) {
+	await connectDB();
+	// Ensure the request method is DELETE
+	if (req.method === "DELETE") {
+		const { id } = req.query; // Assuming the ID is passed via query parameters
+
+		if (!id) {
+			return res.status(400).json({ message: "Product ID is required" });
+		}
+
+		try {
+			const product = await Product.findByIdAndDelete(id);
+
+			if (!product) {
+				return res.status(404).json({ message: "Product not found" });
+			}
+			return res.status(204).end(); // No content response
+		} catch (error) {
+			return res.status(500).json({
+				message: "Error deleting product",
+				error: error.message
+			});
+		}
+	} else {
+		return res.status(405).json({ message: "Method not allowed" });
 	}
 };

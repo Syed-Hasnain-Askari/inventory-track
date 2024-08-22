@@ -1,10 +1,10 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { Header as ProductInventryHeader } from "../../components/ProductInventry/Header";
 import { Sider } from "../../components/ProductInventry/Sider";
 import Footer from "../components/Footer";
 import { Products } from "../../components/ProductInventry/Products";
 import GridListToggle from "../components/GridListToggle";
-import GridList from "../components/GridList";
+
 async function fetchData() {
 	const response = await fetch("http://localhost:3000/api/products/", {
 		cache: "no-store" // This makes sure the fetch does not use any cache

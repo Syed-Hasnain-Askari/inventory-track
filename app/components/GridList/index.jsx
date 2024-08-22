@@ -1,14 +1,6 @@
 import * as React from "react";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import Divider from "@mui/material/Divider";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
-import Typography from "@mui/material/Typography";
 import Image from "next/image";
 import Link from "next/link";
-
 export default function GridList({ name, id, image, price, description }) {
 	return (
 		<React.Fragment>

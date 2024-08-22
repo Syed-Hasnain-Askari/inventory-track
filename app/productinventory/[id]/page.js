@@ -5,7 +5,7 @@ import Link from "next/link";
 import React from "react";
 async function fetchData(id) {
 	const response = await fetch(`http://localhost:3000/api/products/${id}`, {
-		cache: "no-store" // This makes sure the fetch does not use any cache
+		cache: "force-cache" // This makes sure the fetch does not use any cache
 	});
 	if (!response.ok) {
 		throw new Error("Failed to fetch data");

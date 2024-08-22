@@ -1,6 +1,6 @@
 import React from "react";
 import RootLayout from "../layout";
-import { Header } from "../components/Header";
+import Header from "../components/Header";
 import {
 	Select,
 	SelectContent,
@@ -14,7 +14,7 @@ import { getProducts } from "../../lib/methods";
 export default async function OrderPage() {
 	const response = await getProducts();
 	return (
-		<RootLayout>
+		<React.Fragment>
 			<Header />
 			<div className="container mt-10">
 				<div className="flex flex-col sm:flex-row items-center justify-center">
@@ -64,6 +64,6 @@ export default async function OrderPage() {
 				</div>
 			</div>
 			<Footer />
-		</RootLayout>
+		</React.Fragment>
 	);
 }

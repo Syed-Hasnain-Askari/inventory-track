@@ -3,16 +3,29 @@ import { inventryProductSlice } from "../feature/slice/inventrySlice";
 import { categorySlice } from "../feature/slice/categorySlice";
 import { manufactureSlice } from "../feature/slice/manufactureSlice";
 import { globalSlice } from "../feature/slice/globalSlice";
-import { createWrapper } from "next-redux-wrapper";
-
-// Extract the reducer from the slice
-const rootReducer = combineReducers({
+import {
+	persistStore,
+	persistReducer,
+	FLUSH,
+	REHYDRATE,
+	PAUSE,
+	PERSIST,
+	PURGE,
+	REGISTER
+} from "redux-persist";
+import storage from "redux-persist/lib/storage";
+const persistConfig = {
+	key: "root",
+	storage
+};
+export const rootReducer = combineReducers({
 	inventry: inventryProductSlice.reducer,
 	category: categorySlice.reducer,
 	manufacture: manufactureSlice.reducer,
 	global: globalSlice.reducer
 });
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
-	reducer: rootReducer
+	reducer: persistedReducer
 });
-export const wrapper = createWrapper(store);
+export const persistor = persistStore(store);

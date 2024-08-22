@@ -5,14 +5,30 @@ import { useDispatch, useSelector } from "react-redux";
 import Spinner from "@/components/Spinner";
 import { getProducts } from "../../redux/feature/slice/inventrySlice";
 import GridList from "@/app/components/GridList";
+import { useToast } from "@/components/ui/use-toast";
+import { deleteProductById } from "@/redux/feature/reducer/inventryReducer";
 export const Products = ({ data }) => {
 	const dispatch = useDispatch();
+	const { toast } = useToast();
 	const { inventryProducts, isLoading } = useSelector(
 		(state) => state.inventry
 	);
 	const { isGrid } = useSelector((state) => state.global);
-	console.log(isGrid, "isGrid====");
-
+	console.log(inventryProducts, "inventryProducts====");
+	const handleDeleteProduct = (id) => {
+		try {
+			dispatch(deleteProductById(id));
+			toast({
+				title: "Success!",
+				description: "Product deleted successfully!"
+			});
+		} catch (error) {
+			toast({
+				title: "Uh oh! Something went wrong.",
+				description: "There was a problem with your request."
+			});
+		}
+	};
 	useEffect(() => {
 		if (data) {
 			dispatch(getProducts(data));
@@ -37,21 +53,22 @@ export const Products = ({ data }) => {
 					inventryProducts?.map((product) => {
 						return isGrid ? (
 							<GridList
-								id={product._id}
-								name={product.name}
-								description={product.description}
-								image={product.image}
-								price={product.price}
+								id={product?._id}
+								name={product?.name}
+								description={product?.description}
+								image={product?.image}
+								price={product?.price}
 							/>
 						) : (
 							<ProductCard
-								id={product._id}
-								name={product.name}
-								description={product.description}
-								image={product.image}
-								price={product.price}
-								category={product.category}
-								manufacture={product.manufacture}
+								id={product?._id}
+								name={product?.name}
+								description={product?.description}
+								image={product?.image}
+								price={product?.price}
+								category={product?.category}
+								handleDeleteProduct={handleDeleteProduct}
+								manufacture={product?.manufacture}
 							/>
 						);
 					})

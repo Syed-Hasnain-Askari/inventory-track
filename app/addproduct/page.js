@@ -13,6 +13,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { getCategories } from "@/lib/methods";
 import { getManufacture } from "@/redux/feature/reducer/manufactureReducer";
 import { useDispatch, useSelector } from "react-redux";
+import { addProduct } from "@/redux/feature/reducer/inventryReducer";
 export default function page() {
 	const dispatch = useDispatch();
 	const { toast } = useToast();
@@ -62,47 +63,35 @@ export default function page() {
 
 			// Check if the Cloudinary upload was successful
 			if (!cloudinaryResponse.ok) {
+				console.log(cloudinaryResponse, "cloudinaryResponse");
+
 				throw new Error("Failed to upload image to Cloudinary");
 			}
-
 			const cloudinaryResult = await cloudinaryResponse.json();
-			const imageUrl = cloudinaryResult.secure_url;
-
-			// Send the product data to the backend with the Cloudinary image URL
-			const productResponse = await fetch("/api/products", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify({
+			const imageUrl = cloudinaryResult?.secure_url;
+			if (imageUrl != "") {
+				let payload = {
 					...userInput,
 					image: imageUrl
-				})
-			});
-
-			// Check if the product was successfully added
-			if (!productResponse.ok) {
-				throw new Error("Failed to add product");
+				};
+				// Send the product data to the backend with the Cloudinary image URL
+				dispatch(addProduct(payload));
+				// Display success toast notification
+				toast({
+					title: "Success!",
+					description: "Product has been added successfully!"
+				});
+				// Reset form input fields
+				setUserInput({
+					name: "",
+					description: "",
+					price: "",
+					category: "",
+					image: "",
+					stock: "",
+					manufacturePrice: ""
+				});
 			}
-
-			const productResult = await productResponse.json();
-
-			// Display success toast notification
-			toast({
-				title: "Success!",
-				description: "Product has been added successfully!"
-			});
-
-			// Reset form input fields
-			setUserInput({
-				name: "",
-				description: "",
-				price: "",
-				category: "",
-				image: "",
-				stock: "",
-				manufacturePrice: ""
-			});
 		} catch (error) {
 			console.error("Error:", error);
 			// Display error toast notification
@@ -118,6 +107,7 @@ export default function page() {
 	const handleFileUpload = (event) => {
 		setImage(event.target.files);
 	};
+	console.log(image);
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -313,9 +303,35 @@ export default function page() {
 							onClick={() => {
 								handleSubmit();
 							}}
-							className="hover:shadow-form rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none"
+							className="text-white bg-[#4F46E5] hover:bg-[#433BCB] rounded-lg text-sm px-4 lg:px-5 py-3 lg:py-3.5 focus:outline-none font-extrabold w-full mt-3 shade mb-3 flex items-center justify-center"
 						>
-							{loading ? "loading" : "Submit"}
+							{loading ? (
+								<>
+									<svg
+										class="mr-3 h-5 w-5 animate-spin text-white"
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+									>
+										<circle
+											class="opacity-25"
+											cx="12"
+											cy="12"
+											r="10"
+											stroke="currentColor"
+											strokeWidth="4"
+										></circle>
+										<path
+											class="opacity-75"
+											fill="currentColor"
+											d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+										></path>
+									</svg>
+									<span class="font-medium"> Loading... </span>
+								</>
+							) : (
+								<p>Submit</p>
+							)}
 						</button>
 					</div>
 				</div>

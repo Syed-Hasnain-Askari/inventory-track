@@ -1,6 +1,6 @@
 "use client";
 import { setIsGrid } from "@/redux/feature/slice/globalSlice";
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function GridListToggle() {

@@ -63,8 +63,7 @@ export const deleteManufacture = createAsyncThunk(
 			const response = await fetch(
 				`${BASE_URL}/api/manufacture/delete-manufacture/${id}`,
 				{
-					method: "DELETE",
-					cache: "no-cache"
+					method: "DELETE"
 				}
 			);
 			return await response.json();

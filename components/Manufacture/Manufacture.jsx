@@ -9,6 +9,8 @@ import Spinner from "../Spinner";
 export const Manufacture = ({ data }) => {
 	const dispatch = useDispatch();
 	const { manufactures, isLoading } = useSelector((state) => state.manufacture);
+	const { inventryProducts } = useSelector((state) => state.inventry);
+	console.log(inventryProducts, "inventryProducts====");
 	const handleDeleteManufacture = (id) => {
 		try {
 			dispatch(deleteManufacture(id));

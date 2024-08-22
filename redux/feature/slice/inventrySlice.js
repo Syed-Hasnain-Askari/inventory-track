@@ -2,7 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
 	generalSearch,
 	getInventoryProducts,
-	updateProductById
+	updateProductById,
+	deleteProductById,
+	addProduct
 } from "../reducer/inventryReducer";
 const initialState = {
 	inventryProducts: [],
@@ -44,6 +46,22 @@ export const inventryProductSlice = createSlice({
 			state.isError = true;
 			state.error = action.payload;
 		});
+		//add inventry products
+		builder.addCase(addProduct.pending, (state) => {
+			state.isLoading = true;
+		});
+		builder.addCase(addProduct.fulfilled, (state, action) => {
+			console.log("addProduct.fulfilled", action);
+			state.isLoading = false;
+			state.isSuccess = true;
+			state.inventryProducts.unshift(action?.payload?.result);
+		});
+		builder.addCase(addProduct.rejected, (state, action) => {
+			console.log("addProduct.rejected", action);
+			state.isLoading = false;
+			state.isError = true;
+			state.error = action.payload;
+		});
 		//update inventry products
 		builder.addCase(updateProductById.pending, (state) => {
 			state.isLoading = true;
@@ -63,6 +81,30 @@ export const inventryProductSlice = createSlice({
 			}
 		});
 		builder.addCase(updateProductById.rejected, (state, action) => {
+			state.isLoading = false;
+			state.isError = true;
+			state.error = action.payload;
+		});
+		//Delete product
+		builder.addCase(deleteProductById.pending, (state) => {
+			console.log(state.inventryProducts, "state.inventryProducts");
+			state.isLoading = true;
+		});
+		builder.addCase(deleteProductById.fulfilled, (state, action) => {
+			state.isLoading = false;
+			state.isSuccess = true;
+			// Extract the ID from the action meta (which was sent in the request)
+			const deletedProductId = action.meta.arg;
+			// Find the index of the product with the same ID in the state
+			const index = state.inventryProducts.findIndex(
+				(product) => product?._id === deletedProductId
+			);
+			// If the product is found, remove it from the array
+			if (index !== -1) {
+				state.inventryProducts.splice(index, 1);
+			}
+		});
+		builder.addCase(deleteProductById.rejected, (state, action) => {
 			state.isLoading = false;
 			state.isError = true;
 			state.error = action.payload;
