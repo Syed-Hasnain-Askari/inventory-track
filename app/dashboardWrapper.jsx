@@ -12,9 +12,10 @@ const DashboardLayout = ({ children }) => {
 	);
 	return (
 		<div
-			className={`${
-				isDarkMode ? "dark" : "light"
-			} flex bg-gray-50 text-gray-900 w-full min-h-screen`}
+			// className={`${
+			// 	isDarkMode ? "dark" : "light"
+			// } flex bg-gray-50 text-gray-900 w-full min-h-screen`}
+			className={`flex bg-gray-50 text-gray-900 w-full min-h-screen`}
 		>
 			<Sidebar />
 			<main

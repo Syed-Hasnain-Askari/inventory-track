@@ -7,6 +7,7 @@ import {
 	Clipboard,
 	Layout,
 	LucideIcon,
+	EllipsisVertical,
 	Menu,
 	SlidersHorizontal,
 	User

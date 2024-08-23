@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import RootLayout from "../layout";
 import Header from "../components/Header";
 import {
@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addProduct } from "@/redux/feature/reducer/inventryReducer";
 export default function page() {
 	const dispatch = useDispatch();
+	const inputRef = useRef(null);
 	const { toast } = useToast();
 	const [loading, setLoading] = useState(false);
 	const [image, setImage] = useState("");
@@ -121,6 +122,7 @@ export default function page() {
 	}, []);
 	useEffect(() => {
 		dispatch(getManufacture());
+		inputRef.current.focus();
 	}, [dispatch]);
 	console.log(image[0]?.name);
 	return (
@@ -136,6 +138,7 @@ export default function page() {
 							Name
 						</label>
 						<input
+							ref={inputRef}
 							type="text"
 							name="name"
 							value={userInput.name}
