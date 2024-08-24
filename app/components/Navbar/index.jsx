@@ -7,10 +7,22 @@ import {
 import { Bell, Menu, Moon, Settings, Sun } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import UserMenu from "../UserMenu";
+import Notification from "@/components/notification";
 
 const Navbar = () => {
+	const [toggle, setToggle] = useState(false);
+	const [isNotification, setIsNotification] = useState(false);
+	const handleToggle = () => {
+		setToggle(!toggle);
+		setIsNotification(false);
+	};
+	const handleNotification = () => {
+		setToggle(false);
+		setIsNotification(!isNotification);
+	};
 	const dispatch = useDispatch();
 	const { isDarkMode, isSidebarCollapsed } = useSelector(
 		(state) => state.global
@@ -61,20 +73,38 @@ const Navbar = () => {
 						</button>
 					</div>
 					<div className="relative">
-						<Bell className="cursor-pointer text-gray-500" size={24} />
+						<button onClick={handleNotification}>
+							<Bell className="cursor-pointer text-gray-500" size={24} />
+						</button>
 						<span className="absolute -top-2 -right-2 inline-flex items-center justify-center px-[0.4rem] py-1 text-xs font-semibold leading-none text-red-100 bg-red-400 rounded-full">
 							3
 						</span>
+						{isNotification ? <Notification /> : ""}
 					</div>
+
 					<hr className="w-0 h-7 border border-solid border-l border-gray-300 mx-3" />
 					<div className="flex items-center gap-3 cursor-pointer">
-						<Image
-							src="https://s3-inventorymanagement.s3.us-east-2.amazonaws.com/profile.jpg"
-							alt="Profile"
-							width={50}
-							height={50}
-							className="rounded-full h-full object-cover"
-						/>
+						<div class="relative ml-3">
+							<div>
+								<button
+									type="button"
+									class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+									id="user-menu-button"
+									aria-expanded="false"
+									aria-haspopup="true"
+									onClick={handleToggle}
+								>
+									<span class="absolute -inset-1.5"></span>
+									<span class="sr-only">Open user menu</span>
+									<img
+										class="h-8 w-8 rounded-full"
+										src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+										alt=""
+									/>
+								</button>
+							</div>
+							{toggle ? <UserMenu /> : ""}
+						</div>
 						<span className="font-semibold">Ed Roh</span>
 					</div>
 				</div>

@@ -41,7 +41,7 @@ const brandData = [
 		conversion: 1.9
 	}
 ];
-const ProductTable = () => {
+const ProductTable = ({ data }) => {
 	return (
 		<div className="rounded-[10px] bg-white px-7.5 pb-4 pt-7.5 shadow-lg dark:bg-gray-dark dark:shadow-card">
 			<h4 className="mb-5.5 p-5 text-body-2xlg font-bold text-dark dark:text-white">
@@ -76,11 +76,10 @@ const ProductTable = () => {
 						</h5>
 					</div>
 				</div>
-
-				{brandData.map((brand, key) => (
+				{data?.map((item, key) => (
 					<div
 						className={`grid grid-cols-3 sm:grid-cols-5 ${
-							key === brandData.length - 1
+							key === data.length - 1
 								? ""
 								: "border-b border-stroke dark:border-dark-3"
 						}`}
@@ -88,38 +87,42 @@ const ProductTable = () => {
 					>
 						<div className="flex items-center gap-3.5 px-2 py-4">
 							<div className="flex-shrink-0">
-								<Image src={brand.logo} alt="Brand" width={48} height={48} />
+								<Image src={item?.image} alt="Brand" width={48} height={48} />
 							</div>
-							<p className="hidden font-medium text-dark dark:text-white sm:block">
-								{brand.name}
+							<p className="hidden font-medium text-sm text-dark dark:text-white sm:block">
+								{item?.name.slice(0, 10)}
 							</p>
 						</div>
-
 						<div className="flex items-center justify-center px-2 py-4">
 							<p className="font-medium text-dark dark:text-white">
-								{brand.visitors}K
+								{item?.category}
 							</p>
 						</div>
 
 						<div className="flex items-center justify-center px-2 py-4">
 							<p className="font-medium text-green-light-1">
-								${brand.revenues}
+								{item?.manufacture}
 							</p>
 						</div>
 
 						<div className="hidden items-center justify-center px-2 py-4 sm:flex">
 							<p className="font-medium text-dark dark:text-white">
-								{brand.sales}
+								${item?.price}
 							</p>
 						</div>
 
 						<div className="hidden items-center justify-center px-2 py-4 sm:flex">
-							<p className="font-medium text-dark dark:text-white">
-								{brand.conversion}%
-							</p>
+							<p className="font-medium text-dark dark:text-white">10</p>
 						</div>
 					</div>
 				))}
+				{data?.length === 0 && (
+					<div className="col-span-12 py-32">
+						<div className="flex justify-center items-center h-full">
+							<p className=" text-gray-500 font-semibold">No products found</p>
+						</div>
+					</div>
+				)}
 			</div>
 		</div>
 	);

@@ -37,7 +37,7 @@ export default function GridList({
 				href={`/productinventory/${id}/`}
 				className="bg-white mt-3"
 			>
-				<div className="flex h-32 mb-3 shadow-lg rounded-2xl">
+				<div className="flex h-full mb-3 shadow-lg rounded-2xl">
 					<Image
 						className="mr-4 rounded-lg object-cover object-center"
 						alt="Image placeholder"
@@ -102,7 +102,7 @@ export default function GridList({
 							{description}
 						</p>
 						<div className="flex justify-between items-center mr-2">
-							<p className="text-lg font-semibold text-gray-900 dark:text-white">
+							<p className="text-lg font-medium text-gray-900 dark:text-white">
 								${price}
 							</p>
 							<div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-emerald-500 bg-emerald-100/60 dark:bg-gray-800">

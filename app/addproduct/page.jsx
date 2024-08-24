@@ -77,6 +77,7 @@ export default function page() {
 				};
 				// Send the product data to the backend with the Cloudinary image URL
 				dispatch(addProduct(payload));
+				setLoading(false);
 				// Display success toast notification
 				toast({
 					title: "Success!",
@@ -95,6 +96,7 @@ export default function page() {
 			}
 		} catch (error) {
 			console.error("Error:", error);
+			setLoading(false);
 			// Display error toast notification
 			toast({
 				title: "Error!",

@@ -33,7 +33,7 @@ export default function ProductCard({
 }) {
 	return (
 		<React.Fragment>
-			<div className="relative cursor-pointer shadow-xl mx-auto transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 ">
+			<div className="relative cursor-pointer shadow-xl mx-auto transform overflow-hidden rounded-lg bg-white dark:bg-slate-800">
 				<div className="flex flex-row justify-between items-center">
 					<div class=" bg-yellow-200 mt-3 ml-3 py-1.5 px-6 rounded-full">
 						<p tabindex="0" class="focus:outline-none text-xs text-yellow-700">
@@ -49,7 +49,7 @@ export default function ProductCard({
 									</MenubarTrigger>
 									<MenubarContent>
 										<MenubarItem>
-											<Link href={`/productinventory/${id}`} key={id}>
+											<Link href={`/productinventory/edit/${id}`} key={id}>
 												Edit
 											</Link>
 										</MenubarItem>
@@ -84,7 +84,7 @@ export default function ProductCard({
 					</div>
 				</div>
 
-				<Link href={`/productinventory/${id}`} key={id}>
+				<Link href={`/productinventory/edit/${id}`} key={id}>
 					<Image
 						height={300}
 						width={300}
@@ -100,7 +100,7 @@ export default function ProductCard({
 							{category}
 						</p>
 						<div className="flex justify-between items-center">
-							<p className="mr-2 text-lg font-semibold text-gray-900 dark:text-white">
+							<p className="mr-2 text-lg font-medium text-gray-900 dark:text-white">
 								${price}
 							</p>
 

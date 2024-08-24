@@ -26,7 +26,7 @@ export default function ManufactureCard({
 		<>
 			<div
 				key={id}
-				className="relative cursor-pointer shadow-xl mx-auto w-80 transform overflow-hidden rounded-lg bg-white dark:bg-slate-800 duration-300 hover:scale-105 hover:shadow-lg"
+				className="relative cursor-pointer shadow-xl mx-auto transform overflow-hidden rounded-lg bg-white dark:bg-slate-800"
 			>
 				<div className="absolute right-5 top-6">
 					<AlertDialog>
@@ -71,8 +71,8 @@ export default function ManufactureCard({
 					</AlertDialog>
 				</div>
 				<Image
-					height={300}
-					width={300}
+					height={250}
+					width={250}
 					className="w-full object-cover object-center"
 					src={image}
 					alt="Product Image"

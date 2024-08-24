@@ -1,7 +1,5 @@
-"use client";
 import React from "react";
-import Image from "next/image";
-const SettingBoxes = () => {
+export default function Profile() {
 	return (
 		<>
 			<div className="grid grid-cols-5 gap-8">
@@ -277,6 +275,4 @@ const SettingBoxes = () => {
 			</div>
 		</>
 	);
-};
-
-export default SettingBoxes;
+}
