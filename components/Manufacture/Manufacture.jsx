@@ -60,7 +60,7 @@ export const Manufacture = ({ data }) => {
 				</>
 			)}
 			{manufactures?.length === 0 && !isLoading && (
-				<div className="flex items-center justify-center h-full">
+				<div className="flex items-center justify-center h-96">
 					<p className="text-center text-gray-500 font-semibold">
 						No results found, try adjusting your search and filters.
 					</p>

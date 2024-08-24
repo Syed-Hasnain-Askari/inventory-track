@@ -1,8 +1,10 @@
 "use client";
+import { getManufactureByName } from "@/redux/feature/reducer/manufactureReducer";
 import Link from "next/link";
 import React from "react";
 import { useDispatch } from "react-redux";
 export const Header = () => {
+	const dispatch = useDispatch();
 	const handleSearchChange = (value) => {
 		setTimeout(() => {
 			dispatch(getManufactureByName(value));

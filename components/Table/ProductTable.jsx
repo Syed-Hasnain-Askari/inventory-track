@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Spinner from "../Spinner";
 const brandData = [
 	{
 		logo: "/images/brand/brand-01.svg",
@@ -76,46 +77,56 @@ const ProductTable = ({ data }) => {
 						</h5>
 					</div>
 				</div>
-				{data?.map((item, key) => (
-					<div
-						className={`grid grid-cols-3 sm:grid-cols-5 ${
-							key === data.length - 1
-								? ""
-								: "border-b border-stroke dark:border-dark-3"
-						}`}
-						key={key}
-					>
-						<div className="flex items-center gap-3.5 px-2 py-4">
-							<div className="flex-shrink-0">
-								<Image src={item?.image} alt="Brand" width={48} height={48} />
+				{data?.map((item, key) =>
+					data?.length < 0 ? (
+						<>
+							<div className="col-span-12 h-96">
+								<div className="flex items-center justify-center h-full">
+									<Spinner />
+								</div>
 							</div>
-							<p className="hidden font-medium text-sm text-dark dark:text-white sm:block">
-								{item?.name.slice(0, 10)}
-							</p>
-						</div>
-						<div className="flex items-center justify-center px-2 py-4">
-							<p className="font-medium text-dark dark:text-white">
-								{item?.category}
-							</p>
-						</div>
+						</>
+					) : (
+						<div
+							className={`grid grid-cols-3 sm:grid-cols-5 ${
+								key === data.length - 1
+									? ""
+									: "border-b border-stroke dark:border-dark-3"
+							}`}
+							key={key}
+						>
+							<div className="flex items-center gap-3.5 px-2 py-4">
+								<div className="flex-shrink-0">
+									<Image src={item?.image} alt="Brand" width={48} height={48} />
+								</div>
+								<p className="hidden font-medium text-sm text-dark dark:text-white sm:block">
+									{item?.name.slice(0, 10)}
+								</p>
+							</div>
+							<div className="flex items-center justify-center px-2 py-4">
+								<p className="font-medium text-dark dark:text-white">
+									{item?.category}
+								</p>
+							</div>
 
-						<div className="flex items-center justify-center px-2 py-4">
-							<p className="font-medium text-green-light-1">
-								{item?.manufacture}
-							</p>
-						</div>
+							<div className="flex items-center justify-center px-2 py-4">
+								<p className="font-medium text-green-light-1">
+									{item?.manufacture}
+								</p>
+							</div>
 
-						<div className="hidden items-center justify-center px-2 py-4 sm:flex">
-							<p className="font-medium text-dark dark:text-white">
-								${item?.price}
-							</p>
-						</div>
+							<div className="hidden items-center justify-center px-2 py-4 sm:flex">
+								<p className="font-medium text-dark dark:text-white">
+									${item?.price}
+								</p>
+							</div>
 
-						<div className="hidden items-center justify-center px-2 py-4 sm:flex">
-							<p className="font-medium text-dark dark:text-white">10</p>
+							<div className="hidden items-center justify-center px-2 py-4 sm:flex">
+								<p className="font-medium text-dark dark:text-white">10</p>
+							</div>
 						</div>
-					</div>
-				))}
+					)
+				)}
 				{data?.length === 0 && (
 					<div className="col-span-12 py-32">
 						<div className="flex justify-center items-center h-full">
