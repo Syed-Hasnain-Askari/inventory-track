@@ -1,12 +1,9 @@
 import TableOne from "@/components/TableOne";
 import React from "react";
 async function fetchData() {
-	const response = await fetch(
-		"http://localhost:3000/api/manufacture/get-manufacture",
-		{
-			cache: "no-cache"
-		}
-	);
+	const response = await fetch("http://localhost:3000/api/manufacture/", {
+		cache: "no-cache"
+	});
 	if (!response.ok) {
 		throw new Error("Failed to fetch data");
 	}

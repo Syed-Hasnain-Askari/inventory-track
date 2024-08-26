@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import RootLayout from "../layout";
-import Header from "../components/Header";
+import Header from "../../components/Header";
 import {
 	Select,
 	SelectContent,

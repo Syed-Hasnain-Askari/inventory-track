@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Spinner from "@/components/Spinner";
 import { getProducts } from "../../redux/feature/slice/inventrySlice";
-import GridList from "@/app/components/GridList";
+import GridList from "@/components/GridList";
 import { useToast } from "@/components/ui/use-toast";
 import { deleteProductById } from "@/redux/feature/reducer/inventryReducer";
 export const Products = ({ data }) => {
@@ -14,7 +14,7 @@ export const Products = ({ data }) => {
 		(state) => state.inventry
 	);
 	const { isGrid } = useSelector((state) => state.global);
-	console.log(inventryProducts, "inventryProducts====");
+	console.log(isLoading, "isLoading====");
 	const handleDeleteProduct = (id) => {
 		try {
 			dispatch(deleteProductById(id));

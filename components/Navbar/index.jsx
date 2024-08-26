@@ -3,13 +3,13 @@
 import {
 	setIsDarkMode,
 	setIsSidebarCollapsed
-} from "../../../redux/feature/slice/globalSlice";
+} from "../../redux/feature/slice/globalSlice";
 import { Bell, Menu, Moon, Settings, Sun } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import UserMenu from "../UserMenu";
+import UserMenu from "../../app/components/UserMenu";
 import Notification from "@/components/notification";
 
 const Navbar = () => {

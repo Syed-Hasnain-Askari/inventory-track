@@ -1,6 +1,6 @@
 import React from "react";
 import RootLayout from "../layout";
-import Header from "../components/Header";
+import Header from "../../components/Header";
 import {
 	Select,
 	SelectContent,

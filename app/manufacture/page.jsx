@@ -1,16 +1,13 @@
 import React from "react";
-import Header from "../components/Header";
+import Header from "../../components/Header";
 import { Header as ManufactureHeader } from "../../components/Manufacture/Header";
 import Footer from "../components/Footer";
 import { Manufacture } from "../../components/Manufacture/Manufacture";
 import { Sider } from "@/components/Manufacture/Sider";
 async function fetchData() {
-	const response = await fetch(
-		"http://localhost:3000/api/manufacture/get-manufacture",
-		{
-			cache: "no-cache"
-		}
-	);
+	const response = await fetch("http://localhost:3000/api/manufacture", {
+		cache: "no-cache"
+	});
 	if (!response.ok) {
 		throw new Error("Failed to fetch data");
 	}

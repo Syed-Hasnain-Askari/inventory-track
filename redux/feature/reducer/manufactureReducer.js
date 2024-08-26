@@ -7,12 +7,9 @@ export const getManufacture = createAsyncThunk(
 	"Manufacture/getManufacture",
 	async (thunkAPI) => {
 		try {
-			const response = await fetch(
-				`${BASE_URL}/api/manufacture/get-manufacture`,
-				{
-					next: { revalidate: 3600 }
-				}
-			);
+			const response = await fetch(`${BASE_URL}/api/manufacture`, {
+				next: { revalidate: 3600 }
+			});
 			return await response.json();
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error.response);
@@ -39,17 +36,14 @@ export const addManufacture = createAsyncThunk(
 	"Manufacture/addManufacture",
 	async (payload, thunkAPI) => {
 		try {
-			const response = await fetch(
-				`${BASE_URL}/api/manufacture/add-manufacture`,
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json"
-					},
-					body: JSON.stringify(payload),
-					cache: "no-cache"
-				}
-			);
+			const response = await fetch(`${BASE_URL}/api/manufacture`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(payload),
+				cache: "no-cache"
+			});
 			return await response.json();
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error.response);

@@ -42,12 +42,12 @@ const TableOne = ({ data }) => {
 					</div>
 					<div className="px-2 pb-3.5 text-center">
 						<h5 className="text-sm font-medium uppercase xsm:text-base">
-							Visitors
+							Total Products
 						</h5>
 					</div>
 					<div className="px-2 pb-3.5 text-center">
 						<h5 className="text-sm font-medium uppercase xsm:text-base">
-							Revenues
+							Stock
 						</h5>
 					</div>
 					<div className="hidden px-2 pb-3.5 text-center sm:block">
@@ -82,12 +82,14 @@ const TableOne = ({ data }) => {
 
 						<div className="flex items-center justify-center px-2 py-4">
 							<p className="font-medium text-center text-dark dark:text-white">
-								23K
+								{brand?.total_productCount}
 							</p>
 						</div>
 
 						<div className="flex items-center justify-center px-2 py-4">
-							<p className="font-medium text-green-light-1">$400</p>
+							<p className="font-medium text-green-light-1">
+								{brand?.total_stock}
+							</p>
 						</div>
 
 						<div className="hidden items-center justify-center px-2 py-4 sm:flex">

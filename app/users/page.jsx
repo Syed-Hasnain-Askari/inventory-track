@@ -1,6 +1,6 @@
 import React from "react";
 import RootLayout from "../layout";
-import Header from "../components/Header";
+import Header from "../../components/Header";
 import {
 	Select,
 	SelectContent,
@@ -16,7 +16,7 @@ export default async function Users() {
 	return (
 		<React.Fragment>
 			<Header />
-			<div className="container mt-10">
+			<div className="container">
 				<div className="flex flex-col sm:flex-row items-center justify-center">
 					<div className="relative mt-1 w-full sm:w-auto">
 						<div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">

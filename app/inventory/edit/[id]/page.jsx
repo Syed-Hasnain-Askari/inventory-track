@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Header from "../../../components/Header";
+import Header from "../../../../components/Header";
 import {
 	Select,
 	SelectContent,
@@ -76,8 +76,6 @@ export default function page({ params }) {
 	// useEffect to update the state once the response is available
 	useEffect(() => {
 		const res = inventryProducts?.find((item) => item?._id === params.id);
-		console.log(res, "Res");
-
 		if (res) {
 			setUserInput({
 				name: res?.name || "",
@@ -90,7 +88,7 @@ export default function page({ params }) {
 			});
 			setImage(res?.image);
 		}
-	}, []);
+	}, [params.id]);
 	// useEffect(() => {
 	// 	if (isSuccess) {
 	// 		// Display success toast notification
@@ -101,6 +99,7 @@ export default function page({ params }) {
 	// 		router.push("/productinventory");
 	// 	}
 	// }, [isSuccess]);
+	console.log(userInput, "userInput=====");
 	return (
 		<React.Fragment>
 			<Header />

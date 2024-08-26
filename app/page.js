@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Header from "./components/Header";
+import Header from "../components/Header";
 import ProductCard from "../components/ProductCard";
 import Table from "./components/Table";
 import RootLayout from "./layout";
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import Footer from "./components/Footer";
 import { getProducts } from "../lib/methods";
-export default async function OrderPage() {
+export default async function Page() {
 	const response = await getProducts();
 	console.log(response, "response");
 	return (
