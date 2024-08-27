@@ -1,4 +1,4 @@
-import ProductTable from "@/components/Table/ProductTable";
+import ProductTable from "../../../components/Table/ProductTable";
 import React from "react";
 async function fetchData() {
 	const response = await fetch("http://localhost:3000/api/products/", {

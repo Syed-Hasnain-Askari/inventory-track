@@ -3,7 +3,7 @@ import { Header as ProductInventryHeader } from "../../components/ProductInventr
 import { Sider } from "../../components/ProductInventry/Sider";
 import Footer from "../components/Footer";
 import { Products } from "../../components/ProductInventry/Products";
-import GridListToggle from "../components/GridListToggle";
+import GridListToggle from "../../components/GridListToggle";
 
 async function fetchData() {
 	const response = await fetch("http://localhost:3000/api/products/", {

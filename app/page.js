@@ -9,7 +9,7 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue
-} from "@/components/ui/select";
+} from "../components/ui/select";
 import Footer from "./components/Footer";
 import { getProducts } from "../lib/methods";
 export default async function Page() {

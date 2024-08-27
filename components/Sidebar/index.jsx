@@ -1,6 +1,6 @@
 "use client";
 
-import { setIsSidebarCollapsed } from "@/redux/feature/slice/globalSlice";
+import { setIsSidebarCollapsed } from "../../redux/feature/slice/globalSlice";
 import {
 	Archive,
 	CircleDollarSign,

@@ -252,13 +252,11 @@ export default function page() {
 						</Select>
 					</div>
 					<div className="mb-3">
-						<label
-							htmlFor="guest"
-							className="mb-3 block text-base font-medium text-[#07074D]"
-						>
+						<label htmlFor="guest" className="mb-3 block text-base font-medium">
 							Manufacture
 						</label>
 						<Select
+							className="relative z-10"
 							onValueChange={(e) => {
 								handleSelectChange("manufacture", e);
 							}}
@@ -266,7 +264,7 @@ export default function page() {
 							<SelectTrigger className="w-full h-[50px] mt-3">
 								<SelectValue placeholder="Select" />
 							</SelectTrigger>
-							<SelectContent>
+							<SelectContent className="absolute z-50">
 								{manufactures?.map((item) => {
 									return <SelectItem value={item._id}>{item.name}</SelectItem>;
 								})}

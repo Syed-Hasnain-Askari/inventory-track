@@ -73,7 +73,7 @@ const ProductTable = ({ data }) => {
 					</div>
 					<div className="hidden px-2 pb-3.5 text-center sm:block">
 						<h5 className="text-sm font-medium uppercase xsm:text-base">
-							Sold
+							Stock
 						</h5>
 					</div>
 				</div>
@@ -122,7 +122,9 @@ const ProductTable = ({ data }) => {
 							</div>
 
 							<div className="hidden items-center justify-center px-2 py-4 sm:flex">
-								<p className="font-medium text-dark dark:text-white">10</p>
+								<p className="font-medium text-dark dark:text-white">
+									{item?.stock}
+								</p>
 							</div>
 						</div>
 					)

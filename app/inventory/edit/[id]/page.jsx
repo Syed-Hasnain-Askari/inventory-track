@@ -7,12 +7,12 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue
-} from "@/components/ui/select";
-import { useToast } from "@/components/ui/use-toast";
-import { getCategories } from "@/lib/methods";
-import { getManufacture } from "@/redux/feature/reducer/manufactureReducer";
+} from "../../../../components/ui/select";
+import { useToast } from "../../../../components/ui/use-toast";
+import { getCategories } from "../../../../lib/methods";
+import { getManufacture } from "../../../../redux/feature/reducer/manufactureReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { useFetch } from "@/hooks/useFetch";
+import { useFetch } from "../../../../hooks/useFetch";
 import { updateProductById } from "../../../../redux/feature/reducer/inventryReducer";
 import { useRouter } from "next/navigation";
 export default function page({ params }) {

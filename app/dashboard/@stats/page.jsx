@@ -1,4 +1,4 @@
-import DataStatsOne from "@/components/DataStats";
+import DataStatsOne from "../../../components/DataStats";
 import React from "react";
 async function fetchData() {
 	const response = await fetch("http://localhost:3000/api/stats", {

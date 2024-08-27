@@ -1,4 +1,4 @@
-import TableOne from "@/components/TableOne";
+import TableOne from "../../../components/TableOne";
 import React from "react";
 async function fetchData() {
 	const response = await fetch("http://localhost:3000/api/manufacture/", {

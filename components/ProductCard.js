@@ -9,7 +9,7 @@ import {
 	MenubarSeparator,
 	MenubarShortcut,
 	MenubarTrigger
-} from "@/components/ui/menubar";
+} from "../components/ui/menubar";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -20,7 +20,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger
-} from "@/components/ui/alert-dialog";
+} from "../components/ui/alert-dialog";
 import { EllipsisVertical } from "lucide-react";
 export default function ProductCard({
 	name,
@@ -31,6 +31,12 @@ export default function ProductCard({
 	manufacture,
 	handleDeleteProduct
 }) {
+	const truncate = (str, len) => {
+		if (str.length > len) {
+			return str.slice(0, len) + "...";
+		}
+		return str;
+	};
 	return (
 		<React.Fragment>
 			<div className="relative cursor-pointer shadow-xl mx-auto transform overflow-hidden rounded-lg bg-white dark:bg-slate-800">
@@ -94,7 +100,7 @@ export default function ProductCard({
 					/>
 					<div className="p-4">
 						<h2 className="mb-2 text-lg font-medium dark:text-white text-gray-900">
-							{name}
+							{truncate(name, 40)}
 						</h2>
 						<p className="mb-2 text-base dark:text-gray-300 text-gray-700">
 							{category}

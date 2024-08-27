@@ -7,7 +7,7 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue
-} from "@/components/ui/select";
+} from "../ui/select";
 import { getInventoryProducts } from "../../redux/feature/reducer/inventryReducer";
 import { getCategories } from "../../redux/feature/reducer/categoryReducer";
 import { useDispatch, useSelector } from "react-redux";

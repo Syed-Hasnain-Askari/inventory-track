@@ -2,11 +2,11 @@
 import ProductCard from "../../components/ProductCard";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Spinner from "@/components/Spinner";
+import Spinner from "../../components/Spinner";
 import { getProducts } from "../../redux/feature/slice/inventrySlice";
-import GridList from "@/components/GridList";
-import { useToast } from "@/components/ui/use-toast";
-import { deleteProductById } from "@/redux/feature/reducer/inventryReducer";
+import GridList from "../../components/GridList";
+import { useToast } from "../../components/ui/use-toast";
+import { deleteProductById } from "../../redux/feature/reducer/inventryReducer";
 export const Products = ({ data }) => {
 	const dispatch = useDispatch();
 	const { toast } = useToast();

@@ -2,7 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
-import { generalSearch } from "@/redux/feature/reducer/inventryReducer";
+import { generalSearch } from "../../redux/feature/reducer/inventryReducer";
 export const Header = () => {
 	const dispatch = useDispatch();
 	return (

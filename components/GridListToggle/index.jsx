@@ -1,5 +1,5 @@
 "use client";
-import { setIsGrid } from "@/redux/feature/slice/globalSlice";
+import { setIsGrid } from "../../redux/feature/slice/globalSlice";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
