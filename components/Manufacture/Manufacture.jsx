@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect } from "react";
 import ManufactureCard from "./ManufactureCard";
-import { deleteManufacture } from "@/redux/feature/reducer/manufactureReducer";
+import { deleteManufacture } from "../../redux/feature/reducer/manufactureReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { setManufacture } from "@/redux/feature/slice/manufactureSlice";
+import { setManufacture } from "../../redux/feature/slice/manufactureSlice";
 import Spinner from "../Spinner";
 
 export const Manufacture = ({ data }) => {

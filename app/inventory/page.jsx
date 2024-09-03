@@ -4,10 +4,10 @@ import { Sider } from "../../components/ProductInventry/Sider";
 import Footer from "../components/Footer";
 import { Products } from "../../components/ProductInventry/Products";
 import GridListToggle from "../../components/GridListToggle";
-
+import { getServerSession } from "next-auth";
 async function fetchData() {
 	const response = await fetch("http://localhost:3000/api/products/", {
-		cache: "no-store" // This makes sure the fetch does not use any cache
+		next: { revalidate: 60 }
 	});
 	if (!response.ok) {
 		throw new Error("Failed to fetch data");
@@ -17,6 +17,11 @@ async function fetchData() {
 }
 
 const InventoryPage = async () => {
+	const session = await getServerSession();
+	console.log(session, "session layout");
+	if (session === null) {
+		return <p>Access Denied</p>;
+	}
 	const data = await fetchData();
 	return (
 		<React.Fragment>

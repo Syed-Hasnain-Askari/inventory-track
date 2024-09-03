@@ -1,21 +1,25 @@
-"use client";
 import "./globals.css";
+import React from "react";
 import { Inter } from "next/font/google";
 import DashboardWrapper from "./dashboardWrapper";
-import { useState } from "react";
 import { Toaster } from "../components/ui/toaster";
-import SignInPage from "./auth/signin/page";
+import AuthProvider from "../app/NextAuthProvider";
+import { getServerSession } from "next-auth";
+import AuthPage from "./auth/page";
 const inter = Inter({ subsets: ["latin"] });
-export default function RootLayout({ children }) {
-	const [authenticated, setAuthenticated] = useState(false);
+export default async function RootLayout({ children }) {
+	const session = await getServerSession();
+
 	return (
 		<html lang="en">
 			<body className={inter.className}>
 				<Toaster />
-				{authenticated ? (
-					<DashboardWrapper>{children}</DashboardWrapper>
+				{session === null ? (
+					<AuthPage />
 				) : (
-					<SignInPage />
+					<AuthProvider session={session}>
+						<DashboardWrapper>{children}</DashboardWrapper>
+					</AuthProvider>
 				)}
 			</body>
 		</html>

@@ -1,5 +1,5 @@
 import React from "react";
-export default function UserMenu() {
+export default function UserMenu({ status, handleSignOut }) {
 	return (
 		<div
 			class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
@@ -26,7 +26,9 @@ export default function UserMenu() {
 			>
 				Settings
 			</a>
-			<a
+
+			<button
+				onClick={handleSignOut}
 				href="#"
 				class="block px-4 py-2 text-sm text-gray-700"
 				role="menuitem"
@@ -34,7 +36,7 @@ export default function UserMenu() {
 				id="user-menu-item-2"
 			>
 				Sign out
-			</a>
+			</button>
 		</div>
 	);
 }

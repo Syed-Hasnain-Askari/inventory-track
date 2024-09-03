@@ -1,6 +1,9 @@
 import connectDB from "../lib/db";
+import { getSession } from "next-auth/react";
 const Product = require("../models/products");
 export const getAllProducts = async function handler(req, res) {
+	const session = await getSession({ req });
+	console.log(session, "session====!!!!454");
 	await connectDB();
 	if (req.method == "GET") {
 		try {

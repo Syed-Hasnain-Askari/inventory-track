@@ -5,14 +5,15 @@ import {
 	setIsSidebarCollapsed
 } from "../../redux/feature/slice/globalSlice";
 import { Bell, Menu, Moon, Settings, Sun } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UserMenu from "../../app/components/UserMenu";
 import Notification from "../../components/notification";
-
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 const Navbar = () => {
+	const router = useRouter();
 	const [toggle, setToggle] = useState(false);
 	const [isNotification, setIsNotification] = useState(false);
 	const handleToggle = () => {
@@ -34,8 +35,11 @@ const Navbar = () => {
 	const toggleDarkMode = () => {
 		dispatch(setIsDarkMode(!isDarkMode));
 	};
-	console.log(isDarkMode, "isDarkMode");
-	console.log(isSidebarCollapsed, "isSidebarCollapsed");
+	const handleSignOut = () => {
+		signOut({ redirect: false }).then(() => {
+			router.push("/signin");
+		});
+	};
 	return (
 		<div className="sticky top-5 z-50 flex justify-between items-center w-full mb-7">
 			{/* LEFT SIDE */}
@@ -103,7 +107,11 @@ const Navbar = () => {
 									/>
 								</button>
 							</div>
-							{toggle ? <UserMenu /> : ""}
+							{toggle ? (
+								<UserMenu handleSignOut={handleSignOut} status={status} />
+							) : (
+								""
+							)}
 						</div>
 						<span className="font-semibold">Ed Roh</span>
 					</div>

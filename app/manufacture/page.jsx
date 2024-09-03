@@ -3,10 +3,10 @@ import Header from "../../components/Header";
 import { Header as ManufactureHeader } from "../../components/Manufacture/Header";
 import Footer from "../components/Footer";
 import { Manufacture } from "../../components/Manufacture/Manufacture";
-import { Sider } from "@/components/Manufacture/Sider";
+import { Sider } from "../../components/Manufacture/Sider";
 async function fetchData() {
 	const response = await fetch("http://localhost:3000/api/manufacture", {
-		cache: "no-cache"
+		next: { revalidate: 120 }
 	});
 	if (!response.ok) {
 		throw new Error("Failed to fetch data");

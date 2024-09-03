@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import RootLayout from "../layout";
 import Header from "../../components/Header";
 import {
 	Select,
@@ -8,12 +7,13 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue
-} from "@/components/ui/select";
-import { useToast } from "@/components/ui/use-toast";
-import { getCategories } from "@/lib/methods";
-import { getManufacture } from "@/redux/feature/reducer/manufactureReducer";
+} from "../../components/ui/select";
+import ImageUploader from "../../components/imageuploader/index";
+import { useToast } from "../../components//ui/use-toast";
+import { getCategories } from "../../lib//methods";
+import { getManufacture } from "../../redux/feature/reducer/manufactureReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { addProduct } from "@/redux/feature/reducer/inventryReducer";
+import { addProduct } from "../../redux/feature/reducer/inventryReducer";
 export default function page() {
 	const dispatch = useDispatch();
 	const inputRef = useRef(null);
@@ -110,7 +110,6 @@ export default function page() {
 	const handleFileUpload = (event) => {
 		setImage(event.target.files);
 	};
-	console.log(image);
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -126,7 +125,6 @@ export default function page() {
 		dispatch(getManufacture());
 		inputRef.current.focus();
 	}, [dispatch]);
-	console.log(image[0]?.name);
 	return (
 		<>
 			<Header name={"Add Product"} />
@@ -168,47 +166,7 @@ export default function page() {
 						>
 							Image
 						</label>
-						<div className="max-w-2xl mx-auto">
-							<div className="flex items-center justify-center w-full">
-								<label
-									htmlFor="dropzone-file"
-									className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-								>
-									<div className="flex flex-col items-center justify-center pt-5 pb-6">
-										<svg
-											className="w-10 h-10 mb-3 text-gray-400"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-											xmlns="http://www.w3.org/2000/svg"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-											/>
-										</svg>
-										<p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-											<span className="font-semibold">Click to upload</span> or
-											drag and drop
-										</p>
-										<p className="text-xs text-gray-500 dark:text-gray-400">
-											{image
-												? image[0]?.name
-												: "SVG, PNG, JPG or GIF (MAX. 800x400px)"}
-										</p>
-									</div>
-									<input
-										id="dropzone-file"
-										type="file"
-										className="hidden"
-										name="file"
-										onChange={handleFileUpload}
-									/>
-								</label>
-							</div>
-						</div>
+						<ImageUploader handleFileUpload={handleFileUpload} image={image} />
 					</div>
 					<div className="mb-3">
 						<label
