@@ -1,87 +1,24 @@
 import connectDB from "../lib/db";
-import { getSession } from "next-auth/react";
+import { fetchProducts } from "../services/inventory/products.sevice";
 const Product = require("../models/products");
-export const getAllProducts = async function handler(req, res) {
+export const getAllProducts = async (req, res) => {
 	await connectDB();
-	if (req.method == "GET") {
+	if (req.method === "GET") {
 		try {
 			const { category, manufacture, page, limit } = req.query;
-			const match = {};
-			if (category) match.category = category;
-			if (manufacture) match.manufacture = manufacture;
-			// Convert page and limit to numbers
-			const pageNumber = parseInt(page, 10);
-			const limitNumber = parseInt(limit, 10);
 
-			// Pagination logic: Calculate skip
-			const skip = (pageNumber - 1) * limitNumber;
+			// Call the service to fetch products
+			const { products, pagination } = await fetchProducts({
+				category,
+				manufacture,
+				page,
+				limit
+			});
 
-			// Get total number of products for pagination
-			const totalProducts = await Product.countDocuments();
-
-			const products = await Product.aggregate([
-				{
-					$lookup: {
-						from: "categories",
-						localField: "category",
-						foreignField: "_id",
-						as: "categoryInfo"
-					}
-				},
-				{
-					$unwind: "$categoryInfo"
-				},
-				{
-					$lookup: {
-						from: "manufactures",
-						localField: "manufacture",
-						foreignField: "_id",
-						as: "manufactureInfo"
-					}
-				},
-				{
-					$unwind: "$manufactureInfo"
-				},
-				{
-					$project: {
-						_id: 1,
-						name: 1,
-						description: 1,
-						price: 1,
-						image: 1,
-						stock: 1,
-						manufacturePrice: 1,
-						category: "$categoryInfo.name",
-						manufacture: "$manufactureInfo.name",
-						createdAt: 1,
-						updatedAt: 1
-					}
-				},
-				{
-					$match: match
-				}
-			])
-				.sort({ createdAt: -1 })
-				.skip(skip) // Skipping previous pages' items
-				.limit(limitNumber) // Limiting to the number of items per page
-				.exec();
-
-			// Calculate the pagination values
-			const totalPages = Math.ceil(totalProducts / limitNumber);
-			const hasNextPage = pageNumber < totalPages;
-			const hasPrevPage = pageNumber > 1;
 			return res.status(200).json({
 				message: "Products fetched successfully",
 				result: products,
-				pagination: {
-					totalProducts,
-					currentPage: pageNumber,
-					totalPages,
-					hasNextPage,
-					hasPrevPage,
-					nextPage: hasNextPage ? pageNumber + 1 : null,
-					prevPage: hasPrevPage ? pageNumber - 1 : null
-				}
+				pagination
 			});
 		} catch (error) {
 			res.status(500).json({
@@ -90,7 +27,7 @@ export const getAllProducts = async function handler(req, res) {
 			});
 		}
 	} else {
-		res.status(500).json({ message: "This method is not allowed" });
+		res.status(405).json({ message: "This method is not allowed" });
 	}
 };
 
