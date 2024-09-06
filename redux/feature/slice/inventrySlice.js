@@ -8,6 +8,7 @@ import {
 } from "../reducer/inventryReducer";
 const initialState = {
 	inventryProducts: [],
+	pagination: null,
 	isLoading: false,
 	isSuccess: false,
 	isError: false,
@@ -28,7 +29,8 @@ export const inventryProductSlice = createSlice({
 			console.log(action.payload, "payload");
 			return {
 				...state,
-				inventryProducts: action.payload.result
+				inventryProducts: action.payload.result,
+				pagination: action.payload.pagination
 			};
 		}
 	},
@@ -40,6 +42,7 @@ export const inventryProductSlice = createSlice({
 		builder.addCase(getInventoryProducts.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.inventryProducts = action.payload.result;
+			state.pagination = action.payload.pagination;
 		});
 		builder.addCase(getInventoryProducts.rejected, (state, action) => {
 			state.isLoading = false;

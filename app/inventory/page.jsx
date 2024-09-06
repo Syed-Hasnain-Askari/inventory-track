@@ -25,7 +25,6 @@ const InventoryPage = async () => {
 		return <p>Access Denied</p>;
 	}
 	const data = await fetchData();
-	console.log(data, "data===12345");
 	return (
 		<React.Fragment>
 			<div className="grid grid-cols-12 gap-4">
@@ -42,6 +41,7 @@ const InventoryPage = async () => {
 					<Suspense fallback={<div>loading...</div>}>
 						<Products data={data} />
 					</Suspense>
+					<Pagination />
 				</div>
 			</div>
 			<Footer />
