@@ -34,7 +34,7 @@ export default function GridList({
 		<React.Fragment>
 			<div className="bg-white mt-3">
 				<div className="flex h-full mb-3 shadow-lg rounded-2xl">
-					<Link key={id} href={`/productinventory/${id}/`} className="w-full">
+					<Link key={id} href={`/inventory/${id}/`} className="w-full">
 						<div className="flex w-full h-full">
 							<Image
 								className="mr-4 rounded-lg object-cover object-center"

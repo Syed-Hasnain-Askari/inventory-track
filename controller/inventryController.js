@@ -2,15 +2,23 @@ import connectDB from "../lib/db";
 import { getSession } from "next-auth/react";
 const Product = require("../models/products");
 export const getAllProducts = async function handler(req, res) {
-	const session = await getSession({ req });
-	console.log(session, "session====!!!!454");
 	await connectDB();
 	if (req.method == "GET") {
 		try {
-			const { category, manufacture } = req.query;
+			const { category, manufacture, page, limit } = req.query;
 			const match = {};
 			if (category) match.category = category;
 			if (manufacture) match.manufacture = manufacture;
+			// Convert page and limit to numbers
+			const pageNumber = parseInt(page, 10);
+			const limitNumber = parseInt(limit, 10);
+
+			// Pagination logic: Calculate skip
+			const skip = (pageNumber - 1) * limitNumber;
+
+			// Get total number of products for pagination
+			const totalProducts = await Product.countDocuments();
+
 			const products = await Product.aggregate([
 				{
 					$lookup: {
@@ -54,11 +62,26 @@ export const getAllProducts = async function handler(req, res) {
 				}
 			])
 				.sort({ createdAt: -1 })
+				.skip(skip) // Skipping previous pages' items
+				.limit(limitNumber) // Limiting to the number of items per page
 				.exec();
 
+			// Calculate the pagination values
+			const totalPages = Math.ceil(totalProducts / limitNumber);
+			const hasNextPage = pageNumber < totalPages;
+			const hasPrevPage = pageNumber > 1;
 			return res.status(200).json({
 				message: "Products fetched successfully",
-				result: products
+				result: products,
+				pagination: {
+					totalProducts,
+					currentPage: pageNumber,
+					totalPages,
+					hasNextPage,
+					hasPrevPage,
+					nextPage: hasNextPage ? pageNumber + 1 : null,
+					prevPage: hasPrevPage ? pageNumber - 1 : null
+				}
 			});
 		} catch (error) {
 			res.status(500).json({
@@ -70,6 +93,7 @@ export const getAllProducts = async function handler(req, res) {
 		res.status(500).json({ message: "This method is not allowed" });
 	}
 };
+
 export const createProduct = async function handler(req, res) {
 	await connectDB();
 	if (req.method === "POST") {

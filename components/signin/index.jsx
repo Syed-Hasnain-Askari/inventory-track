@@ -13,9 +13,10 @@ export default function SignIn({ csrfToken, toggleToSignUp }) {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const result = await signIn("credentials", {
-			redirect: false,
+			redirect: true,
 			email,
-			password
+			password,
+			callbackUrl: "/dashboard"
 		});
 		if (result.error) {
 			toast({

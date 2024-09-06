@@ -7,14 +7,13 @@ import { getProducts } from "../../redux/feature/slice/inventrySlice";
 import GridList from "../../components/GridList";
 import { useToast } from "../../components/ui/use-toast";
 import { deleteProductById } from "../../redux/feature/reducer/inventryReducer";
-export const Products = ({ data }) => {
+export default function Products({ data }) {
 	const dispatch = useDispatch();
 	const { toast } = useToast();
 	const { inventryProducts, isLoading } = useSelector(
 		(state) => state.inventry
 	);
 	const { isGrid } = useSelector((state) => state.global);
-	console.log(isLoading, "isLoading====");
 	const handleDeleteProduct = (id) => {
 		try {
 			dispatch(deleteProductById(id));
@@ -84,4 +83,4 @@ export const Products = ({ data }) => {
 			</div>
 		</React.Fragment>
 	);
-};
+}

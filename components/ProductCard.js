@@ -32,7 +32,7 @@ export default function ProductCard({
 	handleDeleteProduct
 }) {
 	const truncate = (str, len) => {
-		if (str.length > len) {
+		if (str?.length > len) {
 			return str.slice(0, len) + "...";
 		}
 		return str;
@@ -55,7 +55,7 @@ export default function ProductCard({
 									</MenubarTrigger>
 									<MenubarContent>
 										<MenubarItem>
-											<Link href={`/productinventory/edit/${id}`} key={id}>
+											<Link href={`/inventory/edit/${id}`} key={id}>
 												Edit
 											</Link>
 										</MenubarItem>
@@ -90,7 +90,7 @@ export default function ProductCard({
 					</div>
 				</div>
 
-				<Link href={`/productinventory/edit/${id}`} key={id}>
+				<Link href={`/inventory/edit/${id}`} key={id}>
 					<Image
 						height={300}
 						width={300}

@@ -1,10 +1,12 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Header as ProductInventryHeader } from "../../components/ProductInventry/Header";
 import { Sider } from "../../components/ProductInventry/Sider";
 import Footer from "../components/Footer";
-import { Products } from "../../components/ProductInventry/Products";
+import Products from "../../components/ProductInventry/Products";
 import GridListToggle from "../../components/GridListToggle";
+import Pagination from "../../components/pagination/index";
 import { getServerSession } from "next-auth";
+import Link from "next/link";
 async function fetchData() {
 	const response = await fetch("http://localhost:3000/api/products/", {
 		next: { revalidate: 60 }
@@ -23,6 +25,7 @@ const InventoryPage = async () => {
 		return <p>Access Denied</p>;
 	}
 	const data = await fetchData();
+	console.log(data, "data===12345");
 	return (
 		<React.Fragment>
 			<div className="grid grid-cols-12 gap-4">
@@ -36,7 +39,9 @@ const InventoryPage = async () => {
 					<div className="flex flex-row justify-end">
 						<GridListToggle />
 					</div>
-					<Products data={data} />
+					<Suspense fallback={<div>loading...</div>}>
+						<Products data={data} />
+					</Suspense>
 				</div>
 			</div>
 			<Footer />
