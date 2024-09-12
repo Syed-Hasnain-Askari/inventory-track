@@ -1,15 +1,14 @@
 "use client";
 import { getManufactureByName } from "../../redux/feature/reducer/manufactureReducer";
+import { useDebouncedCallback } from "use-debounce";
 import Link from "next/link";
 import React from "react";
 import { useDispatch } from "react-redux";
 export const Header = () => {
 	const dispatch = useDispatch();
-	const handleSearchChange = (value) => {
-		setTimeout(() => {
-			dispatch(getManufactureByName(value));
-		}, 2000);
-	};
+	const handleSearchChange = useDebouncedCallback((value) => {
+		dispatch(getManufactureByName(value));
+	}, 2000);
 	return (
 		<React.Fragment>
 			<div className="flex flex-col lg:flex-row justify-between lg:px-0 px-5">

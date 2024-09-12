@@ -1,23 +1,28 @@
 import connectDB from "../lib/db";
-import { fetchProducts } from "../services/inventory/products.sevice";
+import {
+	fetchProducts,
+	createProductService,
+	getProductByIdService,
+	updateProductByIdService,
+	getLatestProductsServices
+} from "../services/inventory/products.sevice";
 const Product = require("../models/products");
 export const getAllProducts = async (req, res) => {
 	await connectDB();
 	if (req.method === "GET") {
 		try {
-			const { category, manufacture, page, limit } = req.query;
-
+			const { search, category, manufacture, page, limit } = req.query;
 			// Call the service to fetch products
-			const { products, pagination } = await fetchProducts({
+			const { searchResult, products, pagination } = await fetchProducts({
+				search,
 				category,
 				manufacture,
 				page,
 				limit
 			});
-
 			return res.status(200).json({
 				message: "Products fetched successfully",
-				result: products,
+				result: products || searchResult,
 				pagination
 			});
 		} catch (error) {
@@ -59,20 +64,19 @@ export const createProduct = async function handler(req, res) {
 			) {
 				return res.status(400).json({ message: "Missing fields" });
 			}
-			const product = new Product({
-				name: name,
-				price: price,
-				description: description,
-				stock: stock,
-				category: category,
-				manufacturePrice: manufacturePrice,
-				manufacture: manufacture,
-				image: image
-			});
-			const response = await product.save();
+			const { product } = await createProductService(
+				name,
+				price,
+				description,
+				stock,
+				category,
+				manufacturePrice,
+				manufacture,
+				image
+			);
 			return res.status(200).json({
 				message: "Product added successfully",
-				result: response
+				result: product
 			});
 		} catch (error) {
 			console.error("Error adding product:", error); // Log the error to the console
@@ -90,9 +94,9 @@ export const getProductById = async function handler(req, res, id) {
 	await connectDB();
 	if (req.method == "GET") {
 		try {
-			const response = await Product.findById(id);
+			const { product } = await getProductByIdService(id);
 			return res.status(200).json({
-				result: response
+				result: product
 			});
 		} catch (error) {
 			res
@@ -108,31 +112,37 @@ export const updateProductById = async function handler(req, res, id) {
 	await connectDB();
 	if (req.method === "PATCH") {
 		try {
-			console.log(id, "ID===");
-			console.log(req.body, "req.body");
-			const updatedProduct = await Product.findByIdAndUpdate(
-				id,
-				JSON.parse(req.body),
-				{
-					new: true, // Return the updated document instead of the old one
-					runValidators: true // Ensure the update follows the schema validation
-				}
-			);
-			if (!updatedProduct) {
-				return res.status(404).json({ message: "Product not found" });
+			const { response } = updateProductByIdService(id, req.body);
+			if (!response) {
+				res.status(404).json({ message: "Product is not found" });
 			}
-			const response = await updatedProduct.save();
 			return res.status(200).json({
 				result: response
 			});
 		} catch (error) {
 			res.status(500).json({
 				message: "Error updating product",
-				error: error.message
+				error: error
 			});
 		}
 	} else {
 		res.status(405).json({ message: "Method not allowed" });
+	}
+};
+export const getLatestProduct = async (req, res) => {
+	try {
+		if (req.method === "GET") {
+			const { products } = await getLatestProductsServices();
+			return res.status(200).json({
+				result: products
+			});
+		} else {
+			res.status(500).json({ message: "This method is not allowed" });
+		}
+	} catch (error) {
+		res
+			.status(500)
+			.json({ message: "Error fetching products", error: error.message });
 	}
 };
 export const deleteProductById = async function handler(req, res) {

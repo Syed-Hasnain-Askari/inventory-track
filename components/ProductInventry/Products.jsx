@@ -8,11 +8,16 @@ import GridList from "../../components/GridList";
 import { useToast } from "../../components/ui/use-toast";
 import { deleteProductById } from "../../redux/feature/reducer/inventryReducer";
 export default function Products({ data }) {
+	const { categories } = useSelector((state) => state.category);
+	const { manufactureList } = useSelector((state) => state.manufacture);
+
 	const dispatch = useDispatch();
 	const { toast } = useToast();
 	const { inventryProducts, isLoading } = useSelector(
 		(state) => state.inventry
 	);
+	const res = categories?.result?.map((item) => item._id === inventryProducts);
+	console.log(res, "response");
 	const { isGrid } = useSelector((state) => state.global);
 	const handleDeleteProduct = (id) => {
 		try {
@@ -50,6 +55,17 @@ export default function Products({ data }) {
 					</div>
 				) : (
 					inventryProducts?.map((product) => {
+						// Find category name by matching product.category with categories._id
+						const categoryName =
+							categories?.result?.find(
+								(cat) => cat._id === product?.category
+							) || "Unknown Category";
+
+						// Find manufacture name by matching product.manufacture with manufactureList._id
+						const manufactureName =
+							manufactureList?.find(
+								(manuf) => manuf._id === product?.manufacture
+							) || "Unknown Manufacturer";
 						return isGrid ? (
 							<GridList
 								id={product?._id}
@@ -66,9 +82,9 @@ export default function Products({ data }) {
 								description={product?.description}
 								image={product?.image}
 								price={product?.price}
-								category={product?.category}
+								category={categoryName?.name}
 								handleDeleteProduct={handleDeleteProduct}
-								manufacture={product?.manufacture}
+								manufacture={manufactureName?.name}
 							/>
 						);
 					})

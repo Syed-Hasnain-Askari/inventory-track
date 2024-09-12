@@ -26,7 +26,6 @@ export const inventryProductSlice = createSlice({
 			};
 		},
 		getProducts: (state, action) => {
-			console.log(action.payload, "payload");
 			return {
 				...state,
 				inventryProducts: action.payload.result,
@@ -40,6 +39,7 @@ export const inventryProductSlice = createSlice({
 			state.isLoading = true;
 		});
 		builder.addCase(getInventoryProducts.fulfilled, (state, action) => {
+			console.log(action, "getInventoryProducts");
 			state.isLoading = false;
 			state.inventryProducts = action.payload.result;
 			state.pagination = action.payload.pagination;

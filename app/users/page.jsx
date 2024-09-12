@@ -9,7 +9,7 @@ import {
 	SelectValue
 } from "../../components/ui/select";
 import Table from "../components/Table";
-import Footer from "../components/Footer";
+import Footer from "../../components/Footer";
 import { getProducts } from "../../lib/methods";
 export default async function Users() {
 	const response = await getProducts();

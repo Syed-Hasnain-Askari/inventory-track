@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "../../components/Header";
 import { Header as ManufactureHeader } from "../../components/Manufacture/Header";
-import Footer from "../components/Footer";
+import Footer from "../../components/Footer";
 import { Manufacture } from "../../components/Manufacture/Manufacture";
 import { Sider } from "../../components/Manufacture/Sider";
 async function fetchData() {

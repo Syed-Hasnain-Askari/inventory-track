@@ -4,10 +4,12 @@ dotenv.config();
 export const getInventoryProducts = createAsyncThunk(
 	"InventoryProduct/getInventoryProducts",
 	async (payload, thunkAPI) => {
-		const { category, manufacture, page = 1, limit = 10 } = payload; // Default page is 1 and limit is 10
+		console.log(payload, "payload");
+		const { search, category, manufacture, page = 1, limit = 10 } = payload; // Default page is 1 and limit is 10
 		try {
 			// Building query params
 			const queryParams = new URLSearchParams();
+			if (search) queryParams.append("search", search);
 			if (category) queryParams.append("category", category);
 			if (manufacture) queryParams.append("manufacture", manufacture);
 			queryParams.append("page", page); // Add page number to query params
@@ -78,15 +80,12 @@ export const deleteProductById = createAsyncThunk(
 );
 export const generalSearch = createAsyncThunk(
 	"InventryProduct/generalSearch",
-	async (payload, thunkAPI) => {
+	async (search, thunkAPI) => {
 		try {
 			console.log(payload, "payload");
-			const response = await fetch(
-				`/api/products/getproduct?search=${payload}`,
-				{
-					cache: "no-cache"
-				}
-			);
+			const response = await fetch(`/api/products/?search=${search}`, {
+				cache: "no-cache"
+			});
 			return await response.json();
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error.response);

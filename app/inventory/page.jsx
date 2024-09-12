@@ -1,7 +1,7 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { Header as ProductInventryHeader } from "../../components/ProductInventry/Header";
 import { Sider } from "../../components/ProductInventry/Sider";
-import Footer from "../components/Footer";
+import Footer from "../../components/Footer";
 import Products from "../../components/ProductInventry/Products";
 import GridListToggle from "../../components/GridListToggle";
 import Pagination from "../../components/pagination/index";
@@ -38,10 +38,8 @@ const InventoryPage = async () => {
 					<div className="flex flex-row justify-end">
 						<GridListToggle />
 					</div>
-					<Suspense fallback={<div>loading...</div>}>
-						<Products data={data} />
-					</Suspense>
-					<Pagination />
+					<Products data={data} />
+					{/* <Pagination /> */}
 				</div>
 			</div>
 			<Footer />

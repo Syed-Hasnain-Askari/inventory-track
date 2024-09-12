@@ -1,9 +1,12 @@
 import ProductTable from "../../../components/Table/ProductTable";
 import React from "react";
 async function fetchData() {
-	const response = await fetch("http://localhost:3000/api/products/", {
-		cache: "no-store" // This makes sure the fetch does not use any cache
-	});
+	const response = await fetch(
+		"http://localhost:3000/api/products/get-latestproduct",
+		{
+			next: { revalidate: 120 }
+		}
+	);
 	if (!response.ok) {
 		throw new Error("Failed to fetch data");
 	}

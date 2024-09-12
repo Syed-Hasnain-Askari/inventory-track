@@ -17,6 +17,7 @@ export default function Pagination() {
 		e.preventDefault();
 		setPage((prev) => prev - 1);
 	};
+
 	useEffect(() => {
 		if (page) {
 			dispatch(getInventoryProducts({ page }));
@@ -59,6 +60,10 @@ export default function Pagination() {
 								? "bg-blue-500 text-white"
 								: "text-blue-5 dark:bg-gray-800 bg-blue-100/60"
 						}`}
+						onClick={() => {
+							const page = index + 1;
+							dispatch(getInventoryProducts({ page }));
+						}}
 					>
 						{index + 1}
 					</button>

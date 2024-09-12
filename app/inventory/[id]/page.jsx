@@ -1,5 +1,4 @@
-import Footer from "@/app/components/Footer";
-import Header from "@/components/Header";
+import Footer from "../../../components/Footer";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -18,8 +17,6 @@ export default async function ProductDetailPage({ params }) {
 	const { name, description, price, image, stock } = response;
 	return (
 		<div>
-			<Header />
-			{/* component */}
 			<section className="text-gray-700 body-font overflow-hidden bg-white">
 				<div className="container px-5 py-10 mx-auto">
 					<div className="lg:w-4/5 mx-auto flex flex-wrap">
