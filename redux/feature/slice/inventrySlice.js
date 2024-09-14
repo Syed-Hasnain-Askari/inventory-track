@@ -39,10 +39,10 @@ export const inventryProductSlice = createSlice({
 			state.isLoading = true;
 		});
 		builder.addCase(getInventoryProducts.fulfilled, (state, action) => {
-			console.log(action, "getInventoryProducts");
+			const { result, pagination } = action.payload;
 			state.isLoading = false;
-			state.inventryProducts = action.payload.result;
-			state.pagination = action.payload.pagination;
+			state.inventryProducts = result;
+			state.pagination = pagination;
 		});
 		builder.addCase(getInventoryProducts.rejected, (state, action) => {
 			state.isLoading = false;

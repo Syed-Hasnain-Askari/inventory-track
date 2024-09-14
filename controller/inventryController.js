@@ -1,4 +1,5 @@
 import connectDB from "../lib/db";
+import { createRedisInstance } from "../lib/redis";
 import {
 	fetchProducts,
 	createProductService,
@@ -12,6 +13,7 @@ export const getAllProducts = async (req, res) => {
 	if (req.method === "GET") {
 		try {
 			const { search, category, manufacture, page, limit } = req.query;
+
 			// Call the service to fetch products
 			const { searchResult, products, pagination } = await fetchProducts({
 				search,

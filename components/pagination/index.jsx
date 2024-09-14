@@ -52,7 +52,7 @@ export default function Pagination() {
 			</button>
 			<div className="items-center hidden md:flex gap-x-3">
 				{/* Loop over totalPages to generate pagination links */}
-				{Array.from({ length: pagination.totalPages }, (_, index) => (
+				{Array.from({ length: pagination?.totalPages }, (_, index) => (
 					<button
 						key={index}
 						className={`px-3 py-2 w-8 text-sm rounded-lg ${

@@ -1,4 +1,8 @@
+import { createRedisInstance } from "../../lib/redis";
 import Product from "../../models/products";
+// Function to create a Redis instance
+const redisClient = createRedisInstance();
+
 export const fetchProducts = async ({
 	search,
 	category,
@@ -7,14 +11,17 @@ export const fetchProducts = async ({
 	limit
 }) => {
 	try {
+		// Convert page and limit to numbers
+		const pageNumber = parseInt(page, 10) || 1;
+		const limitNumber = parseInt(limit, 10) || 10;
+
 		if (search) {
-			console.log(search, "search");
 			const searchResult = await Product.aggregate([
 				{
 					$search: {
 						index: "searchproducts",
 						text: {
-							query: `name:${search}`,
+							query: search,
 							path: {
 								wildcard: "*"
 							}
@@ -22,7 +29,6 @@ export const fetchProducts = async ({
 					}
 				}
 			]);
-			console.log(searchResult, "products");
 			return {
 				searchResult
 			};
@@ -31,25 +37,24 @@ export const fetchProducts = async ({
 			if (category) match.category = category;
 			if (manufacture) match.manufacture = manufacture;
 
-			// Convert page and limit to numbers
-			const pageNumber = parseInt(page, 10) || 1;
-			const limitNumber = parseInt(limit, 10) || 10;
-
 			// Pagination logic: Calculate skip
 			const skip = (pageNumber - 1) * limitNumber;
 
 			// Get total number of products for pagination
-			const totalProducts = await Product.countDocuments();
-			const products = await Product.find()
+			const totalProducts = await Product.countDocuments(match);
+			const products = await Product.find(match)
 				.sort({ createdAt: -1 })
 				.skip(skip) // Skipping previous pages' items
 				.limit(limitNumber) // Limiting to the number of items per page
 				.exec();
+
 			// Calculate the pagination values
 			const totalPages = Math.ceil(totalProducts / limitNumber);
 			const hasNextPage = pageNumber < totalPages;
 			const hasPrevPage = pageNumber > 1;
-			return {
+
+			// Create the result object (products + pagination)
+			const result = {
 				products,
 				pagination: {
 					totalProducts,
@@ -61,11 +66,20 @@ export const fetchProducts = async ({
 					prevPage: hasPrevPage ? pageNumber - 1 : null
 				}
 			};
+
+			// Only cache the result if currentPage === 1
+			if (pageNumber === 1) {
+				// Store products and pagination in Redis (serialize using JSON.stringify)
+				await redisClient.set("products", JSON.stringify(result), "EX", 40); // Cache expires in 40 seconds
+			}
+
+			return result;
 		}
 	} catch (error) {
 		throw new Error(error.message);
 	}
 };
+
 export const createProductService = async ({
 	name,
 	price,

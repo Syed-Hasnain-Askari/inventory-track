@@ -39,7 +39,7 @@ const InventoryPage = async () => {
 						<GridListToggle />
 					</div>
 					<Products data={data} />
-					{/* <Pagination /> */}
+					<Pagination />
 				</div>
 			</div>
 			<Footer />
