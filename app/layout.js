@@ -14,13 +14,14 @@ export default async function RootLayout({ children }) {
 		<html lang="en">
 			<body className={inter.className}>
 				<Toaster />
-				{session === null ? (
+				<DashboardWrapper>{children}</DashboardWrapper>
+				{/* {session === null ? (
 					<AuthPage />
 				) : (
 					<AuthProvider session={session}>
 						<DashboardWrapper>{children}</DashboardWrapper>
 					</AuthProvider>
-				)}
+				)} */}
 			</body>
 		</html>
 	);

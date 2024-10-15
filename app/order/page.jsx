@@ -6,9 +6,9 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue
-} from "@/components/ui/select";
-import Table from "../components/Table";
-import Footer from "../components/Footer";
+} from "../../components/ui/select";
+import Table from "../../components/Table";
+import Footer from "../../components/Footer";
 import { getProducts } from "../../lib/methods";
 export default async function OrderPage() {
 	const response = await getProducts();
