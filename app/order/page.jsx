@@ -7,9 +7,10 @@ import {
 	SelectTrigger,
 	SelectValue
 } from "../../components/ui/select";
-import Table from "../../components/Table";
+
 import Footer from "../../components/Footer";
 import { getProducts } from "../../lib/methods";
+import ProductTable from "../../components/Table/ProductTable";
 export default async function OrderPage() {
 	const response = await getProducts();
 	return (
@@ -59,7 +60,7 @@ export default async function OrderPage() {
 					</button>
 				</div>
 				<div className="mt-20 pb-20">
-					<Table />
+					<ProductTable />
 				</div>
 			</div>
 			<Footer />
