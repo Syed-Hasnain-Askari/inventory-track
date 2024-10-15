@@ -37,6 +37,8 @@ export default function ProductCard({
 		}
 		return str;
 	};
+	console.log(id, "id");
+
 	return (
 		<React.Fragment>
 			<div className="relative cursor-pointer shadow-xl mx-auto transform overflow-hidden rounded-lg bg-white dark:bg-slate-800">
@@ -90,7 +92,7 @@ export default function ProductCard({
 					</div>
 				</div>
 
-				<Link href={`/inventory/edit/${id}`} key={id}>
+				<Link href={`/inventory/${id}`} key={id}>
 					<Image
 						height={300}
 						width={300}

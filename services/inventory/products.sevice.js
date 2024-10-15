@@ -1,8 +1,5 @@
 import { createRedisInstance } from "../../lib/redis";
 import Product from "../../models/products";
-// Function to create a Redis instance
-const redisClient = createRedisInstance();
-
 export const fetchProducts = async ({
 	search,
 	category,
@@ -11,10 +8,16 @@ export const fetchProducts = async ({
 	limit
 }) => {
 	try {
+		//const redis = createRedisInstance();
 		// Convert page and limit to numbers
 		const pageNumber = parseInt(page, 10) || 1;
 		const limitNumber = parseInt(limit, 10) || 10;
-
+		//const cachedProducts = await redis.get("products");
+		// if (pageNumber === 1) {
+		// 	const result = JSON.parse(cachedProducts);
+		// 	console.log(result, "products");
+		// 	return result;
+		// }
 		if (search) {
 			const searchResult = await Product.aggregate([
 				{
@@ -66,13 +69,11 @@ export const fetchProducts = async ({
 					prevPage: hasPrevPage ? pageNumber - 1 : null
 				}
 			};
-
 			// Only cache the result if currentPage === 1
-			if (pageNumber === 1) {
-				// Store products and pagination in Redis (serialize using JSON.stringify)
-				await redisClient.set("products", JSON.stringify(result), "EX", 40); // Cache expires in 40 seconds
-			}
-
+			// if (pageNumber === 1) {
+			// 	// Store products and pagination in Redis (serialize using JSON.stringify)
+			// 	await redis.set("products", JSON.stringify(result), "EX", 180); // Cache expires in 40 seconds
+			// }
 			return result;
 		}
 	} catch (error) {
@@ -80,16 +81,26 @@ export const fetchProducts = async ({
 	}
 };
 
-export const createProductService = async ({
+export const createProductService = async (
 	name,
 	price,
 	description,
 	stock,
 	category,
-	manufacturePrice,
 	manufacture,
 	image
-}) => {
+) => {
+	console.log(
+		name,
+		price,
+		description,
+		stock,
+		category,
+		manufacture,
+		image,
+		"===="
+	);
+	const redis = createRedisInstance();
 	try {
 		const product = new Product({
 			name: name,
@@ -97,7 +108,6 @@ export const createProductService = async ({
 			description: description,
 			stock: stock,
 			category: category,
-			manufacturePrice: manufacturePrice,
 			manufacture: manufacture,
 			image: image
 		});
@@ -117,16 +127,12 @@ export const getProductByIdService = async (id) => {
 	}
 };
 export const updateProductByIdService = async (id, data) => {
+	console.log(id, data, "id, data");
 	try {
-		const updatedProduct = await Product.findByIdAndUpdate(
-			id,
-			JSON.parse(data),
-			{
-				new: true, // Return the updated document instead of the old one
-				runValidators: true // Ensure the update follows the schema validation
-			}
-		);
-
+		const updatedProduct = await Product.findByIdAndUpdate(id, data, {
+			new: true, // Return the updated document instead of the old one
+			runValidators: true // Ensure the update follows the schema validation
+		});
 		const response = await updatedProduct.save();
 		return response;
 	} catch (error) {

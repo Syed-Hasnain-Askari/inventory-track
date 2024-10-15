@@ -28,8 +28,8 @@ export default function page() {
 		price: "",
 		category: "",
 		manufacture: "",
-		manufacturePrice: "",
-		stock: ""
+		stock: "",
+		image: image
 	});
 	const handleChange = (key, e) => {
 		setUserInput({
@@ -46,54 +46,16 @@ export default function page() {
 	const handleSubmit = async (e) => {
 		setLoading(true);
 		try {
-			// Create a FormData object and append the image file
-			const formData = new FormData();
-			for (const file of image) {
-				formData.append("file", file);
-			}
-			formData.append("upload_preset", "my-uploads");
-
-			// Upload the image to Cloudinary
-			const cloudinaryResponse = await fetch(
-				"https://api.cloudinary.com/v1_1/hasnainaskari32/image/upload",
-				{
-					method: "POST",
-					body: formData
-				}
-			);
-
-			// Check if the Cloudinary upload was successful
-			if (!cloudinaryResponse.ok) {
-				console.log(cloudinaryResponse, "cloudinaryResponse");
-
-				throw new Error("Failed to upload image to Cloudinary");
-			}
-			const cloudinaryResult = await cloudinaryResponse.json();
-			const imageUrl = cloudinaryResult?.secure_url;
-			if (imageUrl != "") {
-				let payload = {
-					...userInput,
-					image: imageUrl
-				};
-				// Send the product data to the backend with the Cloudinary image URL
-				dispatch(addProduct(payload));
-				setLoading(false);
-				// Display success toast notification
-				toast({
-					title: "Success!",
-					description: "Product has been added successfully!"
-				});
-				// Reset form input fields
-				setUserInput({
-					name: "",
-					description: "",
-					price: "",
-					category: "",
-					image: "",
-					stock: "",
-					manufacturePrice: ""
-				});
-			}
+			dispatch(addProduct(userInput));
+			// Reset form input fields
+			// setUserInput({
+			// 	name: "",
+			// 	description: "",
+			// 	price: "",
+			// 	category: "",
+			// 	image: "",
+			// 	stock: ""
+			// });
 		} catch (error) {
 			console.error("Error:", error);
 			setLoading(false);
@@ -108,8 +70,29 @@ export default function page() {
 		}
 	};
 	const handleFileUpload = (event) => {
-		setImage(event.target.files);
+		const file = event.target.files[0]; // Get the first selected file
+		const reader = new FileReader(); // Create a new FileReader
+
+		// When the file is successfully read
+		reader.onload = () => {
+			const base64String = reader.result.split(",")[1]; // Get the base64 string without the prefix
+
+			// Set the base64 string to state
+			setUserInput((prev) => ({
+				...prev,
+				image: base64String // Save the base64 string in user input state
+			}));
+
+			// Optional: You can store the file in its original form as well
+			setImage(file); // Store the file if you need it in other parts of your app
+		};
+
+		// Read the file as DataURL (which encodes it in base64)
+		if (file) {
+			reader.readAsDataURL(file);
+		}
 	};
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -125,6 +108,7 @@ export default function page() {
 		dispatch(getManufacture());
 		inputRef.current.focus();
 	}, [dispatch]);
+	console.log(userInput, "userInput");
 	return (
 		<>
 			<Header name={"Add Product"} />
@@ -202,7 +186,7 @@ export default function page() {
 							<SelectContent>
 								{categories?.result?.map((category) => {
 									return (
-										<SelectItem value={category._id}>
+										<SelectItem value={category?._id}>
 											{category.name}
 										</SelectItem>
 									);
@@ -242,21 +226,6 @@ export default function page() {
 							name="stock"
 							value={userInput.stock}
 							onChange={(e) => handleChange("stock", e)}
-							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-						/>
-					</div>
-					<div className="mb-3">
-						<label
-							htmlFor="guest"
-							className="mb-3 block text-base font-medium text-[#07074D]"
-						>
-							Manufacture Price
-						</label>
-						<input
-							type="number"
-							value={userInput.manufacturePrice}
-							name="manufacturePrice"
-							onChange={(e) => handleChange("manufacturePrice", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 						/>
 					</div>

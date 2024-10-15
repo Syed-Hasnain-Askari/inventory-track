@@ -17,10 +17,10 @@ const ProductSchema = new mongoose.Schema(
 			type: Number,
 			required: true
 		},
-		manufacturePrice: {
-			type: Number,
-			required: true
-		},
+		// sku: {
+		// 	type: String,
+		// 	required: true
+		// },
 		category: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Category",
@@ -33,7 +33,7 @@ const ProductSchema = new mongoose.Schema(
 		},
 		image: {
 			type: String,
-			required: true
+			required: false
 		}
 	},
 	{

@@ -6,10 +6,9 @@ import Products from "../../components/ProductInventry/Products";
 import GridListToggle from "../../components/GridListToggle";
 import Pagination from "../../components/pagination/index";
 import { getServerSession } from "next-auth";
-import Link from "next/link";
 async function fetchData() {
 	const response = await fetch("http://localhost:3000/api/products/", {
-		next: { revalidate: 60 }
+		cache: "no-cache"
 	});
 	if (!response.ok) {
 		throw new Error("Failed to fetch data");
@@ -25,6 +24,10 @@ const InventoryPage = async () => {
 		return <p>Access Denied</p>;
 	}
 	const data = await fetchData();
+	console.log(
+		data?.pagination?.totalProducts,
+		"data?.pagination?.totalProducts"
+	);
 	return (
 		<React.Fragment>
 			<div className="grid grid-cols-12 gap-4">
@@ -39,7 +42,7 @@ const InventoryPage = async () => {
 						<GridListToggle />
 					</div>
 					<Products data={data} />
-					<Pagination />
+					{data?.pagination?.totalProducts <= 10 ? <></> : <Pagination />}
 				</div>
 			</div>
 			<Footer />

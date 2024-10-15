@@ -18,21 +18,20 @@ export const getInventoryProducts = createAsyncThunk(
 			const response = await fetch(`/api/products/?${queryParams.toString()}`, {
 				cache: "no-cache"
 			});
-
 			// Parse the response
 			return await response.json();
 		} catch (error) {
+			console.log(error.response, "error====");
 			return thunkAPI.rejectWithValue(error.response);
 		}
 	}
 );
-
 export const addProduct = createAsyncThunk(
 	"InventryProduct/addProduct",
 	async (payload, thunkAPI) => {
 		try {
-			console.log(payload, "payload");
-			const response = await fetch(`/api/products/`, {
+			// 1. First, create the product without the image
+			const productResponse = await fetch(`/api/products/`, {
 				cache: "no-cache",
 				method: "POST",
 				headers: {
@@ -40,20 +39,27 @@ export const addProduct = createAsyncThunk(
 				},
 				body: JSON.stringify(payload)
 			});
-			return await response.json();
+			if (!productResponse.ok) {
+				throw new Error("Failed to save product data. Please try again.");
+			}
+			// Get the product data (including the _id)
+			return await productResponse.json();
 		} catch (error) {
-			return thunkAPI.rejectWithValue(error.response);
+			console.log(error, "error");
+			return thunkAPI.rejectWithValue(error.message);
 		}
 	}
 );
+
 export const updateProductById = createAsyncThunk(
 	"InventryProduct/updateProductById",
 	async (payload, thunkAPI) => {
 		try {
 			console.log(payload, "payload");
-			const response = await fetch(`/api/products/${payload._id}`, {
+			const { _id, userInpt } = payload;
+			const response = await fetch(`/api/products/${_id}`, {
 				method: "PATCH",
-				body: JSON.stringify(payload.userInput)
+				body: JSON.stringify(userInpt)
 			});
 			return await response.json();
 		} catch (error) {

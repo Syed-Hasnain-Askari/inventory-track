@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFetch } from "../../../../hooks/useFetch";
 import { updateProductById } from "../../../../redux/feature/reducer/inventryReducer";
 import { useRouter } from "next/navigation";
+import { generateSKU } from "../../../../util/generateSKU";
 export default function page({ params }) {
 	const router = useRouter();
 	const { toast } = useToast();
@@ -22,11 +23,7 @@ export default function page({ params }) {
 	const { inventryProducts, isLoading, isSuccess } = useSelector(
 		(state) => state.inventry
 	);
-	const {
-		response,
-		error,
-		loading: hookLoader
-	} = useFetch(`http://localhost:3000/api/products/${params.id}`);
+	const [selectedManufacture, setSelectedManufacture] = useState(null);
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
 	const [image, setImage] = useState("");
@@ -37,9 +34,9 @@ export default function page({ params }) {
 		price: "",
 		category: "",
 		manufacture: "",
-		manufacturePrice: "",
 		stock: ""
 	});
+
 	const handleChange = (key, e) => {
 		setUserInput({
 			...userInput,
@@ -53,8 +50,20 @@ export default function page({ params }) {
 		});
 	};
 	const handleSubmit = async (e) => {
+		const id = generateSKU(userInput.name, params.id);
 		const _id = params.id;
-		dispatch(updateProductById({ _id, userInput }));
+		const userInpt = {
+			...userInput,
+			sku: id
+		};
+		dispatch(updateProductById({ _id, userInpt }));
+		if (isSuccess) {
+			toast({
+				title: "Success",
+				description: "product has been updated"
+			}); // Handle login errors
+		}
+		router.push("/inventory");
 	};
 	const handleFileUpload = (event) => {
 		setImage(event.target.files);
@@ -77,18 +86,20 @@ export default function page({ params }) {
 	useEffect(() => {
 		const res = inventryProducts?.find((item) => item?._id === params.id);
 		if (res) {
+			const foundManufacture = manufactures?.find(
+				(item) => item._id === res?.manufacture
+			);
 			setUserInput({
 				name: res?.name || "",
 				description: res?.description || "",
 				price: res?.price || "",
 				category: res?.category || "",
 				manufacture: res?.manufacture || "",
-				manufacturePrice: res?.manufacturePrice || "",
 				stock: res.stock || ""
 			});
 			setImage(res?.image);
 		}
-	}, [params.id]);
+	}, [params.id, manufactures]);
 	// useEffect(() => {
 	// 	if (isSuccess) {
 	// 		// Display success toast notification
@@ -99,7 +110,9 @@ export default function page({ params }) {
 	// 		router.push("/productinventory");
 	// 	}
 	// }, [isSuccess]);
+	// Find the manufacturer based on the selected ID
 	console.log(userInput, "userInput=====");
+	console.log(manufactures, "manufactures=====");
 	return (
 		<React.Fragment>
 			<Header />
@@ -191,7 +204,7 @@ export default function page({ params }) {
 						<input
 							type="number"
 							name="price"
-							value={userInput.price}
+							value={userInput?.price}
 							onChange={(e) => handleChange("price", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 						/>
@@ -233,13 +246,16 @@ export default function page({ params }) {
 							onValueChange={(e) => {
 								handleSelectChange("manufacture", e);
 							}}
+							defaultValue={userInput?.manufacture || ""}
 						>
 							<SelectTrigger className="w-full h-[50px] mt-3">
 								<SelectValue placeholder="Select" />
 							</SelectTrigger>
 							<SelectContent>
 								{manufactures?.map((item) => {
-									return <SelectItem value={item._id}>{item.name}</SelectItem>;
+									return (
+										<SelectItem value={item?._id}>{item?.name}</SelectItem>
+									);
 								})}
 							</SelectContent>
 						</Select>
@@ -254,23 +270,8 @@ export default function page({ params }) {
 						<input
 							type="number"
 							name="stock"
-							value={userInput.stock}
+							value={userInput?.stock}
 							onChange={(e) => handleChange("stock", e)}
-							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-						/>
-					</div>
-					<div className="mb-3">
-						<label
-							htmlFor="guest"
-							className="mb-3 block text-base font-medium text-[#07074D]"
-						>
-							Manufacture Price
-						</label>
-						<input
-							type="number"
-							value={userInput.manufacturePrice}
-							name="manufacturePrice"
-							onChange={(e) => handleChange("manufacturePrice", e)}
 							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
 						/>
 					</div>

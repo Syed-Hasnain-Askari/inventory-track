@@ -1,5 +1,8 @@
 import connectDB from "../lib/db";
 import { createRedisInstance } from "../lib/redis";
+import { uploadOnCloudinary } from "../util/fileuploader";
+import multer from "multer";
+import path from "path";
 import {
 	fetchProducts,
 	createProductService,
@@ -13,7 +16,7 @@ export const getAllProducts = async (req, res) => {
 	if (req.method === "GET") {
 		try {
 			const { search, category, manufacture, page, limit } = req.query;
-
+			console.log(req.query, "req.query");
 			// Call the service to fetch products
 			const { searchResult, products, pagination } = await fetchProducts({
 				search,
@@ -28,6 +31,7 @@ export const getAllProducts = async (req, res) => {
 				pagination
 			});
 		} catch (error) {
+			console.error("Error fetching products:", error);
 			res.status(500).json({
 				message: "Error fetching products",
 				error: error.message
@@ -37,48 +41,40 @@ export const getAllProducts = async (req, res) => {
 		res.status(405).json({ message: "This method is not allowed" });
 	}
 };
-
 export const createProduct = async function handler(req, res) {
 	await connectDB();
 	if (req.method === "POST") {
 		try {
-			console.log(req.body, "req.body");
-			const {
-				name,
-				price,
-				description,
-				stock,
-				category,
-				manufacturePrice,
-				manufacture,
-				image
-			} = req.body;
-			// Ensure all fields are present
-			if (
-				!image ||
-				!manufacture ||
-				!name ||
-				!price ||
-				!description ||
-				!stock ||
-				!category ||
-				!manufacturePrice
-			) {
-				return res.status(400).json({ message: "Missing fields" });
-			}
-			const { product } = await createProductService(
-				name,
-				price,
-				description,
-				stock,
-				category,
-				manufacturePrice,
-				manufacture,
-				image
-			);
+			console.log(req?.body);
+
+			const upload = await uploadOnCloudinary(req?.body?.image);
+			console.log(upload, "Response from clounary");
+
+			// const { name, price, description, stock, category, manufacture, image } =
+			// 	req.body;
+			// console.log(req.body, "req.body===");
+			// // Ensure all fields are present
+			// if (
+			// 	!manufacture ||
+			// 	!name ||
+			// 	!price ||
+			// 	!description ||
+			// 	!stock ||
+			// 	!category
+			// ) {
+			// 	return res.status(400).json({ message: "Missing fields", status: 400 });
+			// }
+			// const product = await createProductService(
+			// 	name,
+			// 	price,
+			// 	description,
+			// 	stock,
+			// 	category,
+			// 	manufacture
+			// );
 			return res.status(200).json({
 				message: "Product added successfully",
-				result: product
+				status: 200
 			});
 		} catch (error) {
 			console.error("Error adding product:", error); // Log the error to the console
@@ -96,7 +92,7 @@ export const getProductById = async function handler(req, res, id) {
 	await connectDB();
 	if (req.method == "GET") {
 		try {
-			const { product } = await getProductByIdService(id);
+			const product = await getProductByIdService(id);
 			return res.status(200).json({
 				result: product
 			});
@@ -114,11 +110,14 @@ export const updateProductById = async function handler(req, res, id) {
 	await connectDB();
 	if (req.method === "PATCH") {
 		try {
-			const { response } = updateProductByIdService(id, req.body);
+			const response = await updateProductByIdService(id, req.body);
+			console.log(response, "response====");
+			console.log(req.body, "req.body====");
 			if (!response) {
 				res.status(404).json({ message: "Product is not found" });
 			}
 			return res.status(200).json({
+				message: "Updated successfully",
 				result: response
 			});
 		} catch (error) {

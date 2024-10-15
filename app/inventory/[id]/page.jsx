@@ -13,7 +13,9 @@ async function fetchData(id) {
 	return data.result;
 }
 export default async function ProductDetailPage({ params }) {
-	const response = await fetchData(params.id);
+	const response = await fetchData(params?.id);
+	console.log(response, "response");
+	console.log(params.id, "params.id====");
 	const { name, description, price, image, stock } = response;
 	return (
 		<div>

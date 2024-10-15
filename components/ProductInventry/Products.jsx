@@ -13,11 +13,10 @@ export default function Products({ data }) {
 
 	const dispatch = useDispatch();
 	const { toast } = useToast();
-	const { inventryProducts, isLoading } = useSelector(
+	const { inventryProducts, isLoading, isError } = useSelector(
 		(state) => state.inventry
 	);
 	const res = categories?.result?.map((item) => item._id === inventryProducts);
-	console.log(res, "response");
 	const { isGrid } = useSelector((state) => state.global);
 	const handleDeleteProduct = (id) => {
 		try {
@@ -38,6 +37,7 @@ export default function Products({ data }) {
 			dispatch(getProducts(data));
 		}
 	}, [dispatch, data]);
+	console.log(inventryProducts, "inventryProducts");
 	return (
 		<React.Fragment>
 			<div

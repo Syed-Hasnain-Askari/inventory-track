@@ -52,7 +52,7 @@ export const Sider = () => {
 						</SelectTrigger>
 						<SelectContent>
 							{manufactureList?.map((item) => {
-								return <SelectItem value={item?.name}>{item?.name}</SelectItem>;
+								return <SelectItem value={item?._id}>{item?.name}</SelectItem>;
 							})}
 						</SelectContent>
 					</Select>
@@ -66,7 +66,7 @@ export const Sider = () => {
 						<SelectContent>
 							{categories?.result?.map((category) => {
 								return (
-									<SelectItem value={category.name}>{category.name}</SelectItem>
+									<SelectItem value={category._id}>{category.name}</SelectItem>
 								);
 							})}
 						</SelectContent>
