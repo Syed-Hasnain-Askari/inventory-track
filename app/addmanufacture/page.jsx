@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "../../components/ui/use-toast";
 import Label from "../components/Label";
-import { addManufacture } from "@/redux/feature/reducer/manufactureReducer";
+import { addManufacture } from "../../redux/feature/reducer/manufactureReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { clearSuccess } from "../../redux/feature/slice/manufactureSlice";
 export default function AddManufacturePage() {
