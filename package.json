@@ -24,6 +24,7 @@
     "dotenv": "^16.4.5",
     "formidable": "^3.5.1",
     "ioredis": "^5.4.1",
+    "jose": "^5.9.6",
     "loadash": "^1.0.0",
     "lucide-react": "^0.428.0",
     "mongoose": "^8.4.1",

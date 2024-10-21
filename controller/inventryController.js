@@ -1,8 +1,7 @@
 import connectDB from "../lib/db";
 import { createRedisInstance } from "../lib/redis";
+import { cookies } from "next/headers";
 import { uploadOnCloudinary } from "../util/fileuploader";
-import multer from "multer";
-import path from "path";
 import {
 	fetchProducts,
 	createProductService,
@@ -11,12 +10,26 @@ import {
 	getLatestProductsServices
 } from "../services/inventory/products.sevice";
 const Product = require("../models/products");
+import { NextResponse } from "next/server";
+// Ensure you have the correct path
+
 export const getAllProducts = async (req, res) => {
 	await connectDB();
 	if (req.method === "GET") {
+		// Get the cookie from the request
+		const token = req.cookies.token; // Access cookies directly
+		console.log(token, "token======");
+
+		if (!token) {
+			return res.status(401).json({
+				message: "Unauthorized request"
+			});
+		}
+
 		try {
 			const { search, category, manufacture, page, limit } = req.query;
 			console.log(req.query, "req.query");
+
 			// Call the service to fetch products
 			const { searchResult, products, pagination } = await fetchProducts({
 				search,
@@ -25,6 +38,7 @@ export const getAllProducts = async (req, res) => {
 				page,
 				limit
 			});
+
 			return res.status(200).json({
 				message: "Products fetched successfully",
 				result: products || searchResult,
@@ -41,6 +55,7 @@ export const getAllProducts = async (req, res) => {
 		res.status(405).json({ message: "This method is not allowed" });
 	}
 };
+
 export const createProduct = async function handler(req, res) {
 	await connectDB();
 	if (req.method === "POST") {
@@ -133,6 +148,13 @@ export const updateProductById = async function handler(req, res, id) {
 export const getLatestProduct = async (req, res) => {
 	try {
 		if (req.method === "GET") {
+			const jwt = cookies().get("token")?.value;
+			console.log(jwt, "jwt======");
+			if (!jwt) {
+				return NextResponse.json({
+					message: "Unathorized request"
+				});
+			}
 			const { products } = await getLatestProductsServices();
 			return res.status(200).json({
 				result: products

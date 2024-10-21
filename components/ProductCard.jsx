@@ -9,7 +9,7 @@ import {
 	MenubarSeparator,
 	MenubarShortcut,
 	MenubarTrigger
-} from "../components/ui/menubar";
+} from "./ui/menubar";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -20,7 +20,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger
-} from "../components/ui/alert-dialog";
+} from "./ui/alert-dialog";
 import { EllipsisVertical } from "lucide-react";
 export default function ProductCard({
 	name,

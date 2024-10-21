@@ -18,11 +18,6 @@ async function fetchData() {
 }
 
 const InventoryPage = async () => {
-	const session = await getServerSession();
-	console.log(session, "session layout");
-	if (session === null) {
-		return <p>Access Denied</p>;
-	}
 	const data = await fetchData();
 	console.log(
 		data?.pagination?.totalProducts,

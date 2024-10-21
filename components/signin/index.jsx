@@ -4,46 +4,48 @@ import React, { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useToast } from "../../components//ui/use-toast";
-export default function SignIn({ csrfToken, toggleToSignUp }) {
+import Image from "next/image";
+export default function SignIn({ toggleToSignUp }) {
 	const { pending } = useFormStatus();
 	const { toast } = useToast();
 	const router = useRouter();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		const result = await signIn("credentials", {
-			redirect: true,
-			email,
-			password,
-			callbackUrl: "/dashboard"
+		setLoading(true);
+		setError("");
+		const res = await fetch("http://localhost:3000/api/auth/login", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({ email, password })
 		});
-		if (result.error) {
-			toast({
-				title: "Ops!",
-				description: result.error
-			}); // Handle login errors
-		} else {
-			// Ensure the session is updated on the client-side
-			const session = await getSession();
-			if (session) {
-				router.refresh(); // Redirect to dashboard if session exists
-			} else {
-				toast({
-					title: "Session Error",
-					description: "Failed to retrieve session. Please try again."
-				});
-			}
+		const data = await res.json();
+		console.log(data, "data");
+
+		if (!res.ok) {
+			setError(data.message || "Something went wrong");
+			setLoading(false);
+			return;
 		}
+		// Redirect or handle successful login
+		router.replace("/"); // Redirect to home page
 	};
 	return (
 		<React.Fragment>
 			<div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
 				<div className="sm:mx-auto sm:w-full sm:max-w-sm">
-					<img
-						alt="Your Company"
-						src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-						className="mx-auto h-10 w-auto"
+					<Image
+						src="/icons/logo.png"
+						alt="edstock-logo"
+						width={100}
+						height={100}
+						className="rounded w-8"
 					/>
 					<h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
 						Sign In to your account
@@ -106,12 +108,13 @@ export default function SignIn({ csrfToken, toggleToSignUp }) {
 						</div>
 
 						<div>
+							{error && <p style={{ color: "red" }}>{error}</p>}
 							<button
-								disabled={pending}
+								disabled={loading}
 								type="submit"
 								className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
 							>
-								{pending ? "loaging..." : "Sign In"}
+								{loading ? "Logging in..." : "Login"}
 							</button>
 						</div>
 					</form>

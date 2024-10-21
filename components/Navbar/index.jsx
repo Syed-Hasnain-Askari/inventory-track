@@ -36,9 +36,7 @@ const Navbar = () => {
 		dispatch(setIsDarkMode(!isDarkMode));
 	};
 	const handleSignOut = () => {
-		signOut({ redirect: false }).then(() => {
-			router.push("/signin");
-		});
+		router.push("auth/login");
 	};
 	return (
 		<div className="sticky top-5 z-50 flex justify-between items-center w-full mb-7">
@@ -107,11 +105,7 @@ const Navbar = () => {
 									/>
 								</button>
 							</div>
-							{toggle ? (
-								<UserMenu handleSignOut={handleSignOut} status={status} />
-							) : (
-								""
-							)}
+							{toggle ? <UserMenu handleSignOut /> : ""}
 						</div>
 						<span className="font-semibold">Ed Roh</span>
 					</div>
