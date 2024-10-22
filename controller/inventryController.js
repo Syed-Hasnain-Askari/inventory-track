@@ -11,19 +11,17 @@ import {
 } from "../services/inventory/products.sevice";
 const Product = require("../models/products");
 import { NextResponse } from "next/server";
+import { verifyToken } from "../util/auth";
 // Ensure you have the correct path
 
 export const getAllProducts = async (req, res) => {
 	await connectDB();
 	if (req.method === "GET") {
-		// Get the cookie from the request
-		const token = req.cookies.token; // Access cookies directly
-		console.log(token, "token======");
+		// Use the verifyToken function to check authorization
+		const { authorized, payload, message } = await verifyToken(req);
 
-		if (!token) {
-			return res.status(401).json({
-				message: "Unauthorized request"
-			});
+		if (!authorized) {
+			return res.status(401).json({ message });
 		}
 
 		try {
@@ -59,6 +57,11 @@ export const getAllProducts = async (req, res) => {
 export const createProduct = async function handler(req, res) {
 	await connectDB();
 	if (req.method === "POST") {
+		const { authorized, payload, message } = await verifyToken(req);
+
+		if (!authorized) {
+			return res.status(401).json({ message });
+		}
 		try {
 			console.log(req?.body);
 
@@ -106,6 +109,11 @@ export const createProduct = async function handler(req, res) {
 export const getProductById = async function handler(req, res, id) {
 	await connectDB();
 	if (req.method == "GET") {
+		const { authorized, payload, message } = await verifyToken(req);
+
+		if (!authorized) {
+			return res.status(401).json({ message });
+		}
 		try {
 			const product = await getProductByIdService(id);
 			return res.status(200).json({
@@ -124,6 +132,11 @@ export const getProductById = async function handler(req, res, id) {
 export const updateProductById = async function handler(req, res, id) {
 	await connectDB();
 	if (req.method === "PATCH") {
+		const { authorized, payload, message } = await verifyToken(req);
+
+		if (!authorized) {
+			return res.status(401).json({ message });
+		}
 		try {
 			const response = await updateProductByIdService(id, req.body);
 			console.log(response, "response====");
@@ -146,38 +159,40 @@ export const updateProductById = async function handler(req, res, id) {
 	}
 };
 export const getLatestProduct = async (req, res) => {
-	try {
-		if (req.method === "GET") {
-			const jwt = cookies().get("token")?.value;
-			console.log(jwt, "jwt======");
-			if (!jwt) {
-				return NextResponse.json({
-					message: "Unathorized request"
-				});
+	if (req.method === "GET") {
+		try {
+			const { authorized, payload, message } = await verifyToken(req);
+
+			if (!authorized) {
+				return res.status(401).json({ message });
 			}
 			const { products } = await getLatestProductsServices();
 			return res.status(200).json({
 				result: products
 			});
-		} else {
-			res.status(500).json({ message: "This method is not allowed" });
+		} catch (error) {
+			res
+				.status(500)
+				.json({ message: "Error fetching products", error: error.message });
 		}
-	} catch (error) {
-		res
-			.status(500)
-			.json({ message: "Error fetching products", error: error.message });
+	} else {
+		res.status(500).json({ message: "This method is not allowed" });
 	}
 };
 export const deleteProductById = async function handler(req, res) {
 	await connectDB();
 	// Ensure the request method is DELETE
 	if (req.method === "DELETE") {
+		const { authorized, payload, message } = await verifyToken(req);
+
+		if (!authorized) {
+			return res.status(401).json({ message });
+		}
 		const { id } = req.query; // Assuming the ID is passed via query parameters
 
 		if (!id) {
 			return res.status(400).json({ message: "Product ID is required" });
 		}
-
 		try {
 			const product = await Product.findByIdAndDelete(id);
 

@@ -31,22 +31,22 @@ export default function SignIn({ toggleToSignUp }) {
 		if (!res.ok) {
 			setError(data.message || "Something went wrong");
 			setLoading(false);
-			return;
+			// Redirect or handle successful login
+			router.push("/"); // Redirect to home page
 		}
-		// Redirect or handle successful login
-		router.replace("/"); // Redirect to home page
 	};
 	return (
 		<React.Fragment>
 			<div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-				<div className="sm:mx-auto sm:w-full sm:max-w-sm">
+				<div className="flex justify-center items-center">
 					<Image
 						src="/icons/logo.png"
 						alt="edstock-logo"
 						width={100}
 						height={100}
-						className="rounded w-8"
 					/>
+				</div>
+				<div className="sm:mx-auto sm:w-full sm:max-w-sm">
 					<h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
 						Sign In to your account
 					</h2>
