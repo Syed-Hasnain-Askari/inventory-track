@@ -21,10 +21,7 @@ export const getManufactureByName = createAsyncThunk(
 	async (query, thunkAPI) => {
 		try {
 			const response = await fetch(
-				`${BASE_URL}/api/manufacture/get-manufacturebyname?search=${query}`,
-				{
-					cache: "no-cache"
-				}
+				`${BASE_URL}/api/manufacture/get-manufacturebyname?search=${query}`
 			);
 			return await response.json();
 		} catch (error) {
@@ -41,8 +38,7 @@ export const addManufacture = createAsyncThunk(
 				headers: {
 					"Content-Type": "application/json"
 				},
-				body: JSON.stringify(payload),
-				cache: "no-cache"
+				body: JSON.stringify(payload)
 			});
 			return await response.json();
 		} catch (error) {

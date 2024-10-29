@@ -15,9 +15,7 @@ export const getInventoryProducts = createAsyncThunk(
 			queryParams.append("page", page); // Add page number to query params
 			queryParams.append("limit", limit); // Add limit to query params if needed
 			// Make the request
-			const response = await fetch(`/api/products/?${queryParams.toString()}`, {
-				cache: "no-cache"
-			});
+			const response = await fetch(`/api/products/?${queryParams.toString()}`);
 			// Parse the response
 			return await response.json();
 		} catch (error) {
@@ -32,7 +30,6 @@ export const addProduct = createAsyncThunk(
 		try {
 			// 1. First, create the product without the image
 			const productResponse = await fetch(`/api/products/`, {
-				cache: "no-cache",
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json"
@@ -89,9 +86,7 @@ export const generalSearch = createAsyncThunk(
 	async (search, thunkAPI) => {
 		try {
 			console.log(payload, "payload");
-			const response = await fetch(`/api/products/?search=${search}`, {
-				cache: "no-cache"
-			});
+			const response = await fetch(`/api/products/?search=${search}`);
 			return await response.json();
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error.response);
