@@ -1,10 +1,9 @@
 "use client";
 import React, { useRef } from "react";
-import { useFormState } from "react-dom";
 import { useToast } from "../../components//ui/use-toast";
 import { registerUserAction } from "../../app/data/actions/auth-actions";
 export default function SignUp({ toggleToSignIn }) {
-	const { pending } = useFormState();
+	const { pending } = useActionState();
 	const ref = useRef();
 	const { toast } = useToast();
 	const handleSubmit = async (event) => {
