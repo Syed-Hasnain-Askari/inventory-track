@@ -4,8 +4,9 @@ import { Header as ManufactureHeader } from "../../components/Manufacture/Header
 import Footer from "../../components/Footer";
 import { Manufacture } from "../../components/Manufacture/Manufacture";
 import { Sider } from "../../components/Manufacture/Sider";
+import { BASE_URL } from "../../lib/config";
 async function fetchData() {
-	const response = await fetch("http://localhost:3000/api/manufacture", {
+	const response = await fetch(`${BASE_URL}/api/manufacture`, {
 		next: { revalidate: 120 }
 	});
 	if (!response.ok) {

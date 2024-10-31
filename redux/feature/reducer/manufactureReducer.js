@@ -1,13 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { getInvetryProductsByManufacture } from "../slice/inventrySlice";
-const dotenv = require("dotenv");
-dotenv.config();
 const BASE_URL = process.env.DEV_URL || "";
 export const getManufacture = createAsyncThunk(
 	"Manufacture/getManufacture",
 	async (thunkAPI) => {
 		try {
-			const response = await fetch(`${BASE_URL}/api/manufacture`, {
+			const response = await fetch(`/api/manufacture`, {
 				next: { revalidate: 3600 }
 			});
 			return await response.json();
@@ -21,7 +18,7 @@ export const getManufactureByName = createAsyncThunk(
 	async (query, thunkAPI) => {
 		try {
 			const response = await fetch(
-				`${BASE_URL}/api/manufacture/get-manufacturebyname?search=${query}`
+				`/api/manufacture/get-manufacturebyname?search=${query}`
 			);
 			return await response.json();
 		} catch (error) {
@@ -33,7 +30,7 @@ export const addManufacture = createAsyncThunk(
 	"Manufacture/addManufacture",
 	async (payload, thunkAPI) => {
 		try {
-			const response = await fetch(`${BASE_URL}/api/manufacture`, {
+			const response = await fetch(`/api/manufacture`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json"
@@ -51,7 +48,7 @@ export const deleteManufacture = createAsyncThunk(
 	async (id, thunkAPI) => {
 		try {
 			const response = await fetch(
-				`${BASE_URL}/api/manufacture/delete-manufacture/${id}`,
+				`/api/manufacture/delete-manufacture/${id}`,
 				{
 					method: "DELETE"
 				}

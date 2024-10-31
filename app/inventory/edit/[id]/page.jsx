@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import Header from "../../../../components/Header";
 import {
 	Select,
@@ -25,6 +25,7 @@ export default function page({ params }) {
 	);
 	const [selectedManufacture, setSelectedManufacture] = useState(null);
 	const dispatch = useDispatch();
+	const { id } = use(params);
 	const [loading, setLoading] = useState(false);
 	const [image, setImage] = useState("");
 	const [categories, setCategories] = useState(null);
@@ -50,8 +51,8 @@ export default function page({ params }) {
 		});
 	};
 	const handleSubmit = async (e) => {
-		const id = generateSKU(userInput.name, params.id);
-		const _id = params.id;
+		const id = generateSKU(userInput.name, id);
+		const _id = id;
 		const userInpt = {
 			...userInput,
 			sku: id
@@ -84,7 +85,7 @@ export default function page({ params }) {
 	}, [dispatch]);
 	// useEffect to update the state once the response is available
 	useEffect(() => {
-		const res = inventryProducts?.find((item) => item?._id === params.id);
+		const res = inventryProducts?.find((item) => item?._id === id);
 		if (res) {
 			const foundManufacture = manufactures?.find(
 				(item) => item._id === res?.manufacture
@@ -99,7 +100,7 @@ export default function page({ params }) {
 			});
 			setImage(res?.image);
 		}
-	}, [params.id, manufactures]);
+	}, [id, manufactures]);
 	// useEffect(() => {
 	// 	if (isSuccess) {
 	// 		// Display success toast notification

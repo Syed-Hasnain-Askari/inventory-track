@@ -1,14 +1,14 @@
 import DataStatsOne from "../../../components/DataStats";
 import React from "react";
+import { BASE_URL } from "../../../lib/config";
 async function fetchData() {
-	const response = await fetch("http://localhost:3000/api/stats", {
-		cache: "no-cache"
-	});
-	if (!response.ok) {
-		throw new Error("Failed to fetch data");
+	try {
+		const response = await fetch(`${BASE_URL}/api/stats`);
+		const data = await response.json();
+		return data.result;
+	} catch (error) {
+		throw new Error(error);
 	}
-	const data = await response.json();
-	return data.result;
 }
 export default async function Stats() {
 	const data = await fetchData();

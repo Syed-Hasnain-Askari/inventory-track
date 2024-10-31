@@ -16,7 +16,6 @@ export default function Products({ data }) {
 	const { inventryProducts, isLoading, isError } = useSelector(
 		(state) => state.inventry
 	);
-	const res = categories?.result?.map((item) => item._id === inventryProducts);
 	const { isGrid } = useSelector((state) => state.global);
 	const handleDeleteProduct = (id) => {
 		try {
@@ -54,7 +53,7 @@ export default function Products({ data }) {
 						</div>
 					</div>
 				) : (
-					inventryProducts?.map((product) => {
+					inventryProducts?.map((product, index) => {
 						// Find category name by matching product.category with categories._id
 						const categoryName =
 							categories?.result?.find(
@@ -68,6 +67,7 @@ export default function Products({ data }) {
 							) || "Unknown Manufacturer";
 						return isGrid ? (
 							<GridList
+								index={index}
 								id={product?._id}
 								name={product?.name}
 								description={product?.description}
@@ -77,6 +77,7 @@ export default function Products({ data }) {
 							/>
 						) : (
 							<ProductCard
+								index={index}
 								id={product?._id}
 								name={product?.name}
 								description={product?.description}

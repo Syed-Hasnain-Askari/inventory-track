@@ -5,12 +5,10 @@ import Footer from "../../components/Footer";
 import Products from "../../components/ProductInventry/Products";
 import GridListToggle from "../../components/GridListToggle";
 import Pagination from "../../components/pagination/index";
+import { BASE_URL } from "../../lib/config";
 async function fetchData() {
-	const response = await fetch("http://localhost:3000/api/products/", {
-		cache: "no-cache"
-	});
+	const response = await fetch(`${BASE_URL}/api/products/`);
 	const data = await response.json();
-	console.log(data, "Data");
 	return data;
 }
 const InventoryPage = async () => {

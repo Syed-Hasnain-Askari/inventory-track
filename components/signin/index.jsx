@@ -16,23 +16,28 @@ export default function SignIn({ toggleToSignUp }) {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setLoading(true);
-		setError("");
-		const res = await fetch("http://localhost:3000/api/auth/login", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({ email, password })
-		});
-		const data = await res.json();
-		console.log(data, "data");
-
-		if (!res.ok) {
-			setError(data.message || "Something went wrong");
+		try {
+			setLoading(true);
+			setError("");
+			const res = await fetch("http://localhost:3000/api/auth/login", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({ email, password })
+			});
+			const data = await res.json();
+			console.log(data, "data");
+			if (!res.ok) {
+				setError(data.message || "Something went wrong");
+				setLoading(false);
+			}
+			router.refresh();
+		} catch (error) {
 			setLoading(false);
-			// Redirect or handle successful login
-			router.push("/"); // Redirect to home page
+			console.log(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 	return (

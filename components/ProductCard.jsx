@@ -23,6 +23,7 @@ import {
 } from "./ui/alert-dialog";
 import { EllipsisVertical } from "lucide-react";
 export default function ProductCard({
+	index,
 	name,
 	id,
 	image,
@@ -92,7 +93,7 @@ export default function ProductCard({
 					</div>
 				</div>
 
-				<Link href={`/inventory/${id}`} key={id}>
+				<Link href={`/inventory/${id}`} key={index}>
 					<Image
 						height={300}
 						width={300}

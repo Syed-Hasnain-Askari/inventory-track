@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 const Navbar = () => {
 	const router = useRouter();
 	const [toggle, setToggle] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [isNotification, setIsNotification] = useState(false);
 	const handleToggle = () => {
 		setToggle(!toggle);
@@ -35,8 +36,27 @@ const Navbar = () => {
 	const toggleDarkMode = () => {
 		dispatch(setIsDarkMode(!isDarkMode));
 	};
-	const handleSignOut = () => {
-		router.push("auth/login");
+	const handleSignOut = async () => {
+		try {
+			setLoading(true);
+			const res = await fetch("http://localhost:3000/api/logout", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: ""
+			});
+			if (!res.ok) {
+				setLoading(false);
+				setError(data.message || "Something went wrong");
+			}
+			router.refresh();
+		} catch (error) {
+			setLoading(false);
+			console.log(error);
+		} finally {
+			setLoading(false);
+		}
 	};
 	return (
 		<div className="sticky top-5 z-50 flex justify-between items-center w-full mb-7">
@@ -105,7 +125,11 @@ const Navbar = () => {
 									/>
 								</button>
 							</div>
-							{toggle ? <UserMenu handleSignOut /> : ""}
+							{toggle ? (
+								<UserMenu loading={loading} handleSignOut={handleSignOut} />
+							) : (
+								""
+							)}
 						</div>
 						<span className="font-semibold">Ed Roh</span>
 					</div>

@@ -1,6 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-const dotenv = require("dotenv");
-dotenv.config();
+import { BASE_URL } from "../../../lib/config";
 export const getInventoryProducts = createAsyncThunk(
 	"InventoryProduct/getInventoryProducts",
 	async (payload, thunkAPI) => {
@@ -15,7 +14,9 @@ export const getInventoryProducts = createAsyncThunk(
 			queryParams.append("page", page); // Add page number to query params
 			queryParams.append("limit", limit); // Add limit to query params if needed
 			// Make the request
-			const response = await fetch(`/api/products/?${queryParams.toString()}`);
+			const response = await fetch(
+				`${BASE_URL}/api/products/?${queryParams.toString()}`
+			);
 			// Parse the response
 			return await response.json();
 		} catch (error) {
@@ -29,7 +30,7 @@ export const addProduct = createAsyncThunk(
 	async (payload, thunkAPI) => {
 		try {
 			// 1. First, create the product without the image
-			const productResponse = await fetch(`/api/products/`, {
+			const productResponse = await fetch(`${BASE_URL}/api/products/`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json"
@@ -54,7 +55,7 @@ export const updateProductById = createAsyncThunk(
 		try {
 			console.log(payload, "payload");
 			const { _id, userInpt } = payload;
-			const response = await fetch(`/api/products/${_id}`, {
+			const response = await fetch(`${BASE_URL}/api/products/${_id}`, {
 				method: "PATCH",
 				body: JSON.stringify(userInpt)
 			});
@@ -68,7 +69,7 @@ export const deleteProductById = createAsyncThunk(
 	"InventryProduct/deleteProductById",
 	async (id, thunkAPI) => {
 		try {
-			const response = await fetch(`/api/products/${id}`, {
+			const response = await fetch(`${BASE_URL}/api/products/${id}`, {
 				method: "DELETE"
 			});
 			if (response.status === 204) {
@@ -86,7 +87,9 @@ export const generalSearch = createAsyncThunk(
 	async (search, thunkAPI) => {
 		try {
 			console.log(payload, "payload");
-			const response = await fetch(`/api/products/?search=${search}`);
+			const response = await fetch(
+				`${BASE_URL}/api/products/?search=${search}`
+			);
 			return await response.json();
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error.response);

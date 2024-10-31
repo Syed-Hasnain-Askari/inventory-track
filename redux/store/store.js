@@ -1,5 +1,6 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { inventryProductSlice } from "../feature/slice/inventrySlice";
+import { authSlice } from "../feature/slice/authSlice";
 import { categorySlice } from "../feature/slice/categorySlice";
 import { manufactureSlice } from "../feature/slice/manufactureSlice";
 import { globalSlice } from "../feature/slice/globalSlice";
@@ -16,9 +17,11 @@ import {
 import storage from "redux-persist/lib/storage";
 const persistConfig = {
 	key: "root",
-	storage
+	storage,
+	whitelist: ["auth"] // only navigation will be persisted
 };
 export const rootReducer = combineReducers({
+	auth: authSlice.reducer,
 	inventry: inventryProductSlice.reducer,
 	category: categorySlice.reducer,
 	manufacture: manufactureSlice.reducer,
