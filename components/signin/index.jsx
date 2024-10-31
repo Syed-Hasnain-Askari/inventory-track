@@ -5,6 +5,7 @@ import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useToast } from "../../components//ui/use-toast";
 import Image from "next/image";
+import { BASE_URL } from "../../lib/config";
 export default function SignIn({ toggleToSignUp }) {
 	const { pending } = useFormStatus();
 	const { toast } = useToast();
@@ -19,7 +20,7 @@ export default function SignIn({ toggleToSignUp }) {
 		try {
 			setLoading(true);
 			setError("");
-			const res = await fetch("http://localhost:3000/api/auth/login", {
+			const res = await fetch(`${BASE_URL}/api/auth/login`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json"
