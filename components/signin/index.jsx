@@ -6,13 +6,15 @@ import { useRouter } from "next/navigation";
 import { useToast } from "../../components//ui/use-toast";
 import Image from "next/image";
 import { BASE_URL } from "../../lib/config";
+import { login } from "../../lib/actions/loginActions";
 export default function SignIn({ toggleToSignUp }) {
+	const [state, action] = React.useActionState(login, undefined);
+
 	const { pending } = useFormStatus();
 	const { toast } = useToast();
 	const router = useRouter();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 
 	const handleSubmit = async (e) => {
@@ -59,7 +61,15 @@ export default function SignIn({ toggleToSignUp }) {
 				</div>
 
 				<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-					<form onSubmit={handleSubmit} className="space-y-6">
+					<form
+						onSubmit={async (e) => {
+							e.preventDefault();
+							const formData = new FormData(e.target);
+							const state = await login(state, formData);
+							// handle the response state, like setting errors if needed
+						}}
+						className="space-y-6"
+					>
 						<div>
 							<label
 								htmlFor="email"
@@ -72,13 +82,15 @@ export default function SignIn({ toggleToSignUp }) {
 									id="email"
 									name="email"
 									type="email"
-									required
 									autoComplete="email"
 									onChange={(e) => {
 										setEmail(e.target.value);
 									}}
 									className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 								/>
+								{state?.errors?.email && (
+									<p className="text-sm text-red-500">{state.errors.email}</p>
+								)}
 							</div>
 						</div>
 						<div>
@@ -106,21 +118,20 @@ export default function SignIn({ toggleToSignUp }) {
 									onChange={(e) => {
 										setPassword(e.target.value);
 									}}
-									required
 									autoComplete="current-password"
 									className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 								/>
+								{state?.errors?.password && (
+									<p className="text-sm text-red-500">
+										{state.errors.password}
+									</p>
+								)}
 							</div>
 						</div>
 
 						<div>
-							{error && <p style={{ color: "red" }}>{error}</p>}
-							<button
-								disabled={loading}
-								type="submit"
-								className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-							>
-								{loading ? "Logging in..." : "Login"}
+							<button className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+								Login
 							</button>
 						</div>
 					</form>

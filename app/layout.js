@@ -3,7 +3,7 @@ import React from "react";
 import { Inter } from "next/font/google";
 import DashboardWrapper from "./dashboardWrapper";
 import { Toaster } from "../components/ui/toaster";
-import AuthPage from "./auth/page";
+import SignInPage from "./login/page";
 import { cookies } from "next/headers";
 import Providers from "./components/Provider";
 
@@ -16,7 +16,7 @@ export default async function RootLayout({ children }) {
 		<html lang="en">
 			<body className={inter.className}>
 				<Toaster />
-				{token ? <DashboardWrapper children={children} /> : <AuthPage />}
+				{token ? <DashboardWrapper children={children} /> : <SignInPage />}
 			</body>
 		</html>
 	);
