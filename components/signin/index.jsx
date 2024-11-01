@@ -20,7 +20,7 @@ export default function SignIn({ toggleToSignUp }) {
 		try {
 			setLoading(true);
 			setError("");
-			const res = await fetch(`${BASE_URL}/api/auth/login`, {
+			const res = await fetch(`${BASE_URL}/api/auth`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json"
