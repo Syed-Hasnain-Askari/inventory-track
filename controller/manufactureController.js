@@ -1,8 +1,14 @@
 import connectDB from "../lib/db";
+import { verifyToken } from "../lib/session";
 const Manufacture = require("../models/manufacture");
 export const addManufacture = async function handler(req, res) {
 	await connectDB();
 	if (req.method == "POST") {
+		const { authorized, payload, message } = await verifyToken(req);
+
+		if (!authorized) {
+			return res.status(401).json({ message });
+		}
 		try {
 			if (!req.body) {
 				return res.status(400).json({ message: "No data found" });
@@ -41,6 +47,11 @@ export const addManufacture = async function handler(req, res) {
 export const getManufacture = async function handler(req, res) {
 	await connectDB();
 	if (req.method == "GET") {
+		const { authorized, payload, message } = await verifyToken(req);
+
+		if (!authorized) {
+			return res.status(401).json({ message });
+		}
 		try {
 			const manufactures = await Manufacture.aggregate([
 				{

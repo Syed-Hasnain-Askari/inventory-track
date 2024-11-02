@@ -2,20 +2,26 @@ import Footer from "../../../components/Footer";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { BASE_URL } from "../../../lib/config";
+import { cookies } from "next/headers";
 async function fetchData(id) {
-	const response = await fetch(`http://localhost:3000/api/products/${id}`, {
-		cache: "force-cache" // This makes sure the fetch does not use any cache
+	const session = (await cookies()).get("session")?.value;
+	const response = await fetch(`${BASE_URL}/api/products/${id}/`, {
+		headers: {
+			"Content-Type": "application/json",
+			Cookie: `session=${session}`
+		},
+		credentials: "include" // Optional: may ensure inclusion for cross-origin
 	});
-	if (!response.ok) {
-		throw new Error("Failed to fetch data");
-	}
 	const data = await response.json();
-	return data.result;
+	return data?.result;
 }
-export default async function ProductDetailPage({ params }) {
-	const response = await fetchData(params?.id);
+
+export default async function Page({ params }) {
+	const { id } = await params; // directly destructure params here
+	const response = await fetchData(id);
+	console.log(id, "id");
 	console.log(response, "response");
-	console.log(params.id, "params.id====");
 	const { name, description, price, image, stock } = response;
 	return (
 		<div>

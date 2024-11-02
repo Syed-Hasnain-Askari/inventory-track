@@ -5,18 +5,34 @@ import Footer from "../../components/Footer";
 import { Manufacture } from "../../components/Manufacture/Manufacture";
 import { Sider } from "../../components/Manufacture/Sider";
 import { BASE_URL } from "../../lib/config";
+import { cookies } from "next/headers";
 async function fetchData() {
-	const response = await fetch(`${BASE_URL}/api/manufacture`, {
-		next: { revalidate: 120 }
-	});
-	if (!response.ok) {
-		throw new Error("Failed to fetch data");
+	try {
+		const session = (await cookies()).get("session")?.value;
+		const response = await fetch(`${BASE_URL}/api/manufacture`, {
+			next: { revalidate: 120 },
+			headers: {
+				"Content-Type": "application/json",
+				Cookie: `session=${session}`
+			},
+			credentials: "include" // Optional: may ensure inclusion for cross-origin
+		});
+		const data = await response.json();
+		return data.result;
+	} catch (error) {
+		console.error(error);
 	}
-	const data = await response.json();
-	return data.result;
 }
 export default async function ManufacturePage() {
 	const response = await fetchData();
+	// Handle the case where response is null (i.e., data fetching failed)
+	if (!response) {
+		return (
+			<div>
+				<h1>Error: Product not found or failed to load.</h1>
+			</div>
+		);
+	}
 	return (
 		<React.Fragment>
 			<Header />

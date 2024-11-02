@@ -3,7 +3,6 @@ import * as jose from "jose";
 
 export const verifyToken = async (req) => {
 	const session = req.cookies.session; // Access the cookie directly
-
 	if (!session) {
 		return { authorized: false, message: "Unauthorized request" };
 	}

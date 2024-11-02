@@ -123,7 +123,7 @@ export const getProductByIdService = async (id) => {
 		const product = await Product.findById(id);
 		return product;
 	} catch (error) {
-		throw new Error(error.message);
+		throw new Error(error);
 	}
 };
 export const updateProductByIdService = async (id, data) => {
