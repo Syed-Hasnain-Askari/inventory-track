@@ -10,8 +10,8 @@ import Providers from "./components/Provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export default async function RootLayout({ children }) {
-	const cookieStore = cookies();
-	const token = await cookieStore.get("token")?.value;
+	const cookieStore = await cookies();
+	const token = cookieStore.get("session")?.value;
 	return (
 		<html lang="en">
 			<body className={inter.className}>
