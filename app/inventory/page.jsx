@@ -6,8 +6,16 @@ import Products from "../../components/ProductInventry/Products";
 import GridListToggle from "../../components/GridListToggle";
 import Pagination from "../../components/pagination/index";
 import { BASE_URL } from "../../lib/config";
+import { cookies } from "next/headers";
 async function fetchData() {
-	const response = await fetch(`${BASE_URL}/api/products/`);
+	const session = (await cookies()).get("session")?.value;
+	const response = await fetch(`${BASE_URL}/api/products/`, {
+		headers: {
+			"Content-Type": "application/json",
+			Cookie: `session=${session}`
+		},
+		credentials: "include"
+	});
 	const data = await response.json();
 	return data;
 }
