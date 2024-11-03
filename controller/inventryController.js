@@ -160,9 +160,8 @@ export const updateProductById = async function handler(NextRequest, res, id) {
 export const getLatestProduct = async (NextRequest, res) => {
 	if (NextRequest.method === "GET") {
 		try {
-			const { authorized, payload, message } = await verifyToken(NextRequest);
-
-			if (!authorized) {
+			const { isAuth, payload, message } = await verifyToken(NextRequest);
+			if (!isAuth) {
 				return res.status(401).json({ message });
 			}
 			const { products } = await getLatestProductsServices();
