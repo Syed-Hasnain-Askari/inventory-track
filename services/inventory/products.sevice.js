@@ -118,7 +118,6 @@ export const createProductService = async (
 	}
 };
 export const getProductByIdService = async (id) => {
-	console.log(id, "id===");
 	try {
 		const product = await Product.findById(id);
 		return product;
@@ -127,7 +126,6 @@ export const getProductByIdService = async (id) => {
 	}
 };
 export const updateProductByIdService = async (id, data) => {
-	console.log(id, data, "id, data");
 	try {
 		const updatedProduct = await Product.findByIdAndUpdate(id, data, {
 			new: true, // Return the updated document instead of the old one

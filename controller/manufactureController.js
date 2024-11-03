@@ -1,12 +1,12 @@
 import connectDB from "../lib/db";
 import { verifyToken } from "../lib/session";
+import { getManufactureService } from "../services/manufature/manufature.service";
 const Manufacture = require("../models/manufacture");
 export const addManufacture = async function handler(req, res) {
 	await connectDB();
 	if (req.method == "POST") {
-		const { authorized, payload, message } = await verifyToken(req);
-
-		if (!authorized) {
+		const { isAuth, payload, message } = await verifyToken(req);
+		if (!isAuth) {
 			return res.status(401).json({ message });
 		}
 		try {
@@ -47,53 +47,15 @@ export const addManufacture = async function handler(req, res) {
 export const getManufacture = async function handler(req, res) {
 	await connectDB();
 	if (req.method == "GET") {
-		const { authorized, payload, message } = await verifyToken(req);
-
-		if (!authorized) {
+		const { isAuth, payload, message } = await verifyToken(req);
+		if (!isAuth) {
 			return res.status(401).json({ message });
 		}
 		try {
-			const manufactures = await Manufacture.aggregate([
-				{
-					$lookup: {
-						from: "products",
-						localField: "_id",
-						foreignField: "manufacture",
-						as: "result"
-					}
-				},
-				{
-					$addFields: {
-						total_productCount: {
-							$size: "$result"
-						},
-						total_stock: {
-							$sum: {
-								$map: {
-									input: "$result",
-									as: "product",
-									in: "$$product.stock"
-								}
-							}
-						}
-					}
-				},
-				{
-					$project: {
-						_id: 1,
-						name: 1,
-						image: 1,
-						location: 1,
-						email: 1,
-						contactName: 1,
-						total_productCount: 1,
-						total_stock: 1
-					}
-				}
-			]);
+			const manufacture = await getManufactureService();
 			return res.status(200).json({
 				message: "Manufactures fetched successfully",
-				result: manufactures
+				result: manufacture
 			});
 		} catch (error) {
 			res.status(500).json({ message: "Error fetching manufactures" });
