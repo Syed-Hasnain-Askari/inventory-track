@@ -57,7 +57,7 @@ export default async function Page({ params }) {
 									Button
 								</button>
 								<Link
-									href={`/productinventory/edit/${id}`}
+									href={`/inventory/edit/${id}`}
 									className="focus:outline-none hover:bg-gray-300 rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4"
 								>
 									<svg

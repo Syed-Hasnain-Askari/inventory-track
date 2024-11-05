@@ -1,22 +1,32 @@
 // app/middleware.js
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import * as jose from "jose";
+
+// 1. Specify protected and public routes
+const protectedRoutes = ["/dashboard", "/inventory", "/manufacture"];
+const publicRoutes = ["/login", "/"];
 
 export async function middleware(req) {
-	const jwt = cookies().get("token")?.value;
+	// 2. Check if the current route is protected or public
+	const path = req.nextUrl.pathname;
+	const isProtectedRoute = protectedRoutes.includes(path);
+	const isPublicRoute = publicRoutes.includes(path);
 
-	const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+	// 3. Decrypt the session from the cookie
+	const cookie = cookies().get("session")?.value;
+	const session = await decrypt(cookie);
 
-	if (!jwt) {
-		return NextResponse.redirect(new URL("/login", req.url));
+	// 4. Redirect
+	if (isProtectedRoute && !session?.userId) {
+		return NextResponse.redirect(new URL("/login", req.nextUrl));
 	}
 
-	try {
-		await jose.jwtVerify(jwt, secret);
-		return NextResponse.next(); // Proceed to the requested page
-	} catch (error) {
-		console.error("JWT verification failed:", error);
-		return NextResponse.redirect(new URL("/login", req.url));
+	if (
+		isPublicRoute &&
+		session?.userId &&
+		!req.nextUrl.pathname.startsWith("/dashboard")
+	) {
+		return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
 	}
+	return NextResponse.next(); // Proceed to the requested page
 }

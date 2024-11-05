@@ -1,11 +1,11 @@
 import "./globals.css";
 import React from "react";
 import { Inter } from "next/font/google";
-import DashboardWrapper from "./dashboardWrapper";
+import DashboardWrapper from "./dashboard/dashboardWrapper";
 import { Toaster } from "../components/ui/toaster";
 import SignInPage from "./login/page";
 import { cookies } from "next/headers";
-import Providers from "./components/Provider";
+import { getUserDetails } from "../lib/actions/getUserDetail";
 
 const inter = Inter({ subsets: ["latin"] });
 

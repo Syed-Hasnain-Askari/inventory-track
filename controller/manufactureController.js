@@ -5,7 +5,7 @@ const Manufacture = require("../models/manufacture");
 export const addManufacture = async function handler(req, res) {
 	await connectDB();
 	if (req.method == "POST") {
-		const { isAuth, payload, message } = await verifyToken(req);
+		const { isAuth, payload, message } = await verifyToken();
 		if (!isAuth) {
 			return res.status(401).json({ message });
 		}

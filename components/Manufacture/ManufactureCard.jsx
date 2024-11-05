@@ -49,7 +49,7 @@ export default function ManufactureCard({
 								/>
 							</svg>
 						</AlertDialogTrigger>
-						<AlertDialogContent>
+						<AlertDialogContent style={{ backgroundColor: "#ffffff" }}>
 							<AlertDialogHeader>
 								<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
 								<AlertDialogDescription>

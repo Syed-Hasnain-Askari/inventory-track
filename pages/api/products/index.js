@@ -2,7 +2,6 @@ import {
 	getAllProducts,
 	createProduct
 } from "../../../controller/inventryController";
-import { rateLimit } from "../../../lib/ratelimit";
 import bodyParser from "body-parser";
 
 // Custom middleware to parse JSON bodies with a larger limit

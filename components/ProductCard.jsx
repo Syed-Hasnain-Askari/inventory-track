@@ -52,7 +52,7 @@ export default function ProductCard({
 					<div>
 						<AlertDialog>
 							<Menubar className="border-none">
-								<MenubarMenu>
+								<MenubarMenu style={{ backgroundColor: "#ffffff" }}>
 									<MenubarTrigger>
 										<EllipsisVertical className="w-6 h-6 !text-gray-700 cursor-pointer" />
 									</MenubarTrigger>
@@ -70,7 +70,7 @@ export default function ProductCard({
 								</MenubarMenu>
 							</Menubar>
 
-							<AlertDialogContent>
+							<AlertDialogContent style={{ backgroundColor: "#ffffff" }}>
 								<AlertDialogHeader>
 									<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
 									<AlertDialogDescription>

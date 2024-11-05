@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useEffect } from "react";
-import Navbar from "../components/Navbar";
-import Sidebar from "..//components/Sidebar";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
 import { useSelector } from "react-redux";
-import Providers from "./components/Provider";
-
-const DashboardLayout = ({ children }) => {
+import Providers from "../components/Provider";
+import { getUserDetails } from "../../lib/actions/getUserDetail";
+const DashboardLayout = ({ children, user }) => {
 	const { isDarkMode, isSidebarCollapsed } = useSelector(
 		(state) => state.global
 	);
@@ -23,19 +23,10 @@ const DashboardLayout = ({ children }) => {
 					isSidebarCollapsed ? "md:pl-24" : "md:pl-72"
 				}`}
 			>
-				<Navbar />
+				<Navbar user={user} />
 				{children}
 			</main>
 		</div>
 	);
 };
-
-const DashboardWrapper = ({ children }) => {
-	return (
-		<Providers>
-			<DashboardLayout>{children}</DashboardLayout>
-		</Providers>
-	);
-};
-
-export default DashboardWrapper;
+export default DashboardLayout;

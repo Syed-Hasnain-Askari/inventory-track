@@ -10,9 +10,10 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UserMenu from "../../app/components/UserMenu";
 import Notification from "../../components/notification";
-import { signOut, useSession } from "next-auth/react";
+import { logout } from "../../lib/actions/logoutAction";
 import { useRouter } from "next/navigation";
-const Navbar = () => {
+const Navbar = ({ user }) => {
+	console.log(user, "user details");
 	const router = useRouter();
 	const [toggle, setToggle] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -37,26 +38,7 @@ const Navbar = () => {
 		dispatch(setIsDarkMode(!isDarkMode));
 	};
 	const handleSignOut = async () => {
-		try {
-			setLoading(true);
-			const res = await fetch("http://localhost:3000/api/logout", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: ""
-			});
-			if (!res.ok) {
-				setLoading(false);
-				setError(data.message || "Something went wrong");
-			}
-			router.refresh();
-		} catch (error) {
-			setLoading(false);
-			console.log(error);
-		} finally {
-			setLoading(false);
-		}
+		await logout();
 	};
 	return (
 		<div className="sticky top-5 z-50 flex justify-between items-center w-full mb-7">
@@ -131,7 +113,7 @@ const Navbar = () => {
 								""
 							)}
 						</div>
-						<span className="font-semibold">Ed Roh</span>
+						<span className="font-semibold">{user?.username}</span>
 					</div>
 				</div>
 				<Link href="/settings">

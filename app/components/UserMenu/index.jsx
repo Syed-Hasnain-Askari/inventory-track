@@ -36,7 +36,7 @@ export default function UserMenu({ loading, status, handleSignOut }) {
 				tabindex="-1"
 				id="user-menu-item-2"
 			>
-				{loading ? <Spinner /> : "Signout"}
+				Signout
 			</button>
 		</div>
 	);
