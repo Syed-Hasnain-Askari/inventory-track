@@ -1,48 +1,25 @@
 "use client";
-import { getSession, signIn } from "next-auth/react";
-import React from "react";
-import { useFormStatus } from "react-dom";
-import { useToast } from "../../components//ui/use-toast";
+import React, { useEffect } from "react";
+import { useToast } from "../ui/use-toast";
 import Image from "next/image";
-import { BASE_URL } from "../../lib/config";
 import { loginAction } from "../../app/login/action";
 export default function SignIn({ toggleToSignUp }) {
+	const { toast } = useToast();
 	const INITIAL_STATE = {
 		data: null
 	};
-	const [formState, formAction] = React.useActionState(
+	const [formState, formAction, pending] = React.useActionState(
 		loginAction,
 		INITIAL_STATE
 	);
-	console.log(formState, "formState=======");
-	const { pending } = useFormStatus();
-
-	// const handleSubmit = async (e) => {
-	// 	e.preventDefault();
-	// 	try {
-	// 		setLoading(true);
-	// 		setError("");
-	// 		const res = await fetch(`${BASE_URL}/api/auth`, {
-	// 			method: "POST",
-	// 			headers: {
-	// 				"Content-Type": "application/json"
-	// 			},
-	// 			body: JSON.stringify({ email, password })
-	// 		});
-	// 		const data = await res.json();
-	// 		console.log(data, "data");
-	// 		if (!res.ok) {
-	// 			setError(data.message || "Something went wrong");
-	// 			setLoading(false);
-	// 		}
-	// 		router.refresh();
-	// 	} catch (error) {
-	// 		setLoading(false);
-	// 		console.log(error);
-	// 	} finally {
-	// 		setLoading(false);
-	// 	}
-	// };
+	useEffect(() => {
+		if (formState?.errors?.message) {
+			toast({
+				title: `Uh oh! ${formState.errors.message}.`
+			});
+		}
+	}, [formState?.errors?.message]);
+	console.log(formState);
 	return (
 		<React.Fragment>
 			<div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -75,7 +52,7 @@ export default function SignIn({ toggleToSignUp }) {
 									name="email"
 									type="email"
 									autoComplete="email"
-									className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+									className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6"
 								/>
 								{formState?.errors?.email && (
 									<p className="text-sm text-red-500">
@@ -107,7 +84,7 @@ export default function SignIn({ toggleToSignUp }) {
 									name="password"
 									type="password"
 									autoComplete="current-password"
-									className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+									className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6"
 								/>
 								{formState?.errors?.password && (
 									<p className="text-sm text-red-500">
@@ -116,7 +93,6 @@ export default function SignIn({ toggleToSignUp }) {
 								)}
 							</div>
 						</div>
-
 						<div>
 							<button
 								type="submit"
@@ -153,15 +129,6 @@ export default function SignIn({ toggleToSignUp }) {
 							</button>
 						</div>
 					</form>
-					<p className="mt-10 text-center text-sm text-gray-500">
-						Don't have an account?{" "}
-						<button
-							onClick={toggleToSignUp}
-							className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-						>
-							Sign Up
-						</button>
-					</p>
 				</div>
 			</div>
 		</React.Fragment>

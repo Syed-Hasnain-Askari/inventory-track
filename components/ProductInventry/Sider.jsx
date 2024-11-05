@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getManufacture } from "../..//redux/feature/reducer/manufactureReducer";
 export const Sider = () => {
 	const dispatch = useDispatch();
+
+	const [isManufactureOpen, setIsManufactureOpen] = useState(false);
 	const { categories } = useSelector((state) => state.category);
 	const { manufactureList } = useSelector((state) => state.manufacture);
 	const [option, setOption] = useState({ manufacture: "", category: "" });
@@ -44,31 +46,41 @@ export const Sider = () => {
 	return (
 		<React.Fragment>
 			<div className="lg:col-span-3 col-span-12 w-full sm:w-auto">
+				{/* Manufacture Selector */}
 				<div>
-					<lable className="font-semibold text-sm">Manufacture</lable>
-					<Select onValueChange={handleManufactureChange}>
+					<label className="font-semibold text-sm">Manufacture</label>
+					<Select
+						onValueChange={handleManufactureChange}
+						onOpenChange={(open) => setIsManufactureOpen(open)} // Track open state
+					>
 						<SelectTrigger className="w-full sm:w-[200px] mt-3">
 							<SelectValue placeholder="Select" />
 						</SelectTrigger>
 						<SelectContent>
-							{manufactureList?.map((item) => {
-								return <SelectItem value={item?._id}>{item?.name}</SelectItem>;
-							})}
+							{manufactureList?.map((item) => (
+								<SelectItem key={item?._id} value={item?._id}>
+									{item?.name}
+								</SelectItem>
+							))}
 						</SelectContent>
 					</Select>
 				</div>
-				<div className="mt-10">
-					<lable className="font-semibold text-sm">Category</lable>
+
+				{/* Category Selector */}
+				<div className={`mt-10 ${isManufactureOpen ? "mt-40" : ""}`}>
+					{" "}
+					{/* Adjust margin based on open state */}
+					<label className="font-semibold text-sm">Category</label>
 					<Select onValueChange={handleCategoryChange}>
 						<SelectTrigger className="w-full sm:w-[200px] mt-3">
 							<SelectValue placeholder="Select" />
 						</SelectTrigger>
 						<SelectContent>
-							{categories?.result?.map((category) => {
-								return (
-									<SelectItem value={category._id}>{category.name}</SelectItem>
-								);
-							})}
+							{categories?.result?.map((category) => (
+								<SelectItem key={category._id} value={category._id}>
+									{category.name}
+								</SelectItem>
+							))}
 						</SelectContent>
 					</Select>
 				</div>

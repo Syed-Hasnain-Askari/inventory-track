@@ -1,31 +1,4 @@
 import Image from "next/image";
-const brandData = [
-	{
-		logo: "/images/brand/brand-hp.svg",
-		name: "HP",
-		visitors: 3.5,
-		revenues: "5,768",
-		sales: 590,
-		conversion: 4.8
-	},
-	{
-		logo: "/images/brand/brand-microsoft.svg",
-		name: "Microsoft",
-		visitors: 2.2,
-		revenues: "4,635",
-		sales: 467,
-		conversion: 4.3
-	},
-	{
-		logo: "/images/brand/brand-apple.svg",
-		name: "Apple",
-		visitors: 2.1,
-		revenues: "4,290",
-		sales: 420,
-		conversion: 3.7
-	}
-];
-
 const TableOne = ({ data }) => {
 	return (
 		<div className="rounded-[10px] bg-white px-7.5 pb-4 pt-7.5 shadow-lg dark:bg-gray-dark dark:shadow-card">
