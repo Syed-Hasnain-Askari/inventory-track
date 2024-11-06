@@ -4,9 +4,7 @@ export const getManufacture = createAsyncThunk(
 	"Manufacture/getManufacture",
 	async (thunkAPI) => {
 		try {
-			const response = await fetch(`/api/manufacture`, {
-				next: { revalidate: 3600 }
-			});
+			const response = await fetch(`/api/manufacture`);
 			return await response.json();
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error.response);

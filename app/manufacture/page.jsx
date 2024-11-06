@@ -10,7 +10,6 @@ async function fetchData() {
 	try {
 		const session = (await cookies()).get("session")?.value;
 		const response = await fetch(`${BASE_URL}/api/manufacture`, {
-			next: { revalidate: 120 },
 			headers: {
 				"Content-Type": "application/json",
 				Cookie: `session=${session}`
