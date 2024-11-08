@@ -4,8 +4,6 @@ import React, { useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
 import { useSelector } from "react-redux";
-import Providers from "../components/Provider";
-import { getUserDetails } from "../../lib/actions/getUserDetail";
 const DashboardLayout = ({ children, user }) => {
 	const { isDarkMode, isSidebarCollapsed } = useSelector(
 		(state) => state.global

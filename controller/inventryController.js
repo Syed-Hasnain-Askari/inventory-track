@@ -14,16 +14,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "../lib/session";
 // Ensure you have the correct path
 
-export const getAllProducts = async (NextRequest, res) => {
-	await connectDB();
-	if (NextRequest.method === "GET") {
-		const { isAuth, payload, message } = await verifyToken(NextRequest);
+export const getAllProducts = async (req, res) => {
+	if (req.method === "GET") {
+		const sessionToken = req.cookies.session;
+		const { isAuth, payload, message } = await verifyToken(sessionToken);
 		if (!isAuth) {
 			return res.status(401).json({ message });
 		}
 		try {
-			const { search, category, manufacture, page, limit } = NextRequest.query;
-			console.log(NextRequest.query, "NextRequest.query");
+			await connectDB();
+			const { search, category, manufacture, page, limit } = req.query;
 
 			// Call the service to fetch products
 			const { searchResult, products, pagination } = await fetchProducts({
@@ -51,23 +51,20 @@ export const getAllProducts = async (NextRequest, res) => {
 	}
 };
 
-export const createProduct = async function handler(NextRequest, res) {
-	await connectDB();
-	if (NextRequest.method === "POST") {
-		const { isAuth, payload, message } = await verifyToken(NextRequest);
+export const createProduct = async function handler(req, res) {
+	if (req.method === "POST") {
+		const sessionToken = req.cookies.session;
+		const { isAuth, payload, message } = await verifyToken(sessionToken);
 
 		if (!isAuth) {
 			return res.status(401).json({ message });
 		}
 		try {
-			console.log(NextRequest?.body);
-
-			const upload = await uploadOnCloudinary(NextRequest?.body?.image);
-			console.log(upload, "Response from clounary");
-
+			await connectDB();
+			const upload = await uploadOnCloudinary(req?.body?.image);
 			// const { name, price, description, stock, category, manufacture, image } =
-			// 	NextRequest.body;
-			// console.log(NextRequest.body, "NextRequest.body===");
+			// 	req.body;
+			// console.log(req.body, "req.body===");
 			// // Ensure all fields are present
 			// if (
 			// 	!manufacture ||
@@ -100,20 +97,20 @@ export const createProduct = async function handler(NextRequest, res) {
 	} else {
 		// Handle any other HTTP method
 		res.setHeader("Allow", ["POST"]);
-		res.status(405).end(`Method ${NextRequest.method} Not Allowed`);
+		res.status(405).end(`Method ${req.method} Not Allowed`);
 	}
 };
-export const getProductById = async (NextRequest, res, id) => {
-	await connectDB();
-	if (NextRequest.method === "GET") {
-		const { isAuth, payload, message } = await verifyToken(NextRequest);
+export const getProductById = async (req, res, id) => {
+	const sessionToken = req.cookies.session;
+	if (req.method === "GET") {
+		const { isAuth, payload, message } = await verifyToken(sessionToken);
 
 		if (!isAuth) {
 			// Corrected condition to check if the user is not authorized
 			return res.status(401).json({ message });
 		}
-
 		try {
+			await connectDB();
 			const product = await getProductByIdService(id);
 			return res.status(200).json({
 				result: product
@@ -128,18 +125,19 @@ export const getProductById = async (NextRequest, res, id) => {
 	}
 };
 
-export const updateProductById = async function handler(NextRequest, res, id) {
-	await connectDB();
-	if (NextRequest.method === "PATCH") {
-		const { authorized, payload, message } = await verifyToken(NextRequest);
+export const updateProductById = async function handler(req, res, id) {
+	const sessionToken = req.cookies.session;
+	if (req.method === "PATCH") {
+		const { isAuth, payload, message } = await verifyToken(sessionToken);
 
-		if (!authorized) {
+		if (!isAuth) {
 			return res.status(401).json({ message });
 		}
 		try {
-			const response = await updateProductByIdService(id, NextRequest.body);
+			await connectDB();
+			const response = await updateProductByIdService(id, req.body);
 			console.log(response, "response====");
-			console.log(NextRequest.body, "NextRequest.body====");
+			console.log(req.body, "req.body====");
 			if (!response) {
 				res.status(404).json({ message: "Product is not found" });
 			}
@@ -157,13 +155,17 @@ export const updateProductById = async function handler(NextRequest, res, id) {
 		res.status(405).json({ message: "Method not allowed" });
 	}
 };
-export const getLatestProduct = async (NextRequest, res) => {
-	if (NextRequest.method === "GET") {
+export const getLatestProduct = async (req, res) => {
+	if (req.method === "GET") {
+		const sessionToken = req.cookies.session;
 		try {
-			const { isAuth, payload, message } = await verifyToken(NextRequest);
+			const { isAuth, message } = await verifyToken(sessionToken);
+			console.log(isAuth, message, "isAuth, message");
+
 			if (!isAuth) {
 				return res.status(401).json({ message });
 			}
+			await connectDB();
 			const { products } = await getLatestProductsServices();
 			return res.status(200).json({
 				result: products
@@ -177,23 +179,22 @@ export const getLatestProduct = async (NextRequest, res) => {
 		res.status(500).json({ message: "This method is not allowed" });
 	}
 };
-export const deleteProductById = async function handler(NextRequest, res) {
-	await connectDB();
-	// Ensure the NextRequestuest method is DELETE
-	if (NextRequest.method === "DELETE") {
-		const { authorized, payload, message } = await verifyToken(NextRequest);
+export const deleteProductById = async function handler(req, res) {
+	const sessionToken = req.cookies.session;
+	// Ensure the request method is DELETE
+	if (req.method === "DELETE") {
+		const { authorized, payload, message } = await verifyToken(sessionToken);
 
 		if (!authorized) {
 			return res.status(401).json({ message });
 		}
-		const { id } = NextRequest.query; // Assuming the ID is passed via query parameters
+		const { id } = req.query; // Assuming the ID is passed via query parameters
 
 		if (!id) {
-			return res
-				.status(400)
-				.json({ message: "Product ID is NextRequestuired" });
+			return res.status(400).json({ message: "Product ID is required" });
 		}
 		try {
+			await connectDB();
 			const product = await Product.findByIdAndDelete(id);
 
 			if (!product) {

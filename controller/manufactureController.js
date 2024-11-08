@@ -3,13 +3,14 @@ import { verifyToken } from "../lib/session";
 import { getManufactureService } from "../services/manufature/manufature.service";
 const Manufacture = require("../models/manufacture");
 export const addManufacture = async function handler(req, res) {
-	await connectDB();
 	if (req.method == "POST") {
-		const { isAuth, payload, message } = await verifyToken();
+		const sessionToken = req.cookies.session;
+		const { isAuth, payload, message } = await verifyToken(sessionToken);
 		if (!isAuth) {
 			return res.status(401).json({ message });
 		}
 		try {
+			await connectDB();
 			if (!req.body) {
 				return res.status(400).json({ message: "No data found" });
 			}
@@ -45,13 +46,14 @@ export const addManufacture = async function handler(req, res) {
 	}
 };
 export const getManufacture = async function handler(req, res) {
-	await connectDB();
 	if (req.method == "GET") {
-		const { isAuth, payload, message } = await verifyToken(req);
+		const sessionToken = req.cookies.session;
+		const { isAuth, payload, message } = await verifyToken(sessionToken);
 		if (!isAuth) {
 			return res.status(401).json({ message });
 		}
 		try {
+			await connectDB();
 			const manufacture = await getManufactureService();
 			return res.status(200).json({
 				message: "Manufactures fetched successfully",

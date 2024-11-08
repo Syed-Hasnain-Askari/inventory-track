@@ -9,7 +9,6 @@ import {
 	SelectValue
 } from "../components/ui/select";
 import Footer from "../components/Footer";
-import { signOut, useSession } from "next-auth/react";
 import { getProducts } from "../lib/methods";
 export default async function Page() {
 	const response = await getProducts();

@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useToast } from "../../components//ui/use-toast";
-import { useSession } from "next-auth/react";
 import { userProfileAction } from "../data/actions/auth-actions";
 import ImageUploader from "../../components/imageuploader";
 const SettingBoxes = () => {
