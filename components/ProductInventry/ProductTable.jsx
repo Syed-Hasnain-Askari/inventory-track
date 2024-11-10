@@ -19,6 +19,7 @@ import {
 } from "../ui/card";
 import { useRouter } from "next/navigation";
 import { Product } from "../../app/inventory/product";
+import Spinner from "../Spinner";
 
 export function ProductsTable({ data }) {
 	const { categories } = useSelector((state) => state.category);
@@ -61,9 +62,19 @@ export function ProductsTable({ data }) {
 			</TableHeader>
 
 			<TableBody>
-				{inventryProducts?.map((product) => (
-					<Product key={product._id} product={product} />
-				))}
+				{inventryProducts?.length === 0 ? (
+					// Show "No products found" when the list is empty
+					<div className="flex justify-center items-center h-full">
+						<p className="text-center text-gray-500 font-semibold">
+							No products found
+						</p>
+					</div>
+				) : (
+					// Render products when there are items in the list
+					inventryProducts?.map((product) => (
+						<Product key={product._id} product={product} />
+					))
+				)}
 			</TableBody>
 		</Table>
 	);

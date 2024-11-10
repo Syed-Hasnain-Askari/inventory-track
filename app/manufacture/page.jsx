@@ -9,29 +9,20 @@ import { cookies } from "next/headers";
 async function fetchData() {
 	try {
 		const session = (await cookies()).get("session")?.value;
-		const response = await fetch(`${BASE_URL}/api/manufacture`, {
+		const response = await fetch(`${BASE_URL}/api/manufacture/`, {
 			headers: {
-				"Content-Type": "application/json",
-				Cookie: `session=${session}`
+				"Content-Type": "application/json"
 			},
 			credentials: "include" // Optional: may ensure inclusion for cross-origin
 		});
 		const data = await response.json();
-		return data.result;
+		return data;
 	} catch (error) {
 		console.error(error);
 	}
 }
 export default async function ManufacturePage() {
-	const response = await fetchData();
-	// Handle the case where response is null (i.e., data fetching failed)
-	if (!response) {
-		return (
-			<div>
-				<h1>Error: Product not found or failed to load.</h1>
-			</div>
-		);
-	}
+	const data = await fetchData();
 	return (
 		<React.Fragment>
 			<Header />
@@ -43,7 +34,7 @@ export default async function ManufacturePage() {
 					<Sider />
 				</aside>
 				<div className="col-span-9">
-					<Manufacture data={response} />
+					<Manufacture data={data} />
 				</div>
 			</div>
 			<Footer />

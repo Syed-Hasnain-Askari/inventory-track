@@ -5,9 +5,9 @@ const Manufacture = require("../models/manufacture");
 export const addManufacture = async function handler(req, res) {
 	if (req.method == "POST") {
 		const sessionToken = req.cookies.session;
-		const { isAuth, payload, message } = await verifyToken(sessionToken);
+		const { isAuth } = await verifyToken(sessionToken);
 		if (!isAuth) {
-			return res.status(401).json({ message });
+			return res.status(401).json({ message: "UnAuthorized" });
 		}
 		try {
 			await connectDB();
@@ -48,9 +48,10 @@ export const addManufacture = async function handler(req, res) {
 export const getManufacture = async function handler(req, res) {
 	if (req.method == "GET") {
 		const sessionToken = req.cookies.session;
-		const { isAuth, payload, message } = await verifyToken(sessionToken);
+		const { isAuth } = await verifyToken(sessionToken);
+		console.log(isAuth, "isAuth");
 		if (!isAuth) {
-			return res.status(401).json({ message });
+			return res.status(401).json({ message: "UnAuthorized" });
 		}
 		try {
 			await connectDB();

@@ -19,7 +19,6 @@ export default function SignIn({ toggleToSignUp }) {
 			});
 		}
 	}, [formState?.errors?.message]);
-	console.log(formState);
 	return (
 		<React.Fragment>
 			<div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">

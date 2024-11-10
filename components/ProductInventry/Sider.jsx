@@ -12,6 +12,7 @@ import { getInventoryProducts } from "../../redux/feature/reducer/inventryReduce
 import { getCategories } from "../../redux/feature/reducer/categoryReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { getManufacture } from "../..//redux/feature/reducer/manufactureReducer";
+import { Card, CardContent } from "../ui/card";
 export const Sider = () => {
 	const dispatch = useDispatch();
 
@@ -45,9 +46,10 @@ export const Sider = () => {
 	};
 	return (
 		<React.Fragment>
-			<div className="lg:col-span-3 col-span-12 w-full sm:w-auto">
-				{/* Manufacture Selector */}
-				<div>
+			<Card>
+				<CardContent>
+					{/* Manufacture Selector */}
+
 					<label className="font-semibold text-sm">Manufacture</label>
 					<Select
 						onValueChange={handleManufactureChange}
@@ -64,27 +66,26 @@ export const Sider = () => {
 							))}
 						</SelectContent>
 					</Select>
-				</div>
 
-				{/* Category Selector */}
-				<div className={`mt-10 ${isManufactureOpen ? "mt-40" : ""}`}>
-					{" "}
-					{/* Adjust margin based on open state */}
-					<label className="font-semibold text-sm">Category</label>
-					<Select onValueChange={handleCategoryChange}>
-						<SelectTrigger className="w-full sm:w-[200px] mt-3">
-							<SelectValue placeholder="Select" />
-						</SelectTrigger>
-						<SelectContent>
-							{categories?.result?.map((category) => (
-								<SelectItem key={category._id} value={category._id}>
-									{category.name}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				</div>
-			</div>
+					{/* Category Selector */}
+					<div className={`mt-10 ${isManufactureOpen ? "mt-40" : ""}`}>
+						{/* Adjust margin based on open state */}
+						<label className="font-semibold text-sm">Category</label>
+						<Select onValueChange={handleCategoryChange}>
+							<SelectTrigger className="w-full sm:w-[200px] mt-3">
+								<SelectValue placeholder="Select" />
+							</SelectTrigger>
+							<SelectContent>
+								{categories?.result?.map((category) => (
+									<SelectItem key={category._id} value={category._id}>
+										{category.name}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
+				</CardContent>
+			</Card>
 		</React.Fragment>
 	);
 };

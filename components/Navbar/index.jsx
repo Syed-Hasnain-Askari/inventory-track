@@ -12,6 +12,9 @@ import UserMenu from "../../app/components/UserMenu";
 import Notification from "../../components/notification";
 import { logout } from "../../lib/actions/logoutAction";
 import { useRouter } from "next/navigation";
+import { useDebouncedCallback } from "use-debounce";
+import { getInventoryProducts } from "../../redux/feature/reducer/inventryReducer";
+import Search from "../search";
 const Navbar = ({ user }) => {
 	console.log(user, "user details");
 	const router = useRouter();
@@ -40,6 +43,10 @@ const Navbar = ({ user }) => {
 	const handleSignOut = async () => {
 		await logout();
 	};
+	const handleSearchChange = useDebouncedCallback((value) => {
+		const search = value;
+		dispatch(getInventoryProducts({ search }));
+	}, 2000);
 	return (
 		<div className="sticky top-5 z-50 flex justify-between items-center w-full mb-7">
 			{/* LEFT SIDE */}
@@ -51,17 +58,7 @@ const Navbar = ({ user }) => {
 					<Menu className="w-4 h-4" />
 				</button>
 
-				<div className="relative">
-					<input
-						type="search"
-						placeholder="Start type to search groups & products"
-						className="pl-10 pr-4 py-2 w-50 md:w-60 border-2 border-gray-300 bg-white rounded-lg focus:outline-none focus:border-blue-500"
-					/>
-
-					<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-non">
-						<Bell className="text-gray-500" size={20} />
-					</div>
-				</div>
+				<Search handleSearchChange={handleSearchChange} />
 			</div>
 
 			{/* RIGHT SIDE */}

@@ -18,8 +18,10 @@ export const getAllProducts = async (req, res) => {
 	if (req.method === "GET") {
 		const sessionToken = req.cookies.session;
 		const { isAuth, payload, message } = await verifyToken(sessionToken);
+		console.log(isAuth, payload, message, "isAuth, payload, message");
+
 		if (!isAuth) {
-			return res.status(401).json({ message });
+			return res.status(401).json({ message: "Failed to verify session" });
 		}
 		try {
 			await connectDB();
@@ -55,9 +57,10 @@ export const createProduct = async function handler(req, res) {
 	if (req.method === "POST") {
 		const sessionToken = req.cookies.session;
 		const { isAuth, payload, message } = await verifyToken(sessionToken);
+		console.log(isAuth, payload, message, "isAuth, payload, message");
 
 		if (!isAuth) {
-			return res.status(401).json({ message });
+			return res.status(401).json({ message: "Failed to verify session" });
 		}
 		try {
 			await connectDB();
@@ -101,13 +104,13 @@ export const createProduct = async function handler(req, res) {
 	}
 };
 export const getProductById = async (req, res, id) => {
-	const sessionToken = req.cookies.session;
 	if (req.method === "GET") {
+		const sessionToken = req.cookies.session;
 		const { isAuth, payload, message } = await verifyToken(sessionToken);
+		console.log(isAuth, payload, message, "isAuth, payload, message");
 
 		if (!isAuth) {
-			// Corrected condition to check if the user is not authorized
-			return res.status(401).json({ message });
+			return res.status(401).json({ message: "Failed to verify session" });
 		}
 		try {
 			await connectDB();
@@ -126,12 +129,13 @@ export const getProductById = async (req, res, id) => {
 };
 
 export const updateProductById = async function handler(req, res, id) {
-	const sessionToken = req.cookies.session;
 	if (req.method === "PATCH") {
+		const sessionToken = req.cookies.session;
 		const { isAuth, payload, message } = await verifyToken(sessionToken);
+		console.log(isAuth, payload, message, "isAuth, payload, message");
 
 		if (!isAuth) {
-			return res.status(401).json({ message });
+			return res.status(401).json({ message: "Failed to verify session" });
 		}
 		try {
 			await connectDB();
@@ -158,13 +162,13 @@ export const updateProductById = async function handler(req, res, id) {
 export const getLatestProduct = async (req, res) => {
 	if (req.method === "GET") {
 		const sessionToken = req.cookies.session;
-		try {
-			const { isAuth, message } = await verifyToken(sessionToken);
-			console.log(isAuth, message, "isAuth, message");
+		const { isAuth, payload, message } = await verifyToken(sessionToken);
+		console.log(isAuth, payload, message, "isAuth, payload, message");
 
-			if (!isAuth) {
-				return res.status(401).json({ message });
-			}
+		if (!isAuth) {
+			return res.status(401).json({ message: "Failed to verify session" });
+		}
+		try {
 			await connectDB();
 			const { products } = await getLatestProductsServices();
 			return res.status(200).json({
@@ -180,16 +184,16 @@ export const getLatestProduct = async (req, res) => {
 	}
 };
 export const deleteProductById = async function handler(req, res) {
-	const sessionToken = req.cookies.session;
 	// Ensure the request method is DELETE
 	if (req.method === "DELETE") {
-		const { authorized, payload, message } = await verifyToken(sessionToken);
+		const sessionToken = req.cookies.session;
+		const { isAuth, payload, message } = await verifyToken(sessionToken);
+		console.log(isAuth, payload, message, "isAuth, payload, message");
 
-		if (!authorized) {
-			return res.status(401).json({ message });
+		if (!isAuth) {
+			return res.status(401).json({ message: "Failed to verify session" });
 		}
 		const { id } = req.query; // Assuming the ID is passed via query parameters
-
 		if (!id) {
 			return res.status(400).json({ message: "Product ID is required" });
 		}
