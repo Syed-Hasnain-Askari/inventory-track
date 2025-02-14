@@ -19,9 +19,11 @@ import {
 } from "../ui/card";
 import { useRouter } from "next/navigation";
 import { Product } from "../../app/inventory/product";
-import Spinner from "../Spinner";
+import { useToast } from "../../components/ui/use-toast";
+import { deleteProductById } from "../../redux/feature/reducer/inventryReducer";
 
 export function ProductsTable({ data }) {
+	const { toast } = useToast();
 	const { categories } = useSelector((state) => state.category);
 	const { manufactureList } = useSelector((state) => state.manufacture);
 
@@ -39,6 +41,20 @@ export function ProductsTable({ data }) {
 	function nextPage() {
 		router.push(`/?offset=${offset}`, { scroll: false });
 	}
+	const handleDeleteProduct = (id) => {
+		try {
+			dispatch(deleteProductById(id));
+			toast({
+				title: "Success!",
+				description: "Product deleted successfully!"
+			});
+		} catch (error) {
+			toast({
+				title: "Uh oh! Something went wrong.",
+				description: "There was a problem with your request."
+			});
+		}
+	};
 	useEffect(() => {
 		if (data) {
 			dispatch(getProducts(data));
@@ -72,7 +88,11 @@ export function ProductsTable({ data }) {
 				) : (
 					// Render products when there are items in the list
 					inventryProducts?.map((product) => (
-						<Product key={product._id} product={product} />
+						<Product
+							id={product._id}
+							product={product}
+							handleDeleteProduct={handleDeleteProduct}
+						/>
 					))
 				)}
 			</TableBody>

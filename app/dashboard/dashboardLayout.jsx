@@ -3,8 +3,9 @@
 import React, { useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
+import ChatBotBubble from "../../components/BubbleChatBot";
 import { useSelector } from "react-redux";
-const DashboardLayout = ({ children, user }) => {
+const DashboardLayout = ({ children, username }) => {
 	const { isDarkMode, isSidebarCollapsed } = useSelector(
 		(state) => state.global
 	);
@@ -21,8 +22,9 @@ const DashboardLayout = ({ children, user }) => {
 					isSidebarCollapsed ? "md:pl-24" : "md:pl-72"
 				}`}
 			>
-				<Navbar user={user} />
+				<Navbar username={username} />
 				{children}
+				<ChatBotBubble />
 			</main>
 		</div>
 	);

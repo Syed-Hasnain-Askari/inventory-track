@@ -20,7 +20,8 @@ async function fetchData() {
 			"Content-Type": "application/json",
 			Cookie: `session=${session}`
 		},
-		credentials: "include"
+		credentials: "include",
+		cache: "force-cache"
 	});
 	const data = await response.json();
 	return data;

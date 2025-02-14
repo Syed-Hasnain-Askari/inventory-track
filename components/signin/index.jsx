@@ -15,6 +15,7 @@ export default function SignIn({ toggleToSignUp }) {
 	useEffect(() => {
 		if (formState?.errors?.message) {
 			toast({
+				variant: "destructive",
 				title: `Uh oh! ${formState.errors.message}.`
 			});
 		}

@@ -15,8 +15,7 @@ import { useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { getInventoryProducts } from "../../redux/feature/reducer/inventryReducer";
 import Search from "../search";
-const Navbar = ({ user }) => {
-	console.log(user, "user details");
+const Navbar = ({ username }) => {
 	const router = useRouter();
 	const [toggle, setToggle] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -110,7 +109,7 @@ const Navbar = ({ user }) => {
 								""
 							)}
 						</div>
-						<span className="font-semibold">{user?.username}</span>
+						<span className="font-semibold">{username}</span>
 					</div>
 				</div>
 				<Link href="/settings">

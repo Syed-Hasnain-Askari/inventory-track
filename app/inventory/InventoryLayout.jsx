@@ -1,11 +1,11 @@
 import React from "react";
-import { Header as ProductInventryHeader } from "../../components/ProductInventry/Header";
+import { Header as ProductInventoryHeader } from "../../components/ProductInventry/Header";
 import { Sider } from "../../components/ProductInventry/Sider";
 const InventoryLayout = ({ children }) => {
 	return (
 		<div className="grid grid-cols-12 gap-4">
 			<div className="col-span-12">
-				<ProductInventryHeader />
+				<ProductInventoryHeader />
 			</div>
 			<aside className="lg:col-span-3 col-span-12 w-full sm:w-auto">
 				<Sider />
