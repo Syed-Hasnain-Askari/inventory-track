@@ -18,7 +18,6 @@ export const getAllProducts = async (req, res) => {
 	if (req.method === "GET") {
 		const sessionToken = req.cookies.session;
 		const { isAuth, payload, message } = await verifyToken(sessionToken);
-		console.log(isAuth, payload, message, "isAuth, payload, message");
 
 		if (!isAuth) {
 			return res.status(401).json({ message: "Failed to verify session" });
@@ -57,14 +56,13 @@ export const createProduct = async function handler(req, res) {
 	if (req.method === "POST") {
 		const sessionToken = req.cookies.session;
 		const { isAuth, payload, message } = await verifyToken(sessionToken);
-		console.log(isAuth, payload, message, "isAuth, payload, message");
 
 		if (!isAuth) {
 			return res.status(401).json({ message: "Failed to verify session" });
 		}
 		try {
 			await connectDB();
-			const upload = await uploadOnCloudinary(req?.body?.image);
+			//const upload = await uploadOnCloudinary(req?.body?.image);
 			// const { name, price, description, stock, category, manufacture, image } =
 			// 	req.body;
 			// console.log(req.body, "req.body===");
@@ -107,7 +105,6 @@ export const getProductById = async (req, res, id) => {
 	if (req.method === "GET") {
 		const sessionToken = req.cookies.session;
 		const { isAuth, payload, message } = await verifyToken(sessionToken);
-		console.log(isAuth, payload, message, "isAuth, payload, message");
 
 		if (!isAuth) {
 			return res.status(401).json({ message: "Failed to verify session" });
@@ -132,7 +129,6 @@ export const updateProductById = async function handler(req, res, id) {
 	if (req.method === "PATCH") {
 		const sessionToken = req.cookies.session;
 		const { isAuth, payload, message } = await verifyToken(sessionToken);
-		console.log(isAuth, payload, message, "isAuth, payload, message");
 
 		if (!isAuth) {
 			return res.status(401).json({ message: "Failed to verify session" });

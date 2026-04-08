@@ -13,6 +13,7 @@ import {
 	deleteManufacture,
 	getManufactureByName
 } from "../../redux/feature/reducer/manufactureReducer";
+import { Label } from "@radix-ui/react-dropdown-menu";
 export const Sider = () => {
 	const { manufactureList, isLoading, isSuccess } = useSelector(
 		(state) => state.manufacture
@@ -25,7 +26,7 @@ export const Sider = () => {
 		<div className="grid grid-cols-12">
 			<div className="lg:col-span-3 col-span-12 w-full sm:w-auto">
 				<div>
-					<lable className="font-semibold text-sm">Manufacture</lable>
+					<Label className="font-semibold text-sm">Manufacture</Label>
 					<Select
 						onValueChange={(e) => {
 							dispatch(getManufactureByName(e));
@@ -35,8 +36,12 @@ export const Sider = () => {
 							<SelectValue placeholder="Select" />
 						</SelectTrigger>
 						<SelectContent>
-							{manufactureList?.map((item) => {
-								return <SelectItem value={item?.name}>{item?.name}</SelectItem>;
+							{manufactureList?.map((item, index) => {
+								return (
+									<SelectItem key={item.id} value={item?.name}>
+										{item?.name}
+									</SelectItem>
+								);
 							})}
 						</SelectContent>
 					</Select>

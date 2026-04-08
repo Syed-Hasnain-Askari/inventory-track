@@ -1,4 +1,4 @@
-import TableOne from "../../../components/TableOne";
+import TableOne from "../../../../components/TableOne";
 import React from "react";
 import { BASE_URL } from "../../../lib/config";
 import { cookies } from "next/headers";

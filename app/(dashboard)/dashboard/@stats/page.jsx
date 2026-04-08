@@ -1,4 +1,4 @@
-import DataStatsOne from "../../../components/DataStats";
+import DataStatsOne from "../../../../components/DataStats";
 import React from "react";
 import { BASE_URL } from "../../../lib/config";
 import { cookies } from "next/headers";

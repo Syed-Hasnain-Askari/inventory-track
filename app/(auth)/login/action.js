@@ -1,7 +1,7 @@
 "use server";
-import { LoginFormSchema } from "../../util/validation/form";
+import { LoginFormSchema } from "../../../util/validation/form";
 import connectDB from "../../lib/db";
-import User from "../../models/users";
+import User from "../../../models/users";
 import bcrypt from "bcrypt";
 import { createSession } from "../../lib/session";
 

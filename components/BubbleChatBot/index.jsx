@@ -27,9 +27,9 @@ const BubbleChatBot = () => {
 				"Content-Type": "application/json"
 			},
 			body: JSON.stringify({
-				user_message: input,
-				max_token: 1000,
-				temperature: 0.5
+				user_question: input
+				// max_token: 1000,
+				// temperature: 0.5
 			})
 		});
 

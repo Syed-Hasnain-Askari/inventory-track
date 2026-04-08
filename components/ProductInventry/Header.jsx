@@ -216,8 +216,8 @@ export const Header = () => {
 										<SelectContent>
 											{categories?.result?.map((category) => {
 												return (
-													<SelectItem value={category?._id}>
-														{category.name}
+													<SelectItem value={category?._id} key={category?._id}>
+														{category?.name}
 													</SelectItem>
 												);
 											})}

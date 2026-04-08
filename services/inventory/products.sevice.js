@@ -1,4 +1,4 @@
-import { createRedisInstance } from "../../lib/redis";
+//import { createRedisInstance } from "../../lib/redis";
 import Product from "../../models/products";
 export const fetchProducts = async ({
 	search,
@@ -100,7 +100,7 @@ export const createProductService = async (
 		image,
 		"===="
 	);
-	const redis = createRedisInstance();
+	//const redis = createRedisInstance();
 	try {
 		const product = new Product({
 			name: name,

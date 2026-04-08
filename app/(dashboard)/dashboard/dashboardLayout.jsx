@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect } from "react";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import ChatBotBubble from "../../components/BubbleChatBot";
+import Navbar from "../../../components/Navbar";
+import Sidebar from "../../../components/Sidebar";
+import ChatBotBubble from "../../../components/BubbleChatBot";
 import { useSelector } from "react-redux";
 const DashboardLayout = ({ children, username }) => {
 	const { isDarkMode, isSidebarCollapsed } = useSelector(
@@ -14,7 +14,7 @@ const DashboardLayout = ({ children, username }) => {
 			// className={`${
 			// 	isDarkMode ? "dark" : "light"
 			// } flex bg-gray-50 text-gray-900 w-full min-h-screen`}
-			className={`flex text-gray-900 w-full min-h-screen`}
+			className={`flex bg-zinc-50 dark:bg-zinc-950 transition-colors`}
 		>
 			<Sidebar />
 			<main

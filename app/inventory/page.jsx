@@ -29,7 +29,7 @@ async function fetchData() {
 const InventoryPage = async () => {
 	const data = await fetchData();
 	return (
-		<InventoryLayout>
+		<InventoryLayout className="bg-zinc-50 dark:bg-zinc-950">
 			<Card>
 				<CardHeader>
 					<CardTitle>Products</CardTitle>
