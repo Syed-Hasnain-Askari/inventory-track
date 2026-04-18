@@ -3,10 +3,6 @@ import {
 	createProduct
 } from "../../../controller/inventryController";
 import bodyParser from "body-parser";
-
-// Custom middleware to parse JSON bodies with a larger limit
-const parseBody = bodyParser.json({ limit: "50mb" });
-
 export default async function handler(req, res) {
 	// await rateLimit(req, res, async () => {
 	// 	if (req.method === "GET") {

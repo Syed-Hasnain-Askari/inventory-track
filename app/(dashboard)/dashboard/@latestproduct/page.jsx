@@ -1,4 +1,4 @@
-import ProductTable from "../../../components/Table/ProductTable";
+import ProductTable from "../../../../components/Table/ProductTable";
 import React from "react";
 import { BASE_URL } from "../../../lib/config";
 import { cookies } from "next/headers";

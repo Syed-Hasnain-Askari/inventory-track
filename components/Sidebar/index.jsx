@@ -106,13 +106,6 @@ const Sidebar = () => {
 					label="Manufacture"
 					isCollapsed={isSidebarCollapsed}
 				/>
-
-				<SidebarLink
-					href="/users"
-					icon={User}
-					label="Users"
-					isCollapsed={isSidebarCollapsed}
-				/>
 				<SidebarLink
 					href="/settings"
 					icon={SlidersHorizontal}

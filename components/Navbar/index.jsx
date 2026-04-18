@@ -10,10 +10,12 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UserMenu from "../../app/components/UserMenu";
 import Notification from "../../components/notification";
-import { logout } from "../../lib/actions/logoutAction";
+import { logout } from "../../app/lib/actions/logoutAction";
 import { useRouter } from "next/navigation";
-const Navbar = ({ user }) => {
-	console.log(user, "user details");
+import { useDebouncedCallback } from "use-debounce";
+import { getInventoryProducts } from "../../redux/feature/reducer/inventryReducer";
+import Search from "../search";
+const Navbar = ({ username }) => {
 	const router = useRouter();
 	const [toggle, setToggle] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -40,8 +42,12 @@ const Navbar = ({ user }) => {
 	const handleSignOut = async () => {
 		await logout();
 	};
+	const handleSearchChange = useDebouncedCallback((value) => {
+		const search = value;
+		dispatch(getInventoryProducts({ search }));
+	}, 2000);
 	return (
-		<div className="sticky top-5 z-50 flex justify-between items-center w-full mb-7">
+		<header className="sticky h-20 rounded-full w-full bg-white top-5 z-50 flex justify-between items-center mb-7 px-5 py-3 shadow-md">
 			{/* LEFT SIDE */}
 			<div className="flex justify-between items-center gap-5">
 				<button
@@ -51,17 +57,7 @@ const Navbar = ({ user }) => {
 					<Menu className="w-4 h-4" />
 				</button>
 
-				<div className="relative">
-					<input
-						type="search"
-						placeholder="Start type to search groups & products"
-						className="pl-10 pr-4 py-2 w-50 md:w-60 border-2 border-gray-300 bg-white rounded-lg focus:outline-none focus:border-blue-500"
-					/>
-
-					<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-non">
-						<Bell className="text-gray-500" size={20} />
-					</div>
-				</div>
+				<Search handleSearchChange={handleSearchChange} />
 			</div>
 
 			{/* RIGHT SIDE */}
@@ -88,20 +84,20 @@ const Navbar = ({ user }) => {
 
 					<hr className="w-0 h-7 border border-solid border-l border-gray-300 mx-3" />
 					<div className="flex items-center gap-3 cursor-pointer">
-						<div class="relative ml-3">
+						<div className="relative ml-3">
 							<div>
 								<button
 									type="button"
-									class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+									className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
 									id="user-menu-button"
 									aria-expanded="false"
 									aria-haspopup="true"
 									onClick={handleToggle}
 								>
-									<span class="absolute -inset-1.5"></span>
-									<span class="sr-only">Open user menu</span>
+									<span className="absolute -inset-1.5"></span>
+									<span className="sr-only">Open user menu</span>
 									<img
-										class="h-8 w-8 rounded-full"
+										className="h-8 w-8 rounded-full"
 										src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
 										alt=""
 									/>
@@ -113,14 +109,14 @@ const Navbar = ({ user }) => {
 								""
 							)}
 						</div>
-						<span className="font-semibold">{user?.username}</span>
+						<span className="font-semibold">{username}</span>
 					</div>
 				</div>
 				<Link href="/settings">
 					<Settings className="cursor-pointer text-gray-500" size={24} />
 				</Link>
 			</div>
-		</div>
+		</header>
 	);
 };
 

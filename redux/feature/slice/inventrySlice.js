@@ -96,10 +96,11 @@ export const inventryProductSlice = createSlice({
 			state.isLoading = true;
 		});
 		builder.addCase(deleteProductById.fulfilled, (state, action) => {
+			console.log(action, "deleteProductById.fulfilled");
 			state.isLoading = false;
 			state.isSuccess = true;
 			// Extract the ID from the action meta (which was sent in the request)
-			const deletedProductId = action.meta.arg;
+			const deletedProductId = action.payload.id;
 			// Find the index of the product with the same ID in the state
 			const index = state.inventryProducts.findIndex(
 				(product) => product?._id === deletedProductId

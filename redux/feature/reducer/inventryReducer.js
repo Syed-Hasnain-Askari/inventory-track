@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { BASE_URL } from "../../../lib/config";
+import { BASE_URL } from "../../../app/lib/config";
 export const getInventoryProducts = createAsyncThunk(
 	"InventoryProduct/getInventoryProducts",
 	async (payload, thunkAPI) => {
