@@ -3,7 +3,7 @@ export const getCategories = createAsyncThunk(
 	"Category/getCategories",
 	async (thunkAPI) => {
 		try {
-			const response = await fetch(`/api/getcategories`, {
+			const response = await fetch(`${BASE_URL}/api/getcategories`, {
 				next: { revalidate: 3600 }
 			});
 			return await response.json();

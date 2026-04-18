@@ -3,7 +3,7 @@ export const getManufacture = createAsyncThunk(
 	"Manufacture/getManufacture",
 	async (thunkAPI) => {
 		try {
-			const response = await fetch(`/api/manufacture`, {
+			const response = await fetch(`/${BASE_URL}api/manufacture`, {
 				next: { revalidate: 3600 }
 			});
 			return await response.json();

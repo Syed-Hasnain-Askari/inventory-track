@@ -4,7 +4,7 @@ export const getManufacture = createAsyncThunk(
 	"Manufacture/getManufacture",
 	async (thunkAPI) => {
 		try {
-			const response = await fetch(`/api/manufacture`);
+			const response = await fetch(`${BASE_URL}/api/manufacture`);
 			return await response.json();
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error.response);
@@ -16,7 +16,7 @@ export const getManufactureByName = createAsyncThunk(
 	async (query, thunkAPI) => {
 		try {
 			const response = await fetch(
-				`/api/manufacture/get-manufacturebyname?search=${query}`
+				`${BASE_URL}/api/manufacture/get-manufacturebyname?search=${query}`
 			);
 			return await response.json();
 		} catch (error) {

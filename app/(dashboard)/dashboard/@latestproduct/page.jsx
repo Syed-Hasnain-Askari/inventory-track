@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 async function fetchData() {
 	const session = (await cookies()).get("session")?.value;
 	try {
-		const response = await fetch(`${BASE_URL}/api/products/get-latestproduct`, {
+		const response = fetch(`${BASE_URL}/api/products/get-latestproduct`, {
 			next: { revalidate: 120 },
 			headers: {
 				"Content-Type": "application/json",
