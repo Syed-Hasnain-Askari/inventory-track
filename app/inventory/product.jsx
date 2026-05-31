@@ -188,7 +188,7 @@ export function Product({ id, product, handleDeleteProduct }) {
 							<AlertDialogDescription className="text-zinc-500 dark:text-zinc-400">
 								Are you sure you want to delete{" "}
 								<span className="font-bold text-zinc-900 dark:text-zinc-200">
-									"{product.name}"
+									&ldquo;{product.name}&rdquo;
 								</span>
 								? This action is permanent and cannot be undone.
 							</AlertDialogDescription>

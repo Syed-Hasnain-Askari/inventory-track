@@ -11,7 +11,7 @@ import { generateSKU } from "../../../util/generateSKU";
 // Configure multer storage
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
-		const dir = "./public/uploads";
+		const dir = path.join(/*turbopackIgnore: true*/ process.cwd(), "public", "uploads");
 		if (!fs.existsSync(dir)) {
 			fs.mkdirSync(dir, { recursive: true });
 		}

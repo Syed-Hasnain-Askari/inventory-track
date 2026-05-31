@@ -33,7 +33,7 @@ export function AddProductDialog() {
 				<DialogHeader>
 					<DialogTitle>Product Information</DialogTitle>
 					<DialogDescription>
-						Enter product details below. Click save when you're done.
+						Enter product details below. Click save when you&apos;re done.
 					</DialogDescription>
 				</DialogHeader>
 				<div className="grid gap-4 py-4">

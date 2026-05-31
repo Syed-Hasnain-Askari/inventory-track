@@ -22,7 +22,7 @@ export default async function RootLayout({ children }) {
 				<Toaster />
 				<SessionAutoLogout isAuthenticated={isValidToken} />
 				{isValidToken ? (
-					<DashboardWrapper children={children} />
+					<DashboardWrapper>{children}</DashboardWrapper>
 				) : (
 					<SignInPage />
 				)}

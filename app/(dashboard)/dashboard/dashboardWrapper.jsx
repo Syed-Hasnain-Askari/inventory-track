@@ -5,7 +5,7 @@ const DashboardWrapper = async ({ children }) => {
 	const user = await getUserDetails();
 	return (
 		<Providers>
-			<DashboardLayout children={children} username={user?.username} />
+			<DashboardLayout username={user?.username}>{children}</DashboardLayout>
 		</Providers>
 	);
 };

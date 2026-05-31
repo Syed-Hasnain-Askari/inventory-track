@@ -150,7 +150,7 @@ export default function ProductEditForm({ product }) {
 					Edit Product
 				</h1>
 				<p className="text-zinc-500">
-					Update the information for "{product?.name}"
+					Update the information for &ldquo;{product?.name}&rdquo;
 				</p>
 			</div>
 
