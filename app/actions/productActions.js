@@ -2,8 +2,8 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { BASE_URL } from "@/lib/config";
 import { revalidatePath } from "next/cache";
+import { getServerBaseUrl } from "../../lib/server-url";
 
 async function handleResponse(response) {
 	if (!response.ok) {
@@ -31,8 +31,9 @@ export async function getProducts(params = {}) {
 		const queryString = new URLSearchParams(params).toString();
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
+		const baseUrl = getServerBaseUrl();
 
-		const response = await fetch(`${BASE_URL}/api/products/?${queryString}`, {
+		const response = await fetch(`${baseUrl}/api/products/?${queryString}`, {
 			headers: {
 				"Content-Type": "application/json",
 				Cookie: `session=${session}`
@@ -52,8 +53,9 @@ export async function getProductById(id) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
+		const baseUrl = getServerBaseUrl();
 
-		const response = await fetch(`${BASE_URL}/api/products/${id}`, {
+		const response = await fetch(`${baseUrl}/api/products/${id}`, {
 			headers: {
 				"Content-Type": "application/json",
 				Cookie: `session=${session}`
@@ -73,6 +75,7 @@ export async function createProduct(data) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
+		const baseUrl = getServerBaseUrl();
 
 		const isFormData = data instanceof FormData;
 		const headers = {
@@ -83,7 +86,7 @@ export async function createProduct(data) {
 			headers["Content-Type"] = "application/json";
 		}
 
-		const response = await fetch(`${BASE_URL}/api/products`, {
+		const response = await fetch(`${baseUrl}/api/products`, {
 			method: "POST",
 			headers,
 			body: isFormData ? data : JSON.stringify(data),
@@ -103,6 +106,7 @@ export async function updateProduct(id, data) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
+		const baseUrl = getServerBaseUrl();
 
 		const isFormData = data instanceof FormData;
 		const headers = {
@@ -113,7 +117,7 @@ export async function updateProduct(id, data) {
 			headers["Content-Type"] = "application/json";
 		}
 
-		const response = await fetch(`${BASE_URL}/api/products/${id}`, {
+		const response = await fetch(`${baseUrl}/api/products/${id}`, {
 			method: "PATCH",
 			headers,
 			body: isFormData ? data : JSON.stringify(data),
@@ -133,8 +137,9 @@ export async function deleteProduct(id) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
+		const baseUrl = getServerBaseUrl();
 
-		const response = await fetch(`${BASE_URL}/api/products/${id}`, {
+		const response = await fetch(`${baseUrl}/api/products/${id}`, {
 			method: "DELETE",
 			headers: {
 				"Content-Type": "application/json",

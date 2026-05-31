@@ -1,8 +1,8 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { BASE_URL } from "@/lib/config";
 import { revalidatePath } from "next/cache";
+import { getServerBaseUrl } from "../../lib/server-url";
 
 async function handleResponse(response) {
 	if (!response.ok) {
@@ -21,15 +21,12 @@ async function handleResponse(response) {
 
 export async function getCategories() {
 	try {
-		const cookieStore = await cookies();
-		//const session = cookieStore.get("session")?.value;
+		const baseUrl = getServerBaseUrl();
 
-		const response = await fetch(`${BASE_URL}/api/categories`, {
+		const response = await fetch(`${baseUrl}/api/categories`, {
 			headers: {
 				"Content-Type": "application/json"
-				//Cookie: `session=${session}`
 			},
-			//credentials: "include",
 			cache: "no-store"
 		});
 
@@ -44,8 +41,9 @@ export async function createCategory(data) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
+		const baseUrl = getServerBaseUrl();
 
-		const response = await fetch(`${BASE_URL}/api/categories`, {
+		const response = await fetch(`${baseUrl}/api/categories`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -68,8 +66,9 @@ export async function updateCategory(id, data) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
+		const baseUrl = getServerBaseUrl();
 
-		const response = await fetch(`${BASE_URL}/api/categories/${id}`, {
+		const response = await fetch(`${baseUrl}/api/categories/${id}`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
@@ -92,8 +91,9 @@ export async function deleteCategory(id) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
+		const baseUrl = getServerBaseUrl();
 
-		const response = await fetch(`${BASE_URL}/api/categories/${id}`, {
+		const response = await fetch(`${baseUrl}/api/categories/${id}`, {
 			method: "DELETE",
 			headers: {
 				"Content-Type": "application/json",

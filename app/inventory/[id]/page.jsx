@@ -2,11 +2,12 @@ import Footer from "../../../components/Footer";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { BASE_URL } from "@/lib/config";
 import { cookies } from "next/headers";
+import { getServerBaseUrl } from "../../../lib/server-url";
 async function fetchData(id) {
 	const session = (await cookies()).get("session")?.value;
-	const response = await fetch(`${BASE_URL}/api/products/${id}/`, {
+	const baseUrl = getServerBaseUrl();
+	const response = await fetch(`${baseUrl}/api/products/${id}/`, {
 		headers: {
 			"Content-Type": "application/json",
 			Cookie: `session=${session}`
@@ -20,6 +21,9 @@ async function fetchData(id) {
 export default async function Page({ params }) {
 	const { id } = await params; // directly destructure params here
 	const response = await fetchData(id);
+	if (!response) {
+		return null;
+	}
 	console.log(id, "id");
 	console.log(response, "response");
 	const { name, description, price, image, stock } = response;

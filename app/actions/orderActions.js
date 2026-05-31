@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { BASE_URL } from "@/lib/config";
+import { getServerBaseUrl } from "../../lib/server-url";
 
 async function handleResponse(response) {
 	if (!response.ok) {
@@ -26,8 +26,9 @@ export async function getOrders(params = {}) {
 		const queryString = new URLSearchParams(params).toString();
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
+		const baseUrl = getServerBaseUrl();
 
-		const response = await fetch(`${BASE_URL}/api/orders/?${queryString}`, {
+		const response = await fetch(`${baseUrl}/api/orders/?${queryString}`, {
 			headers: {
 				"Content-Type": "application/json",
 				Cookie: `session=${session}`
@@ -47,8 +48,9 @@ export async function updateOrderStatus(id, status) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
+		const baseUrl = getServerBaseUrl();
 
-		const response = await fetch(`${BASE_URL}/api/orders/status/${id}`, {
+		const response = await fetch(`${baseUrl}/api/orders/status/${id}`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
@@ -69,8 +71,9 @@ export async function getOrderStats() {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
+		const baseUrl = getServerBaseUrl();
 
-		const response = await fetch(`${BASE_URL}/api/orders/dashboard/stats`, {
+		const response = await fetch(`${baseUrl}/api/orders/dashboard/stats`, {
 			headers: {
 				"Content-Type": "application/json",
 				Cookie: `session=${session}`
