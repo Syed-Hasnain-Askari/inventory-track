@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 import { getServerBaseUrl } from "../../../lib/server-url";
 async function fetchData(id) {
 	const session = (await cookies()).get("session")?.value;
-	const baseUrl = getServerBaseUrl();
+	const baseUrl = await getServerBaseUrl();
 	const response = await fetch(`${baseUrl}/api/products/${id}/`, {
 		headers: {
 			"Content-Type": "application/json",

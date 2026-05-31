@@ -21,7 +21,7 @@ async function handleResponse(response) {
 
 export async function getCategories() {
 	try {
-		const baseUrl = getServerBaseUrl();
+		const baseUrl = await getServerBaseUrl();
 
 		const response = await fetch(`${baseUrl}/api/categories`, {
 			headers: {
@@ -41,7 +41,7 @@ export async function createCategory(data) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = getServerBaseUrl();
+		const baseUrl = await getServerBaseUrl();
 
 		const response = await fetch(`${baseUrl}/api/categories`, {
 			method: "POST",
@@ -66,7 +66,7 @@ export async function updateCategory(id, data) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = getServerBaseUrl();
+		const baseUrl = await getServerBaseUrl();
 
 		const response = await fetch(`${baseUrl}/api/categories/${id}`, {
 			method: "PUT",
@@ -91,7 +91,7 @@ export async function deleteCategory(id) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = getServerBaseUrl();
+		const baseUrl = await getServerBaseUrl();
 
 		const response = await fetch(`${baseUrl}/api/categories/${id}`, {
 			method: "DELETE",

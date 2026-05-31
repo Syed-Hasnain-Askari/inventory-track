@@ -26,7 +26,7 @@ export async function getOrders(params = {}) {
 		const queryString = new URLSearchParams(params).toString();
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = getServerBaseUrl();
+		const baseUrl = await getServerBaseUrl();
 
 		const response = await fetch(`${baseUrl}/api/orders/?${queryString}`, {
 			headers: {
@@ -48,7 +48,7 @@ export async function updateOrderStatus(id, status) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = getServerBaseUrl();
+		const baseUrl = await getServerBaseUrl();
 
 		const response = await fetch(`${baseUrl}/api/orders/status/${id}`, {
 			method: "PUT",
@@ -71,7 +71,7 @@ export async function getOrderStats() {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = getServerBaseUrl();
+		const baseUrl = await getServerBaseUrl();
 
 		const response = await fetch(`${baseUrl}/api/orders/dashboard/stats`, {
 			headers: {

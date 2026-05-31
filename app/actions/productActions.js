@@ -31,7 +31,7 @@ export async function getProducts(params = {}) {
 		const queryString = new URLSearchParams(params).toString();
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = getServerBaseUrl();
+		const baseUrl = await getServerBaseUrl();
 
 		const response = await fetch(`${baseUrl}/api/products/?${queryString}`, {
 			headers: {
@@ -53,7 +53,7 @@ export async function getProductById(id) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = getServerBaseUrl();
+		const baseUrl = await getServerBaseUrl();
 
 		const response = await fetch(`${baseUrl}/api/products/${id}`, {
 			headers: {
@@ -75,7 +75,7 @@ export async function createProduct(data) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = getServerBaseUrl();
+		const baseUrl = await getServerBaseUrl();
 
 		const isFormData = data instanceof FormData;
 		const headers = {
@@ -106,7 +106,7 @@ export async function updateProduct(id, data) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = getServerBaseUrl();
+		const baseUrl = await getServerBaseUrl();
 
 		const isFormData = data instanceof FormData;
 		const headers = {
@@ -137,7 +137,7 @@ export async function deleteProduct(id) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = getServerBaseUrl();
+		const baseUrl = await getServerBaseUrl();
 
 		const response = await fetch(`${baseUrl}/api/products/${id}`, {
 			method: "DELETE",

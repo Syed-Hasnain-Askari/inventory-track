@@ -9,7 +9,7 @@ import { getServerBaseUrl } from "../../lib/server-url";
 async function fetchData() {
 	try {
 		const session = (await cookies()).get("session")?.value;
-		const baseUrl = getServerBaseUrl();
+		const baseUrl = await getServerBaseUrl();
 		const response = await fetch(`${baseUrl}/api/products/`, {
 			headers: {
 				"Content-Type": "application/json",
