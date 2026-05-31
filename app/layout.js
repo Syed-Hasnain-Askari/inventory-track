@@ -5,7 +5,7 @@ import DashboardWrapper from "./(dashboard)/dashboard/dashboardWrapper";
 import { Toaster } from "../components/ui/toaster";
 import SignInPage from "./(auth)/login/page";
 import SessionAutoLogout from "../components/SessionAutoLogout";
-import { verifyToken } from "@/lib/session";
+import { verifyToken } from "../lib/session";
 import { cookies } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"] });
