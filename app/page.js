@@ -12,23 +12,21 @@ import Footer from "../components/Footer";
 import { getProducts } from "../lib/methods";
 export default async function Page() {
 	const response = await getProducts();
+	const products = response?.result || [];
 	return (
 		<>
 			<Header />
 			<main className="container mt-10">
 				<section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-					{response?.result?.map((item) => {
-						console.log(item, "item!!!");
-						return (
-							<ProductCard
-								key={item._id}
-								name={item.name}
-								description={item.description}
-								image={item.image}
-								price={item.price}
-							/>
-						);
-					})}
+					{products.map((item) => (
+						<ProductCard
+							key={item._id}
+							name={item.name}
+							description={item.description}
+							image={item.images?.[0] || item.image}
+							price={item.price}
+						/>
+					))}
 				</section>
 				<section className="mt-10">
 					<div className="flex flex-col sm:flex-row items-center justify-center">
