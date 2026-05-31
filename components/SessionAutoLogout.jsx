@@ -2,9 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { logout } from "../app/lib/actions/logoutAction";
+import { logout } from "@/lib/actions/logoutAction";
 
-const AUTO_LOGOUT_AFTER_MS = 10 * 1000;
+const AUTO_LOGOUT_AFTER_MS = 60 * 60 * 1000;
 
 export default function SessionAutoLogout({ isAuthenticated }) {
 	const router = useRouter();

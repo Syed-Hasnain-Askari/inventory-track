@@ -2,7 +2,7 @@ import Footer from "../../../components/Footer";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { BASE_URL } from "../../../lib/config";
+import { BASE_URL } from "@/lib/config";
 import { cookies } from "next/headers";
 async function fetchData(id) {
 	const session = (await cookies()).get("session")?.value;

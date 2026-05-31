@@ -14,13 +14,16 @@ export default function SignUp({ toggleToSignIn }) {
 		if (result.success === false) {
 			toast({
 				title: "Error",
+				variant: "destructive",
+				description: result.message
+			});
+		} else {
+			toast({
+				title: "Success!",
+				variant: "success",
 				description: result.message
 			});
 		}
-		toast({
-			title: "Success!",
-			description: result.message
-		});
 	};
 	return (
 		<React.Fragment>

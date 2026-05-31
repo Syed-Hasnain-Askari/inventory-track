@@ -22,6 +22,8 @@ import {
 	AlertDialogTrigger
 } from "./ui/alert-dialog";
 import { EllipsisVertical } from "lucide-react";
+import thumbnail from "@/public/images/no-image.jpg";
+
 export default function ProductCard({
 	index,
 	name,
@@ -29,7 +31,6 @@ export default function ProductCard({
 	image,
 	price,
 	category,
-	manufacture,
 	handleDeleteProduct
 }) {
 	const truncate = (str, len) => {
@@ -38,17 +39,11 @@ export default function ProductCard({
 		}
 		return str;
 	};
-	console.log(id, "id");
 
 	return (
 		<React.Fragment>
 			<div className="relative cursor-pointer shadow-xl mx-auto transform overflow-hidden rounded-lg bg-white dark:bg-slate-800">
-				<div className="flex flex-row justify-between items-center">
-					<div class=" bg-yellow-200 mt-3 ml-3 py-1.5 px-6 rounded-full">
-						<p tabindex="0" class="focus:outline-none text-xs text-yellow-700">
-							{manufacture}
-						</p>
-					</div>
+				<div className="flex flex-row justify-end items-center p-2">
 					<div>
 						<AlertDialog>
 							<Menubar className="border-none">
@@ -97,8 +92,8 @@ export default function ProductCard({
 					<Image
 						height={300}
 						width={300}
-						className="w-full object-cover object-center"
-						src={image}
+						className="w-full h-48 object-cover object-center"
+						src={image || thumbnail}
 						alt="Product Image"
 					/>
 					<div className="p-4">

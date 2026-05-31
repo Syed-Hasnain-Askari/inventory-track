@@ -1,16 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { BASE_URL } from "../../../app/lib/config";
+import { BASE_URL } from "@/lib/config";
 export const getInventoryProducts = createAsyncThunk(
 	"InventoryProduct/getInventoryProducts",
 	async (payload, thunkAPI) => {
 		console.log(payload, "payload");
-		const { search, category, manufacture, page = 1, limit = 10 } = payload; // Default page is 1 and limit is 10
+		const { search, category, page = 1, limit = 10 } = payload; // Default page is 1 and limit is 10
 		try {
 			// Building query params
 			const queryParams = new URLSearchParams();
 			if (search) queryParams.append("search", search);
 			if (category) queryParams.append("category", category);
-			if (manufacture) queryParams.append("manufacture", manufacture);
 			queryParams.append("page", page); // Add page number to query params
 			queryParams.append("limit", limit); // Add limit to query params if needed
 			// Make the request

@@ -7,14 +7,12 @@ import { getProducts } from "../../redux/feature/slice/inventrySlice";
 import GridList from "../../components/GridList";
 import { useToast } from "../../components/ui/use-toast";
 import { deleteProductById } from "../../redux/feature/reducer/inventryReducer";
-import { ProductsTable } from "./ProductTable";
-export default function Products({ data }) {
+export default function Products() {
 	const { categories } = useSelector((state) => state.category);
-	const { manufactureList } = useSelector((state) => state.manufacture);
 
 	const dispatch = useDispatch();
 	const { toast } = useToast();
-	const { inventryProducts, isLoading, isError } = useSelector(
+	const { inventryProducts, isLoading } = useSelector(
 		(state) => state.inventry
 	);
 	const { isGrid } = useSelector((state) => state.global);
@@ -23,21 +21,18 @@ export default function Products({ data }) {
 			dispatch(deleteProductById(id));
 			toast({
 				title: "Success!",
+				variant: "success",
 				description: "Product deleted successfully!"
 			});
 		} catch (error) {
 			toast({
 				title: "Uh oh! Something went wrong.",
+				variant: "destructive",
 				description: "There was a problem with your request."
 			});
 		}
 	};
-	useEffect(() => {
-		if (data) {
-			dispatch(getProducts(data));
-		}
-	}, [dispatch, data]);
-	console.log(inventryProducts, "inventryProducts");
+	console.log(state.inventry, "state.inventry");
 	return (
 		<React.Fragment>
 			<div
@@ -55,43 +50,35 @@ export default function Products({ data }) {
 					</div>
 				) : (
 					inventryProducts?.map((product, index) => {
-						// Find category name by matching product.category with categories._id
-						const categoryName =
-							categories?.result?.find(
-								(cat) => cat._id === product?.category
-							) || "Unknown Category";
+						const categoryName = product?.category?.name || "Uncategorized";
 
-						// Find manufacture name by matching product.manufacture with manufactureList._id
-						const manufactureName =
-							manufactureList?.find(
-								(manuf) => manuf._id === product?.manufacture
-							) || "Unknown Manufacturer";
 						return isGrid ? (
 							<GridList
 								index={index}
+								key={product?._id}
 								id={product?._id}
 								name={product?.name}
 								description={product?.description}
-								image={product?.image}
+								image={product?.image || product?.images?.[0]}
 								price={product?.price}
 								handleDeleteProduct={handleDeleteProduct}
 							/>
 						) : (
 							<ProductCard
 								index={index}
+								key={product?._id}
 								id={product?._id}
 								name={product?.name}
 								description={product?.description}
-								image={product?.image}
+								image={product?.image || product?.images?.[0]}
 								price={product?.price}
-								category={categoryName?.name}
+								category={categoryName}
 								handleDeleteProduct={handleDeleteProduct}
-								manufacture={manufactureName?.name}
 							/>
 						);
 					})
 				)}
-				{inventryProducts?.length === 0 && (
+				{inventryProducts?.length === 0 && !isLoading && (
 					<div className="col-span-12 py-32">
 						<div className="flex justify-center items-center h-full">
 							<p className=" text-gray-500 font-semibold">No products found</p>

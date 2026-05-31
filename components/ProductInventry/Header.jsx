@@ -1,9 +1,14 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { File, PlusCircle } from "lucide-react";
-import { getManufacture } from "../../redux/feature/reducer/manufactureReducer";
-import { getCategories } from "../../lib//methods";
+import {
+	FileDown,
+	Plus,
+	Package,
+	Upload,
+	Loader2
+} from "lucide-react";
+import { getCategories } from "../../app/actions/categoryActions";
 import { Button } from "../ui/button";
 import {
 	Dialog,
@@ -11,8 +16,7 @@ import {
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
-	DialogTitle,
-	DialogTrigger
+	DialogTitle
 } from "../ui/dialog";
 import {
 	Select,
@@ -21,270 +25,344 @@ import {
 	SelectTrigger,
 	SelectValue
 } from "../../components/ui/select";
-import ImageUploader from "../imageuploader";
-import { addProductAction } from "../../lib/actions/addProduct";
+import { createProduct } from "../../app/actions/productActions";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { useToast } from "../ui/use-toast";
+import GridListToggle from "../GridListToggle";
+
 export const Header = () => {
-	const dispatch = useDispatch();
-	const { manufactures } = useSelector((state) => state.manufacture);
-	const [categories, setCategories] = useState(null);
-	const [image, setImage] = useState("");
-	const [userInput, setUserInput] = useState({
+	const { toast } = useToast();
+	const [categories, setCategories] = useState([]);
+	const [image, setImage] = useState(null);
+	const [previewUrl, setPreviewUrl] = useState("");
+	const [isOpen, setIsOpen] = useState(false);
+	const [loading, setLoading] = useState(false);
+
+	const [formData, setFormData] = useState({
 		name: "",
 		price: "",
-		category: "",
-		manufacture: "",
 		stock: "",
-		image: image
+		category: "",
+		description: ""
 	});
-	const INITIAL_STATE = {
-		data: null
-	};
-	const [formState, formAction, pending] = React.useActionState(
-		addProductAction,
-		INITIAL_STATE
-	);
-	const [isOpen, setIsOpen] = useState(false);
 
-	const handleClose = () => {
-		setIsOpen(false); // Close the dialog programmatically
+	const handleInputChange = (e) => {
+		const { name, value } = e.target;
+		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
-	console.log(formState, "formState=====");
-	const handleSelectChange = (key, e) => {
-		setUserInput({
-			...userInput,
-			[key]: e
-		});
+
+	const handleSelectChange = (name, value) => {
+		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
+
 	const handleFileUpload = (event) => {
-		const file = event.target.files[0]; // Get the first selected file
-		const reader = new FileReader(); // Create a new FileReader
-
-		// When the file is successfully read
-		reader.onload = () => {
-			const base64String = reader.result.split(",")[1]; // Get the base64 string without the prefix
-
-			// Set the base64 string to state
-			setUserInput((prev) => ({
-				...prev,
-				image: base64String // Save the base64 string in user input state
-			}));
-
-			// Optional: You can store the file in its original form as well
-			setImage(file); // Store the file if you need it in other parts of your app
-		};
-
-		// Read the file as DataURL (which encodes it in base64)
+		const file = event.target.files[0];
 		if (file) {
-			reader.readAsDataURL(file);
+			setImage(file);
+			setPreviewUrl(URL.createObjectURL(file));
 		}
 	};
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await getCategories();
-				setCategories(response);
+				const catRes = await getCategories();
+				setCategories(catRes?.result || []);
 			} catch (error) {
-				console.error("Error fetching categories:", error);
+				console.error("Error fetching form data:", error);
 			}
 		};
 		fetchData();
 	}, []);
-	useEffect(() => {
-		dispatch(getManufacture());
-	}, [dispatch]);
-	useEffect(() => {
-		setIsOpen(false);
-	}, [formState.success]);
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		setLoading(true);
+
+		try {
+			// Basic validation
+			if (
+				!formData.name ||
+				!formData.price ||
+				!formData.stock ||
+				!formData.category
+			) {
+				toast({
+					title: "Validation Error",
+					variant: "destructive",
+					description: "Please fill in all required fields."
+				});
+				setLoading(false);
+				return;
+			}
+
+			const payload = new FormData();
+			payload.append("name", formData.name);
+			payload.append("price", formData.price);
+			payload.append("stock", formData.stock);
+			payload.append("category", formData.category);
+			payload.append("description", formData.description);
+			if (image) {
+				payload.append("image", image);
+			}
+
+			// Call API directly to bypass Server Action 1MB limit
+			const response = await fetch("/api/products", {
+				method: "POST",
+				body: payload
+			});
+
+			const result = await response.json();
+
+			if (result.success) {
+				toast({
+					title: "Success",
+					variant: "success",
+					description: "Product has been created successfully!"
+				});
+				setIsOpen(false);
+				setFormData({
+					name: "",
+					price: "",
+					stock: "",
+					category: "",
+					description: ""
+				});
+				setImage(null);
+				setPreviewUrl("");
+			} else {
+				toast({
+					title: "Error",
+					variant: "destructive",
+					description: result.message || "Failed to create product."
+				});
+			}
+		} catch (error) {
+			toast({
+				title: "Error",
+				variant: "destructive",
+				description: "An unexpected error occurred."
+			});
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
-		<React.Fragment>
-			<div className="flex sm:flex-col lg:flex-row justify-between items-center">
-				{/* <h1 className="xl:text-center md:text-center max-w-lg text-xl font-bold text-gray-800 xl:text-2xl">
-					Product Inventory
-				</h1> */}
-				<div className="ml-auto flex items-center gap-2">
-					<Button size="sm" variant="outline" className="h-8 gap-1 bg-black">
-						<File className="h-3.5 w-3.5 text-white" />
-						<span className="sr-only sm:not-sr-only sm:whitespace-nowrap text-white">
-							Export
-						</span>
-					</Button>
-					<Button
-						size="sm"
-						variant="outline"
-						className="h-8 gap-1 bg-black"
-						onClick={() => setIsOpen(true)}
-					>
-						<PlusCircle className="h-3.5 w-3.5 text-white" />
-						<span className="sr-only sm:not-sr-only sm:whitespace-nowrap text-white">
-							Add Product
-						</span>
-					</Button>
+		<div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between px-6 py-4 bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
+			<div>
+				<h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+					Inventory Management
+				</h1>
+				<p className="text-sm text-zinc-500 dark:text-zinc-400">
+					Manage your product catalog, stock levels, and pricing.
+				</p>
+			</div>
 
-					<Dialog
-						open={isOpen}
-						onOpenChange={() => {
-							setIsOpen(false);
-						}}
-					>
-						<DialogTrigger asChild></DialogTrigger>
-						<DialogContent className="sm:max-w-[425px] w-[425px] h-[425px] rounded-lg shadow-lg bg-white overflow-y-auto">
-							<DialogHeader>
-								<DialogTitle>Add Product</DialogTitle>
-							</DialogHeader>
+			<div className="flex items-center gap-3">
+				<GridListToggle />
+				<Button
+					variant="outline"
+					size="sm"
+					className="h-9 gap-2 shadow-sm border-zinc-200 dark:border-zinc-800"
+				>
+					<FileDown className="h-4 w-4" />
+					<span>Export</span>
+				</Button>
 
-							<form action={formAction} method="POST">
-								<div>
-									<label className="block text-sm font-medium leading-6 text-gray-900">
-										Name
-									</label>
-									<input
+				<Button
+					size="sm"
+					className="h-9 gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all"
+					onClick={() => setIsOpen(true)}
+				>
+					<Plus className="h-4 w-4" />
+					<span>Add Product</span>
+				</Button>
+
+				<Dialog open={isOpen} onOpenChange={setIsOpen}>
+					<DialogContent className="sm:max-w-[600px] p-0 max-h-[90vh] overflow-y-auto bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl">
+						<DialogHeader className="px-6 pt-6 pb-4 bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-100 dark:border-zinc-800">
+							<DialogTitle className="text-xl font-semibold flex items-center gap-2">
+								<Package className="h-5 w-5 text-indigo-600" />
+								Add New Product
+							</DialogTitle>
+							<DialogDescription className="text-zinc-500 dark:text-zinc-400">
+								Fill in the details below to add a new product to your
+								inventory.
+							</DialogDescription>
+						</DialogHeader>
+
+						<form onSubmit={handleSubmit} className="px-6 py-4 space-y-4">
+							<div className="grid grid-cols-2 gap-4">
+								<div className="col-span-2 space-y-1.5">
+									<Label htmlFor="name" className="text-sm font-medium">
+										Product Name
+									</Label>
+									<Input
 										id="name"
-										type="text"
 										name="name"
-										className="pl-3 py-2 w-full border-2 border-gray-300 bg-white rounded-lg focus:outline-none focus:border-blue-500"
+										value={formData.name}
+										onChange={handleInputChange}
+										placeholder="e.g. Premium Wireless Headphones"
+										required
 									/>
-									{formState?.errors?.name && (
-										<p className="text-sm text-red-500">
-											{formState.errors.name}
-										</p>
-									)}
 								</div>
 
-								<div>
-									<label
-										htmlFor="price"
-										className="block text-sm font-medium leading-6 text-gray-900"
-									>
-										Price
-									</label>
-									<input
+								<div className="space-y-1.5">
+									<Label htmlFor="price" className="text-sm font-medium">
+										Price ($)
+									</Label>
+									<Input
 										id="price"
-										type="number"
 										name="price"
-										className="pl-3 py-2 w-full border-2 border-gray-300 bg-white rounded-lg focus:outline-none focus:border-blue-500"
-									/>
-									{formState?.errors?.price && (
-										<p className="text-sm text-red-500">
-											{formState.errors.price}
-										</p>
-									)}
-								</div>
-
-								<div>
-									<label
-										htmlFor="stock"
-										className="block text-sm font-medium leading-6 text-gray-900"
-									>
-										Stock
-									</label>
-									<input
-										id="stock"
 										type="number"
-										name="stock"
-										className="pl-3 py-2 w-full border-2 border-gray-300 bg-white rounded-lg focus:outline-none focus:border-blue-500"
+										step="0.01"
+										value={formData.price}
+										onChange={handleInputChange}
+										placeholder="0.00"
+										required
 									/>
-									{formState?.errors?.stock && (
-										<p className="text-sm text-red-500">
-											{formState.errors.stock}
-										</p>
-									)}
 								</div>
 
-								<div className="mb-3">
-									<label
-										htmlFor="image"
-										className="mb-3 block text-base font-medium text-[#07074D]"
-									>
-										Image
-									</label>
-									<ImageUploader
-										handleFileUpload={handleFileUpload}
-										image={image}
+								<div className="space-y-1.5">
+									<Label htmlFor="stock" className="text-sm font-medium">
+										Stock Level
+									</Label>
+									<Input
+										id="stock"
+										name="stock"
+										type="number"
+										value={formData.stock}
+										onChange={handleInputChange}
+										placeholder="0"
+										required
 									/>
 								</div>
-								<div className="mb-3">
-									<label
-										htmlFor="guest"
-										className="mb-3 block text-base font-medium text-[#07074D]"
+
+								<div className="space-y-1.5">
+									<Label htmlFor="category" className="text-sm font-medium">
+										Category
+									</Label>
+									<Select
+										value={formData.category}
+										onValueChange={(v) => handleSelectChange("category", v)}
 									>
-										Type
-									</label>
-									<Select name="category">
-										<SelectTrigger className="w-full h-[50px] mt-3">
-											<SelectValue placeholder="Select" />
+										<SelectTrigger id="category">
+											<SelectValue placeholder="Select Category" />
 										</SelectTrigger>
 										<SelectContent>
-											{categories?.result?.map((category) => {
-												return (
-													<SelectItem value={category?._id} key={category?._id}>
-														{category?.name}
-													</SelectItem>
-												);
-											})}
+											{categories.map((category) => (
+												<SelectItem value={category._id} key={category._id}>
+													{category.name}
+												</SelectItem>
+											))}
 										</SelectContent>
 									</Select>
 								</div>
-								<div className="mb-3">
-									<label
-										htmlFor="guest"
-										className="mb-3 block text-base font-medium"
-									>
-										Manufacture
-									</label>
-									<Select name="manufacture" className="relative z-10">
-										<SelectTrigger className="w-full h-[50px] mt-3">
-											<SelectValue placeholder="Select" />
-										</SelectTrigger>
-										<SelectContent className="absolute z-50">
-											{manufactures?.map((item) => {
-												return (
-													<SelectItem value={item._id}>{item.name}</SelectItem>
-												);
-											})}
-										</SelectContent>
-									</Select>
-								</div>
+							</div>
 
-								<DialogFooter>
-									<button
-										type="submit"
-										disabled={pending}
-										className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-									>
-										{pending ? (
-											<>
-												<svg
-													class="mr-3 h-5 w-5 animate-spin text-white"
-													xmlns="http://www.w3.org/2000/svg"
-													fill="none"
-													viewBox="0 0 24 24"
-												>
-													<circle
-														class="opacity-25"
-														cx="12"
-														cy="12"
-														r="10"
-														stroke="currentColor"
-														strokeWidth="4"
-													></circle>
-													<path
-														class="opacity-75"
-														fill="currentColor"
-														d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-													></path>
-												</svg>
-												<span class="font-medium"> Loading... </span>
-											</>
-										) : (
-											"Submit"
-										)}
-									</button>
-								</DialogFooter>
-							</form>
-						</DialogContent>
-					</Dialog>
-				</div>
+							<div className="space-y-1.5">
+								<Label htmlFor="description" className="text-sm font-medium">
+									Description
+								</Label>
+								<textarea
+									id="description"
+									name="description"
+									value={formData.description}
+									onChange={handleInputChange}
+									className="flex min-h-[80px] w-full rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-950 dark:ring-offset-zinc-950 dark:placeholder:text-zinc-400 dark:focus-visible:ring-zinc-300"
+									placeholder="Describe the product..."
+								/>
+							</div>
+
+							<div className="space-y-1.5">
+								<Label className="text-sm font-medium">Product Image</Label>
+								<div className="flex items-center gap-4 p-4 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-lg">
+									{previewUrl ? (
+										<div className="relative h-20 w-20 rounded-md overflow-hidden border border-zinc-200">
+											<img
+												src={previewUrl}
+												alt="Preview"
+												className="h-full w-full object-cover"
+											/>
+											<button
+												type="button"
+												onClick={() => {
+													setImage(null);
+													setPreviewUrl("");
+												}}
+												className="absolute top-0 right-0 bg-red-500 text-white p-0.5 rounded-bl-md"
+											>
+												<X className="h-3 w-3" />
+											</button>
+										</div>
+									) : (
+										<div className="h-20 w-20 rounded-md bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center border border-zinc-200 dark:border-zinc-800">
+											<Upload className="h-6 w-6 text-zinc-400" />
+										</div>
+									)}
+									<div className="flex-1">
+										<Input
+											type="file"
+											accept="image/*"
+											onChange={handleFileUpload}
+											className="cursor-pointer"
+										/>
+										<p className="text-[10px] text-zinc-500 mt-1">
+											PNG, JPG, GIF up to 5MB
+										</p>
+									</div>
+								</div>
+							</div>
+
+							<DialogFooter className="pt-4 border-t border-zinc-100 dark:border-zinc-800">
+								<Button
+									type="button"
+									variant="outline"
+									onClick={() => setIsOpen(false)}
+									disabled={loading}
+								>
+									Cancel
+								</Button>
+								<Button
+									type="submit"
+									disabled={loading}
+									className="bg-indigo-600 hover:bg-indigo-700 text-white"
+								>
+									{loading ? (
+										<>
+											<Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+											Creating...
+										</>
+									) : (
+										"Create Product"
+									)}
+								</Button>
+							</DialogFooter>
+						</form>
+					</DialogContent>
+				</Dialog>
 			</div>
-		</React.Fragment>
+		</div>
 	);
 };
+
+// Internal X icon helper
+const X = ({ className }) => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width="24"
+		height="24"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth="2"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		className={className}
+	>
+		<path d="M18 6 6 18" />
+		<path d="m6 6 12 12" />
+	</svg>
+);

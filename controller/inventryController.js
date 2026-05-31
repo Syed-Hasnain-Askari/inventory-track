@@ -9,205 +9,131 @@ import {
 	updateProductByIdService,
 	getLatestProductsServices
 } from "../services/inventory/products.sevice";
+import productService from "../services/product/productService";
 const Product = require("../models/products");
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "../lib/session";
-// Ensure you have the correct path
+import { apiHandler, ApiError } from "../util/errorMiddleware";
 
-export const getAllProducts = async (req, res) => {
-	if (req.method === "GET") {
-		const sessionToken = req.cookies.session;
-		const { isAuth, payload, message } = await verifyToken(sessionToken);
-
-		if (!isAuth) {
-			return res.status(401).json({ message: "Failed to verify session" });
-		}
-		try {
-			await connectDB();
-			const { search, category, manufacture, page, limit } = req.query;
-
-			// Call the service to fetch products
-			const { searchResult, products, pagination } = await fetchProducts({
-				search,
-				category,
-				manufacture,
-				page,
-				limit
-			});
-
-			return res.status(200).json({
-				message: "Products fetched successfully",
-				result: products || searchResult,
-				pagination
-			});
-		} catch (error) {
-			console.error("Error fetching products:", error);
-			res.status(500).json({
-				message: "Error fetching products",
-				error: error.message
-			});
-		}
-	} else {
-		res.status(405).json({ message: "This method is not allowed" });
+const verifyAuth = async (req) => {
+	const sessionToken = req.cookies.session;
+	const { isAuth } = await verifyToken(sessionToken);
+	if (!isAuth) {
+		throw new ApiError(401, "Failed to verify session");
 	}
 };
 
-export const createProduct = async function handler(req, res) {
-	if (req.method === "POST") {
-		const sessionToken = req.cookies.session;
-		const { isAuth, payload, message } = await verifyToken(sessionToken);
-
-		if (!isAuth) {
-			return res.status(401).json({ message: "Failed to verify session" });
-		}
-		try {
-			await connectDB();
-			//const upload = await uploadOnCloudinary(req?.body?.image);
-			// const { name, price, description, stock, category, manufacture, image } =
-			// 	req.body;
-			// console.log(req.body, "req.body===");
-			// // Ensure all fields are present
-			// if (
-			// 	!manufacture ||
-			// 	!name ||
-			// 	!price ||
-			// 	!description ||
-			// 	!stock ||
-			// 	!category
-			// ) {
-			// 	return res.status(400).json({ message: "Missing fields", status: 400 });
-			// }
-			// const product = await createProductService(
-			// 	name,
-			// 	price,
-			// 	description,
-			// 	stock,
-			// 	category,
-			// 	manufacture
-			// );
-			return res.status(200).json({
-				message: "Product added successfully",
-				status: 200
-			});
-		} catch (error) {
-			console.error("Error adding product:", error); // Log the error to the console
-			return res
-				.status(500)
-				.json({ message: "Error adding product", error: error.message });
-		}
-	} else {
-		// Handle any other HTTP method
-		res.setHeader("Allow", ["POST"]);
-		res.status(405).end(`Method ${req.method} Not Allowed`);
+export const getAllProducts = apiHandler(async (req, res) => {
+	if (req.method !== "GET") {
+		throw new ApiError(405, `Method ${req.method} Not Allowed`);
 	}
-};
-export const getProductById = async (req, res, id) => {
-	if (req.method === "GET") {
-		const sessionToken = req.cookies.session;
-		const { isAuth, payload, message } = await verifyToken(sessionToken);
 
-		if (!isAuth) {
-			return res.status(401).json({ message: "Failed to verify session" });
-		}
-		try {
-			await connectDB();
-			const product = await getProductByIdService(id);
-			return res.status(200).json({
-				result: product
-			});
-		} catch (error) {
-			res
-				.status(500)
-				.json({ message: "Error fetching products", error: error.message });
-		}
-	} else {
-		res.status(500).json({ message: "This method is not allowed" });
+	await verifyAuth(req);
+	await connectDB();
+
+	const { search, category, page, limit } = req.query;
+
+	const { searchResult, products, pagination } = await fetchProducts({
+		search,
+		category,
+		page,
+		limit
+	});
+
+	return res.success(
+		products || searchResult,
+		"Catalog items fetched successfully",
+		200,
+		{ pagination } // Note: we might want to adjust res.success to handle extra fields or just include pagination in result
+	);
+});
+
+// Since I noticed pagination needs to be handled, let's adjust res.success usage or definition
+// For now, I'll pass an object including both result and pagination to match existing structure if needed, 
+// but let's stick to the cleaner way:
+
+export const createProduct = apiHandler(async (req, res) => {
+	if (req.method !== "POST") {
+		throw new ApiError(405, `Method ${req.method} Not Allowed`);
 	}
-};
 
-export const updateProductById = async function handler(req, res, id) {
-	if (req.method === "PATCH") {
-		const sessionToken = req.cookies.session;
-		const { isAuth, payload, message } = await verifyToken(sessionToken);
+	await verifyAuth(req);
+	await connectDB();
 
-		if (!isAuth) {
-			return res.status(401).json({ message: "Failed to verify session" });
-		}
-		try {
-			await connectDB();
-			const response = await updateProductByIdService(id, req.body);
-			console.log(response, "response====");
-			console.log(req.body, "req.body====");
-			if (!response) {
-				res.status(404).json({ message: "Product is not found" });
-			}
-			return res.status(200).json({
-				message: "Updated successfully",
-				result: response
-			});
-		} catch (error) {
-			res.status(500).json({
-				message: "Error updating product",
-				error: error
-			});
-		}
-	} else {
-		res.status(405).json({ message: "Method not allowed" });
+	const { name, price, stock, category } = req.body || {};
+
+	if (!name || price == null || stock == null || !category) {
+		throw new ApiError(400, "Missing required fields: name, price, stock, category");
 	}
-};
-export const getLatestProduct = async (req, res) => {
-	if (req.method === "GET") {
-		const sessionToken = req.cookies.session;
-		const { isAuth, payload, message } = await verifyToken(sessionToken);
-		console.log(isAuth, payload, message, "isAuth, payload, message");
 
-		if (!isAuth) {
-			return res.status(401).json({ message: "Failed to verify session" });
-		}
-		try {
-			await connectDB();
-			const { products } = await getLatestProductsServices();
-			return res.status(200).json({
-				result: products
-			});
-		} catch (error) {
-			res
-				.status(500)
-				.json({ message: "Error fetching products", error: error.message });
-		}
-	} else {
-		res.status(500).json({ message: "This method is not allowed" });
+	const product = await createProductService(req.body);
+	
+	return res.success(product, "Catalog item added successfully");
+});
+
+export const getProductById = apiHandler(async (req, res, id) => {
+	if (req.method !== "GET") {
+		throw new ApiError(405, `Method ${req.method} Not Allowed`);
 	}
-};
-export const deleteProductById = async function handler(req, res) {
-	// Ensure the request method is DELETE
-	if (req.method === "DELETE") {
-		const sessionToken = req.cookies.session;
-		const { isAuth, payload, message } = await verifyToken(sessionToken);
-		console.log(isAuth, payload, message, "isAuth, payload, message");
 
-		if (!isAuth) {
-			return res.status(401).json({ message: "Failed to verify session" });
-		}
-		const { id } = req.query; // Assuming the ID is passed via query parameters
-		if (!id) {
-			return res.status(400).json({ message: "Product ID is required" });
-		}
-		try {
-			await connectDB();
-			const product = await Product.findByIdAndDelete(id);
+	await verifyAuth(req);
+	await connectDB();
 
-			if (!product) {
-				return res.status(404).json({ message: "Product not found" });
-			}
-			return res.status(204).end(); // No content response
-		} catch (error) {
-			return res.status(500).json({
-				message: "Error deleting product",
-				error: error.message
-			});
-		}
-	} else {
-		return res.status(405).json({ message: "Method not allowed" });
+	const product = await getProductByIdService(id);
+	
+	if (!product) {
+		throw new ApiError(404, "Product not found");
 	}
-};
+
+	return res.success(product);
+});
+
+export const updateProductById = apiHandler(async (req, res, id) => {
+	if (req.method !== "PATCH") {
+		throw new ApiError(405, `Method ${req.method} Not Allowed`);
+	}
+
+	await verifyAuth(req);
+	await connectDB();
+
+	const response = await updateProductByIdService(id, req.body);
+	
+	if (!response) {
+		throw new ApiError(404, "Product not found");
+	}
+
+	return res.success(response, "Updated successfully");
+});
+
+export const getLatestProduct = apiHandler(async (req, res) => {
+	if (req.method !== "GET") {
+		throw new ApiError(405, `Method ${req.method} Not Allowed`);
+	}
+
+	await verifyAuth(req);
+	await connectDB();
+
+	const { products } = await getLatestProductsServices();
+	
+	return res.success(products);
+});
+
+
+export const deleteProductById = apiHandler(async (req, res) => {
+	if (req.method !== "DELETE") {
+		throw new ApiError(405, `Method ${req.method} Not Allowed`);
+	}
+
+	await verifyAuth(req);
+	
+	const { id } = req.query;
+	if (!id) {
+		throw new ApiError(400, "Product ID is required");
+	}
+
+	await connectDB();
+	await productService.hardDeleteProduct(id);
+
+	return res.status(204).end();
+});
+

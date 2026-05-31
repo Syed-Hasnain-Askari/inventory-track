@@ -26,9 +26,10 @@ export const inventryProductSlice = createSlice({
 			};
 		},
 		getProducts: (state, action) => {
+			console.log(action, "action====");
 			return {
 				...state,
-				inventryProducts: action.payload.result,
+				inventryProducts: action.payload.result || [],
 				pagination: action.payload.pagination
 			};
 		}
@@ -40,9 +41,9 @@ export const inventryProductSlice = createSlice({
 		});
 		builder.addCase(getInventoryProducts.fulfilled, (state, action) => {
 			console.log(action, "getInventoryProducts.fulfilled");
-			const { result, pagination } = action.payload;
+			const { result, products, pagination } = action.payload;
 			state.isLoading = false;
-			state.inventryProducts = result;
+			state.inventryProducts = products || result || [];
 			state.pagination = pagination;
 		});
 		builder.addCase(getInventoryProducts.rejected, (state, action) => {

@@ -4,17 +4,20 @@ import {
 	setIsDarkMode,
 	setIsSidebarCollapsed
 } from "../../redux/feature/slice/globalSlice";
-import { Bell, Menu, Moon, Settings, Sun } from "lucide-react";
+import { Bell, Menu, Moon, Settings, Sun, Search as SearchIcon } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UserMenu from "../../app/components/UserMenu";
 import Notification from "../../components/notification";
-import { logout } from "../../app/lib/actions/logoutAction";
+import { logout } from "@/lib/actions/logoutAction";
 import { useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { getInventoryProducts } from "../../redux/feature/reducer/inventryReducer";
 import Search from "../search";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
 const Navbar = ({ username }) => {
 	const router = useRouter();
 	const [toggle, setToggle] = useState(false);
@@ -46,75 +49,89 @@ const Navbar = ({ username }) => {
 		const search = value;
 		dispatch(getInventoryProducts({ search }));
 	}, 2000);
+
 	return (
-		<header className="sticky h-20 rounded-full w-full bg-white top-5 z-50 flex justify-between items-center mb-7 px-5 py-3 shadow-md">
+		<header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b bg-white/80 px-6 backdrop-blur-md dark:bg-zinc-950/80 dark:border-zinc-800">
 			{/* LEFT SIDE */}
-			<div className="flex justify-between items-center gap-5">
-				<button
-					className="px-3 py-3 bg-gray-100 rounded-full hover:bg-blue-100"
+			<div className="flex items-center gap-4">
+				<Button
+					variant="ghost"
+					size="icon"
+					className="md:hidden"
 					onClick={toggleSidebar}
 				>
-					<Menu className="w-4 h-4" />
-				</button>
+					<Menu className="h-5 w-5" />
+				</Button>
 
-				<Search handleSearchChange={handleSearchChange} />
+				<div className="relative w-full max-w-md">
+					<SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+					<Search handleSearchChange={handleSearchChange} />
+				</div>
 			</div>
 
 			{/* RIGHT SIDE */}
-			<div className="flex justify-between items-center gap-5">
-				<div className="hidden md:flex justify-between items-center gap-5">
-					<div>
-						<button onClick={toggleDarkMode}>
-							{isDarkMode ? (
-								<Sun className="cursor-pointer text-gray-500" size={24} />
-							) : (
-								<Moon className="cursor-pointer text-gray-500" size={24} />
-							)}
-						</button>
-					</div>
+			<div className="flex items-center gap-2">
+				<div className="flex items-center gap-1 sm:gap-2">
+					<Button
+						variant="ghost"
+						size="icon"
+						onClick={toggleDarkMode}
+						className="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+					>
+						{isDarkMode ? (
+							<Sun className="h-5 w-5" />
+						) : (
+							<Moon className="h-5 w-5" />
+						)}
+					</Button>
+					
 					<div className="relative">
-						<button onClick={handleNotification}>
-							<Bell className="cursor-pointer text-gray-500" size={24} />
-						</button>
-						<span className="absolute -top-2 -right-2 inline-flex items-center justify-center px-[0.4rem] py-1 text-xs font-semibold leading-none text-red-100 bg-red-400 rounded-full">
-							3
-						</span>
-						{isNotification ? <Notification /> : ""}
+						<Button
+							variant="ghost"
+							size="icon"
+							onClick={handleNotification}
+							className="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+						>
+							<Bell className="h-5 w-5" />
+							<span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-600 ring-2 ring-white dark:ring-zinc-950"></span>
+						</Button>
+						{isNotification && <Notification />}
 					</div>
 
-					<hr className="w-0 h-7 border border-solid border-l border-gray-300 mx-3" />
-					<div className="flex items-center gap-3 cursor-pointer">
-						<div className="relative ml-3">
-							<div>
-								<button
-									type="button"
-									className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-									id="user-menu-button"
-									aria-expanded="false"
-									aria-haspopup="true"
-									onClick={handleToggle}
-								>
-									<span className="absolute -inset-1.5"></span>
-									<span className="sr-only">Open user menu</span>
-									<img
-										className="h-8 w-8 rounded-full"
-										src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-										alt=""
-									/>
-								</button>
+					<Button
+						variant="ghost"
+						size="icon"
+						asChild
+						className="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+					>
+						<Link href="/settings">
+							<Settings className="h-5 w-5" />
+						</Link>
+					</Button>
+
+					<div className="mx-2 h-6 w-px bg-zinc-200 dark:bg-zinc-800" />
+
+					<div className="relative">
+						<button
+							onClick={handleToggle}
+							className="flex items-center gap-2 rounded-full p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none"
+						>
+							<div className="h-8 w-8 overflow-hidden rounded-full border border-zinc-200 dark:border-zinc-800">
+								<img
+									className="h-full w-full object-cover"
+									src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+									alt="User"
+								/>
 							</div>
-							{toggle ? (
-								<UserMenu loading={loading} handleSignOut={handleSignOut} />
-							) : (
-								""
-							)}
-						</div>
-						<span className="font-semibold">{username}</span>
+							<span className="hidden text-sm font-medium text-zinc-700 dark:text-zinc-300 md:block">
+								{username}
+							</span>
+						</button>
+						{toggle && (
+							<UserMenu loading={loading} handleSignOut={handleSignOut} />
+						)}
 					</div>
 				</div>
-				<Link href="/settings">
-					<Settings className="cursor-pointer text-gray-500" size={24} />
-				</Link>
 			</div>
 		</header>
 	);

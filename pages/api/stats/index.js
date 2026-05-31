@@ -1,32 +1,35 @@
 import connectDB from "../../../lib/db";
+import { apiHandler, ApiError } from "../../../util/errorMiddleware";
 const Product = require("../../../models/products");
-const Manufacture = require("../../../models/manufacture");
+const Customer = require("../../../models/customer");
+const Order = require("../../../models/order");
 
-export default async function handler(req, res) {
+export default apiHandler(async (req, res) => {
+	if (req.method !== "GET") {
+		throw new ApiError(405, `Method ${req.method} Not Allowed`);
+	}
+
 	await connectDB();
 
-	if (req.method !== "GET") {
-		return res.status(405).json({ message: "Only GET requests are allowed" });
-	}
-
-	try {
-		// Fetch both counts concurrently
-		const [totalProduct, totalManufacture] = await Promise.all([
-			Product.aggregate([{ $count: "totalProduct" }]),
-			Manufacture.aggregate([{ $count: "totalManufacture" }])
-		]);
-
-		res.status(200).json({
-			message: "Data fetched successfully",
-			result: {
-				totalProduct: totalProduct[0]?.totalProduct || 0, // Handling case where no data is found
-				totalManufacture: totalManufacture[0]?.totalManufacture || 0
+	const [totalProduct, totalCustomers, orderStats] = await Promise.all([
+		Product.aggregate([{ $count: "totalProduct" }]),
+		Customer.aggregate([{ $count: "totalCustomers" }]),
+		Order.aggregate([
+			{
+				$group: {
+					_id: null,
+					totalOrders: { $sum: 1 },
+					totalRevenue: { $sum: "$totalAmount" }
+				}
 			}
-		});
-	} catch (error) {
-		res.status(500).json({
-			message: "Error fetching data",
-			error: error.message
-		});
-	}
-}
+		])
+	]);
+
+	return res.success({
+		totalProduct: totalProduct[0]?.totalProduct || 0,
+		totalCustomers: totalCustomers[0]?.totalCustomers || 0,
+		totalOrders: orderStats[0]?.totalOrders || 0,
+		totalRevenue: orderStats[0]?.totalRevenue || 0
+	}, "Data fetched successfully");
+});
+

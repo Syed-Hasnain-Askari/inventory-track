@@ -1,100 +1,76 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getInventoryProducts } from "../../redux/feature/reducer/inventryReducer";
-export default function Pagination() {
-	const { inventryProducts, pagination } = useSelector(
-		(state) => state.inventry
-	);
-	console.log(inventryProducts, pagination, "inventryProducts, pagination");
-	const dispatch = useDispatch();
-	const [page, setPage] = useState(1);
-	const handleNext = (e) => {
-		e.preventDefault();
-		setPage((prev) => prev + 1);
-	};
-	const handlePrev = (e) => {
-		e.preventDefault();
-		setPage((prev) => prev - 1);
-	};
+import React from "react";
 
-	useEffect(() => {
-		if (page) {
-			dispatch(getInventoryProducts({ page }));
-		}
-	}, [page]);
-	return (
-		<div className="flex items-center justify-around mt-6">
-			<button
-				disabled={pagination?.hasPrevPage ? false : true}
-				className={`flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 ${
-					pagination?.hasPrevPage
-						? "hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
-						: ""
-				}`}
-				onClick={handlePrev}
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					strokeWidth="1.5"
-					stroke="currentColor"
-					className="w-5 h-5 rtl:-scale-x-100"
-				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
-					/>
-				</svg>
-				<span>previous</span>
-			</button>
-			<div className="items-center hidden md:flex gap-x-3">
-				{/* Loop over totalPages to generate pagination links */}
-				{Array.from({ length: pagination?.totalPages }, (_, index) => (
-					<button
-						key={index}
-						className={`px-3 py-2 w-8 text-sm rounded-lg ${
-							index + 1 === pagination.currentPage
-								? "bg-blue-500 text-white"
-								: "text-blue-5 dark:bg-gray-800 bg-blue-100/60"
-						}`}
-						onClick={() => {
-							const page = index + 1;
-							dispatch(getInventoryProducts({ page }));
-						}}
-					>
-						{index + 1}
-					</button>
-				))}
-			</div>
+export default function Pagination({ currentPage, totalPages, onPageChange }) {
+  if (totalPages <= 1) return null;
 
-			<button
-				disabled={pagination?.hasNextPage ? false : true}
-				onClick={handleNext}
-				className={`flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 ${
-					pagination?.hasNextPage
-						? "hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
-						: ""
-				}`}
-			>
-				<span>Next</span>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					strokeWidth="1.5"
-					stroke="currentColor"
-					className="w-5 h-5 rtl:-scale-x-100"
-				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
-					/>
-				</svg>
-			</button>
-		</div>
-	);
+  return (
+    <nav className="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-gray-700">
+      <div className="flex-1">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Showing {(currentPage - 1) * 10 + 1}-{Math.min(currentPage * 10, totalPages * 10)} of {totalPages * 10} products
+        </p>
+      </div>
+      <div className="flex items-center space-x-2">
+        {/* Previous Button */}
+        <button
+          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+          disabled={currentPage === 1}
+          className={`flex items-center px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+            currentPage === 1
+              ? "text-gray-400 bg-gray-50 dark:bg-gray-800/30 dark:text-gray-600"
+              : "text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+          }`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="w-4 h-4 rtl:rotate-180"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15.75 19.5L8.25 12l7.5-7.5"
+            />
+          </svg>
+          <span className="ml-2">Previous</span>
+        </button>
+
+        {/* Page Info */}
+        <span className="px-3 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 rounded-full">
+          Page {currentPage} of {totalPages}
+        </span>
+
+        {/* Next Button */}
+        <button
+          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+          disabled={currentPage === totalPages}
+          className={`flex items-center px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+            currentPage === totalPages
+              ? "text-gray-400 bg-gray-50 dark:bg-gray-800/30 dark:text-gray-600"
+              : "text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+          }`}
+        >
+          <span className="mr-2">Next</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="w-4 h-4 ltr:rotate-180"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M8.25 4.5l7.5 7.5L8.25 19.5"
+            />
+          </svg>
+        </button>
+      </div>
+    </nav>
+  );
 }

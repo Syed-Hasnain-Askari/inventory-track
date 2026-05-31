@@ -1,9 +1,11 @@
 import { getLatestProduct } from "../../../controller/inventryController";
-export default async function handler(req, res) {
+import { apiHandler, ApiError } from "../../../util/errorMiddleware";
+
+export default apiHandler(async (req, res) => {
 	if (req.method === "GET") {
 		return getLatestProduct(req, res);
 	} else {
-		res.setHeader("Allow", ["GET", "POST"]);
-		res.status(405).end(`Method ${req.method} Not Allowed`);
+		throw new ApiError(405, `Method ${req.method} Not Allowed`);
 	}
-}
+});
+

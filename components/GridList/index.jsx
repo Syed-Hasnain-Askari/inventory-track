@@ -22,6 +22,8 @@ import {
 	AlertDialogTrigger
 } from "../ui/alert-dialog";
 import { EllipsisVertical } from "lucide-react";
+import thumbnail from "@/public/images/no-image.jpg";
+
 export default function GridList({
 	index,
 	name,
@@ -33,95 +35,72 @@ export default function GridList({
 }) {
 	return (
 		<React.Fragment>
-			<div className="bg-white mt-3">
-				<div className="flex h-full mb-3 shadow-lg rounded-2xl">
-					<Link key={index} href={`/inventory/${id}/`} className="w-full">
-						<div className="flex w-full h-full">
+			<div className="bg-white dark:bg-zinc-950 mt-3">
+				<div className="flex h-full mb-3 shadow-lg rounded-2xl border border-zinc-200 dark:border-zinc-800">
+					<Link key={index} href={`/inventory/${id}`} className="w-full">
+						<div className="flex w-full h-full p-2">
 							<Image
-								className="mr-4 rounded-lg object-cover object-center"
-								alt="Image placeholder"
+								className="mr-4 rounded-lg object-cover object-center h-24 w-24"
+								alt={name}
 								width={100}
 								height={100}
 								loading="lazy"
-								src={image}
+								src={image || thumbnail}
 							/>
 							<div className="flex flex-col justify-between py-2 w-full">
 								<div className="flex justify-between items-center mr-2">
-									<div>
-										<h2 className="text-lg font-medium text-gray-900 dark:text-white">
-											{name}
-										</h2>
-									</div>
+									<h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50 truncate">
+										{name}
+									</h2>
 								</div>
-								<p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+								<p className="text-xs text-zinc-500 line-clamp-2">
 									{description}
 								</p>
 								<div className="flex justify-between items-center mr-2">
-									<p className="text-lg font-medium text-gray-900 dark:text-white">
+									<p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
 										${price}
 									</p>
-									<div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-emerald-500 bg-emerald-100/60 dark:bg-gray-800">
-										<svg
-											width={12}
-											height={12}
-											viewBox="0 0 12 12"
-											fill="none"
-											xmlns="http://www.w3.org/2000/svg"
-										>
-											<path
-												d="M10 3L4.5 8.5L2 6"
-												stroke="currentColor"
-												strokeWidth="1.5"
-												strokeLinecap="round"
-												strokeLinejoin="round"
-											/>
-										</svg>
-										<h2 className="text-sm font-normal">In Stock</h2>
-									</div>
 								</div>
 							</div>
 						</div>
 					</Link>
-					<div
-						onClick={(e) => {
-							e.stopPropagation();
-						}}
-					>
+					<div className="p-2">
 						<AlertDialog>
-							<Menubar className="border-none">
+							<Menubar className="border-none bg-transparent">
 								<MenubarMenu>
-									<MenubarTrigger>
-										<EllipsisVertical className="w-6 h-6 !text-gray-700 cursor-pointer" />
+									<MenubarTrigger className="focus:bg-zinc-100 dark:focus:bg-zinc-800 rounded-full h-8 w-8 flex items-center justify-center p-0">
+										<EllipsisVertical className="w-5 h-5 text-zinc-500 cursor-pointer" />
 									</MenubarTrigger>
-									<MenubarContent>
-										<MenubarItem>
-											<Link href={`/productinventory/${id}`} key={id}>
-												Edit
+									<MenubarContent align="end" className="bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 shadow-xl">
+										<MenubarItem asChild className="cursor-pointer focus:bg-zinc-50 dark:focus:bg-zinc-900">
+											<Link href={`/inventory/edit/${id}`} key={id}>
+												Edit Product
 											</Link>
 										</MenubarItem>
 										<AlertDialogTrigger asChild>
-											<MenubarItem>Delete</MenubarItem>
+											<MenubarItem className="cursor-pointer text-red-600 focus:text-red-700 focus:bg-red-50 dark:focus:bg-red-900/20">Delete Product</MenubarItem>
 										</AlertDialogTrigger>
 									</MenubarContent>
 								</MenubarMenu>
 							</Menubar>
 
-							<AlertDialogContent>
+							<AlertDialogContent className="bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800">
 								<AlertDialogHeader>
 									<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
 									<AlertDialogDescription>
 										This action cannot be undone. This will permanently delete
-										your product from the server
+										your product from the server.
 									</AlertDialogDescription>
 								</AlertDialogHeader>
 								<AlertDialogFooter>
-									<AlertDialogCancel>Cancel</AlertDialogCancel>
+									<AlertDialogCancel className="font-semibold">Cancel</AlertDialogCancel>
 									<AlertDialogAction
 										onClick={() => {
 											handleDeleteProduct(id);
 										}}
+										className="bg-red-600 text-white hover:bg-red-700 font-semibold"
 									>
-										Ok
+										Delete
 									</AlertDialogAction>
 								</AlertDialogFooter>
 							</AlertDialogContent>

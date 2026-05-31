@@ -1,16 +1,37 @@
 export default function DashboardLayout({
 	children,
 	latestproduct,
-	manufacture,
 	stats
 }) {
 	return (
-		<>
-			{stats}
-			<div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-9 2xl:gap-7.5">
-				<div className="col-span-12">{latestproduct}</div>
-				<div className="col-span-12">{manufacture}</div>
+		<div className="space-y-8">
+			<div>
+				<h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Dashboard</h1>
+				<p className="text-zinc-500 dark:text-zinc-400">
+					Welcome back! Here's what's happening with your inventory today.
+				</p>
 			</div>
-		</>
+
+			<section>
+				{stats}
+			</section>
+
+			<div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+				<div className="lg:col-span-8">
+					{latestproduct}
+				</div>
+				<div className="lg:col-span-4">
+					<div className="h-full rounded-xl border border-dashed border-zinc-300 dark:border-zinc-800 flex items-center justify-center p-6 text-center">
+						<div className="space-y-2">
+							<p className="text-sm font-medium text-zinc-500">Analytics Chart Placeholder</p>
+							<p className="text-xs text-zinc-400 max-w-[200px]">
+								Interactive charts and detailed analytics will appear here.
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			{children}
+		</div>
 	);
 }

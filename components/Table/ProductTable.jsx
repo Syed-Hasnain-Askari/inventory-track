@@ -1,101 +1,104 @@
 import Image from "next/image";
 import Spinner from "../Spinner";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow
+} from "@/components/ui/table";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+
 const ProductTable = ({ data }) => {
 	return (
-		<div className="rounded-[10px] bg-white px-7.5 pb-4 pt-7.5 shadow-lg dark:bg-gray-dark dark:shadow-card">
-			<h4 className="mb-5.5 p-5 text-body-2xlg font-bold text-dark dark:text-white">
-				Latest Products
-			</h4>
-
-			<div className="flex flex-col">
-				<div className="grid grid-cols-3 sm:grid-cols-5">
-					<div className="px-2 pb-3.5">
-						<h5 className="text-sm font-medium uppercase xsm:text-base">
-							Name
-						</h5>
-					</div>
-					<div className="px-2 pb-3.5 text-center">
-						<h5 className="text-sm font-medium uppercase xsm:text-base">
-							Category
-						</h5>
-					</div>
-					<div className="px-2 pb-3.5 text-center">
-						<h5 className="text-sm font-medium uppercase xsm:text-base">
-							Manufacture
-						</h5>
-					</div>
-					<div className="hidden px-2 pb-3.5 text-center sm:block">
-						<h5 className="text-sm font-medium uppercase xsm:text-base">
-							Price
-						</h5>
-					</div>
-					<div className="hidden px-2 pb-3.5 text-center sm:block">
-						<h5 className="text-sm font-medium uppercase xsm:text-base">
-							Stock
-						</h5>
-					</div>
+		<Card className="border-none shadow-sm dark:bg-zinc-900">
+			<CardHeader className="flex flex-row items-center justify-between">
+				<CardTitle className="text-lg font-semibold">Latest Products</CardTitle>
+				<Badge variant="outline" className="font-normal">
+					Last 24 hours
+				</Badge>
+			</CardHeader>
+			<CardContent>
+				<div className="rounded-md border dark:border-zinc-800 overflow-hidden">
+					<Table>
+						<TableHeader className="bg-zinc-50 dark:bg-zinc-800/50">
+							<TableRow>
+								<TableHead className="w-[80px]">Image</TableHead>
+								<TableHead>Name</TableHead>
+								<TableHead>Category</TableHead>
+								<TableHead className="text-right">Price</TableHead>
+								<TableHead className="text-right">Stock</TableHead>
+								<TableHead className="text-center">Status</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{!data ? (
+								<TableRow>
+									<TableCell colSpan={6} className="h-24 text-center">
+										<div className="flex items-center justify-center gap-2">
+											<Spinner className="h-4 w-4" />
+											<span>Loading products...</span>
+										</div>
+									</TableCell>
+								</TableRow>
+							) : data.length === 0 ? (
+								<TableRow>
+									<TableCell
+										colSpan={6}
+										className="h-24 text-center text-zinc-500"
+									>
+										No products found.
+									</TableCell>
+								</TableRow>
+							) : (
+								data.map((item) => (
+									<TableRow
+										key={item.id}
+										className="group hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
+									>
+										<TableCell>
+											<div className="relative h-10 w-10 overflow-hidden rounded-md border dark:border-zinc-800">
+												<Image
+													src={item?.image || "/images/no-image.jpg"}
+													alt={item?.name}
+													fill
+													className="object-cover"
+												/>
+											</div>
+										</TableCell>
+										<TableCell className="font-medium text-zinc-900 dark:text-zinc-100">
+											{item?.name}
+										</TableCell>
+										<TableCell>
+											<Badge variant="secondary" className="font-normal">
+												{item?.category}
+											</Badge>
+										</TableCell>
+										<TableCell className="text-right font-medium">
+											${item?.price}
+										</TableCell>
+										<TableCell className="text-right">{item?.stock}</TableCell>
+										<TableCell className="text-center">
+											<div className="flex justify-center">
+												{item?.stock > 10 ? (
+													<span className="flex h-2 w-2 rounded-full bg-emerald-500" />
+												) : item?.stock > 0 ? (
+													<span className="flex h-2 w-2 rounded-full bg-amber-500" />
+												) : (
+													<span className="flex h-2 w-2 rounded-full bg-rose-500" />
+												)}
+											</div>
+										</TableCell>
+									</TableRow>
+								))
+							)}
+						</TableBody>
+					</Table>
 				</div>
-				{data?.map((item, key) =>
-					data?.length < 0 ? (
-						<>
-							<div className="col-span-12 h-96">
-								<div className="flex items-center justify-center h-full">
-									<Spinner />
-								</div>
-							</div>
-						</>
-					) : (
-						<div
-							className={`grid grid-cols-3 sm:grid-cols-5 ${
-								key === data.length - 1
-									? ""
-									: "border-b border-stroke dark:border-dark-3"
-							}`}
-							key={key}
-						>
-							<div className="flex items-center gap-3.5 px-2 py-4">
-								<div className="flex-shrink-0">
-									<Image src={item?.image} alt="Brand" width={48} height={48} />
-								</div>
-								<p className="hidden font-medium text-sm text-dark dark:text-white sm:block">
-									{item?.name.slice(0, 10)}
-								</p>
-							</div>
-							<div className="flex items-center justify-center px-2 py-4">
-								<p className="font-medium text-dark dark:text-white">
-									{item?.category}
-								</p>
-							</div>
-
-							<div className="flex items-center justify-center px-2 py-4">
-								<p className="font-medium text-green-light-1">
-									{item?.manufacture}
-								</p>
-							</div>
-
-							<div className="hidden items-center justify-center px-2 py-4 sm:flex">
-								<p className="font-medium text-dark dark:text-white">
-									${item?.price}
-								</p>
-							</div>
-
-							<div className="hidden items-center justify-center px-2 py-4 sm:flex">
-								<p className="font-medium text-dark dark:text-white">
-									{item?.stock}
-								</p>
-							</div>
-						</div>
-					)
-				)}
-				{data?.length === 0 && (
-					<div className="col-span-12 py-32">
-						<div className="flex justify-center items-center h-full">
-							<p className=" text-gray-500 font-semibold">No products found</p>
-						</div>
-					</div>
-				)}
-			</div>
-		</div>
+			</CardContent>
+		</Card>
 	);
 };
 export default ProductTable;

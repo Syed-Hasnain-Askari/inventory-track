@@ -1,16 +1,9 @@
-import React, { Suspense } from "react";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle
-} from "../../components/ui/card";
-import { ProductsTable } from "../../components/ProductInventry/ProductTable";
+import React from "react";
+import { StatsSection } from "../../components/ProductInventry/StatsSection";
+import { InventoryContent } from "../../components/ProductInventry/InventoryContent";
 import Pagination from "../../components/pagination/index";
-import Spinner from "../../components/Spinner";
 import InventoryLayout from "./InventoryLayout";
-import { BASE_URL } from "../../lib/config";
+import { BASE_URL } from "@/lib/config";
 import { cookies } from "next/headers";
 
 async function fetchData() {
@@ -21,27 +14,26 @@ async function fetchData() {
 			Cookie: `session=${session}`
 		},
 		credentials: "include",
-		cache: "force-cache"
+		cache: "no-store"
 	});
-	const data = await response.json();
-	return data;
+	const result = await response.json();
+	return result;
 }
+
 const InventoryPage = async () => {
-	const data = await fetchData();
+	const response = await fetchData();
+	console.log(response, "Response");
 	return (
 		<InventoryLayout className="bg-zinc-50 dark:bg-zinc-950">
-			<Card>
-				<CardHeader>
-					<CardTitle>Products</CardTitle>
-					<CardDescription>
-						Manage your products and view their sales performance.
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<ProductsTable data={data} />
-				</CardContent>
-			</Card>
-			{data?.pagination?.totalProducts > 10 && <Pagination />}
+			<div className="space-y-6">
+				<StatsSection data={response?.result} />
+				<InventoryContent data={response} />
+				{response?.pagination?.totalProducts > 10 && (
+					<div className="flex justify-end mt-4">
+						<Pagination />
+					</div>
+				)}
+			</div>
 		</InventoryLayout>
 	);
 };

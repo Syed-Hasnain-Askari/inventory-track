@@ -1,56 +1,51 @@
 import * as jose from "jose";
 import connectDB from "../../../lib/db";
-import User from "../../../models/users"; // Assuming you have a Mongoose User model
+import User from "../../../models/users";
 import bcrypt from "bcrypt";
-export default async function handler(req, res) {
-	if (req.method === "POST") {
-		const { email, password } = req.body;
-		if (!email || !password) {
-			return res
-				.status(400)
-				.json({ message: "Email and password are required" });
-		}
-		try {
-			// Connect to the database
-			await connectDB();
-
-			// Find the user by email
-			const user = await User.findOne({ email });
-			if (!user) {
-				return res.status(400).json({ message: "Invalid email or password." });
-			}
-
-			// Compare the provided password with the stored hash
-			const isValidPassword = await bcrypt.compare(password, user.password);
-			if (!isValidPassword) {
-				return res.status(400).json({ message: "Invalid email or password." });
-			}
-
-			// Generate JWT
-			const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-			const alg = "HS256";
-			const jwt = await new jose.SignJWT({ email })
-				.setProtectedHeader({ alg })
-				.setIssuedAt()
-				.setExpirationTime("2h")
-				.sign(secret);
-			// Set cookie using res.setHeader
-			res.setHeader(
-				"Set-Cookie",
-				`token=${jwt}; HttpOnly; Path=/; Max-Age=${2 * 60 * 60}`
-			);
-			return res.status(200).json({
-				data: {
-					accessToken: jwt,
-					user: user
-				},
-				message: "Login success"
-			});
-		} catch (error) {
-			console.error("Error during login:", error);
-			return res.status(500).json({ message: "Internal server error" });
-		}
-	} else {
-		return res.status(405).json({ message: "Method not allowed" });
+import { apiHandler, ApiError } from "../../../util/errorMiddleware";
+const isProduction = process.env.NODE_ENV === "production";
+export default apiHandler(async (req, res) => {
+	if (req.method !== "POST") {
+		throw new ApiError(405, `Method ${req.method} Not Allowed`);
 	}
-}
+
+	const { email, password } = req.body;
+	if (!email || !password) {
+		throw new ApiError(400, "Email and password are required");
+	}
+
+	await connectDB();
+
+	const user = await User.findOne({ email });
+	if (!user) {
+		throw new ApiError(401, "Invalid email or password");
+	}
+
+	const isValidPassword = await bcrypt.compare(password, user.password);
+	if (!isValidPassword) {
+		throw new ApiError(401, "Invalid email or password");
+	}
+
+	const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+	const alg = "HS256";
+	const jwt = await new jose.SignJWT({ email })
+		.setProtectedHeader({ alg })
+		.setIssuedAt()
+		.setExpirationTime("2h")
+		.sign(secret);
+	res.setHeader(
+		"Set-Cookie",
+		`session=${jwt}; HttpOnly; Path=/; Max-Age=${2 * 60 * 60}; SameSite=${
+			isProduction ? "None" : "Lax"
+		}; ${isProduction ? "Secure;" : ""}`
+	);
+
+	return res.success(
+		{
+			data: {
+				accessToken: jwt
+			}
+		},
+		"Login success"
+	);
+});

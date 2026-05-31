@@ -2,7 +2,6 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { inventryProductSlice } from "../feature/slice/inventrySlice";
 import { authSlice } from "../feature/slice/authSlice";
 import { categorySlice } from "../feature/slice/categorySlice";
-import { manufactureSlice } from "../feature/slice/manufactureSlice";
 import { globalSlice } from "../feature/slice/globalSlice";
 import {
 	persistStore,
@@ -15,6 +14,7 @@ import {
 	REGISTER
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { productSlice } from "../feature/slice/productSlice";
 const persistConfig = {
 	key: "root",
 	storage,
@@ -23,8 +23,8 @@ const persistConfig = {
 export const rootReducer = combineReducers({
 	auth: authSlice.reducer,
 	inventry: inventryProductSlice.reducer,
+	product: productSlice.reducer,
 	category: categorySlice.reducer,
-	manufacture: manufactureSlice.reducer,
 	global: globalSlice.reducer
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);

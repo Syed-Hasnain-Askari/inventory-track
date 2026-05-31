@@ -1,6 +1,6 @@
 "use server";
 import User from "../../../models/users";
-import connectDB from "../../../lib/db";
+import connectDB from "@/lib/db";
 export const userProfileAction = async (name, contact, id) => {
 	try {
 		await connectDB();

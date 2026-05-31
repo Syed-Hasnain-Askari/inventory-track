@@ -1,272 +1,158 @@
-"use client";
-import React, { useState, useEffect, useRef } from "react";
-import Header from "../../components/Header";
+import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue
-} from "../../components/ui/select";
-import ImageUploader from "../../components/imageuploader/index";
-import { useToast } from "../../components//ui/use-toast";
-import { getCategories } from "../../lib//methods";
-import { getManufacture } from "../../redux/feature/reducer/manufactureReducer";
-import { useDispatch, useSelector } from "react-redux";
-import { addProduct } from "../../redux/feature/reducer/inventryReducer";
-export default function page() {
-	const dispatch = useDispatch();
-	const inputRef = useRef(null);
-	const { toast } = useToast();
-	const [loading, setLoading] = useState(false);
-	const [image, setImage] = useState("");
-	const { manufactures } = useSelector((state) => state.manufacture);
-	const [categories, setCategories] = useState(null);
-	const [userInput, setUserInput] = useState({
-		name: "",
-		description: "",
-		price: "",
-		category: "",
-		manufacture: "",
-		stock: "",
-		image: image
-	});
-	const handleChange = (key, e) => {
-		setUserInput({
-			...userInput,
-			[key]: e.target.value
-		});
-	};
-	const handleSelectChange = (key, e) => {
-		setUserInput({
-			...userInput,
-			[key]: e
-		});
-	};
-	const handleSubmit = async (e) => {
-		setLoading(true);
-		try {
-			dispatch(addProduct(userInput));
-			// Reset form input fields
-			// setUserInput({
-			// 	name: "",
-			// 	description: "",
-			// 	price: "",
-			// 	category: "",
-			// 	image: "",
-			// 	stock: ""
-			// });
-		} catch (error) {
-			console.error("Error:", error);
-			setLoading(false);
-			// Display error toast notification
-			toast({
-				title: "Error!",
-				description: error.message,
-				status: "error"
-			});
-		} finally {
-			setLoading(false);
-		}
-	};
-	const handleFileUpload = (event) => {
-		const file = event.target.files[0]; // Get the first selected file
-		const reader = new FileReader(); // Create a new FileReader
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch"; // Assuming a Switch component for isActive
 
-		// When the file is successfully read
-		reader.onload = () => {
-			const base64String = reader.result.split(",")[1]; // Get the base64 string without the prefix
+export function AddProductDialog() {
+	// In a real application, you would manage state for these inputs
+	// and handle form submission logic here.
+	// For this redesign, we are focusing on the structure of the modal fields.
 
-			// Set the base64 string to state
-			setUserInput((prev) => ({
-				...prev,
-				image: base64String // Save the base64 string in user input state
-			}));
-
-			// Optional: You can store the file in its original form as well
-			setImage(file); // Store the file if you need it in other parts of your app
-		};
-
-		// Read the file as DataURL (which encodes it in base64)
-		if (file) {
-			reader.readAsDataURL(file);
-		}
-	};
-
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const response = await getCategories();
-				setCategories(response);
-			} catch (error) {
-				console.error("Error fetching categories:", error);
-			}
-		};
-		fetchData();
-	}, []);
-	useEffect(() => {
-		dispatch(getManufacture());
-		inputRef.current.focus();
-	}, [dispatch]);
-	console.log(userInput, "userInput");
 	return (
-		<>
-			<Header name={"Add Product"} />
-			<div className="flex items-center justify-center p-12">
-				<div className="mx-auto w-full max-w-[550px]">
-					<div className="mb-3">
-						<label
-							htmlFor="guest"
-							className="mb-3 block text-base font-medium text-[#07074D]"
-						>
+		<Dialog>
+			<DialogTrigger asChild>
+				<Button variant="outline">Add New Product</Button>
+			</DialogTrigger>
+			<DialogContent className="sm:max-w-[475px] ">
+				<DialogHeader>
+					<DialogTitle>Product Information</DialogTitle>
+					<DialogDescription>
+						Enter product details below. Click save when you're done.
+					</DialogDescription>
+				</DialogHeader>
+				<div className="grid gap-4 py-4">
+					{/* Product Name */}
+					<div className="grid grid-cols-4 items-center gap-4">
+						<Label htmlFor="productName" className="text-right">
 							Name
-						</label>
-						<input
-							ref={inputRef}
-							type="text"
-							name="name"
-							value={userInput.name}
-							onChange={(e) => handleChange("name", e)}
-							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+						</Label>
+						<Input
+							id="productName"
+							placeholder="e.g., Laptop, T-Shirt"
+							className="col-span-3"
+							// defaultValue={product?.name || ""} // For editing
 						/>
 					</div>
-					<div className="mb-3">
-						<label
-							htmlFor="guest"
-							className="mb-3 block text-base font-medium text-[#07074D]"
-						>
+
+					{/* Product Description */}
+					<div className="grid grid-cols-4 items-center gap-4">
+						<Label htmlFor="productDescription" className="text-right">
 							Description
-						</label>
-						<textarea
-							name="description"
-							value={userInput.description}
-							onChange={(e) => handleChange("description", e)}
-							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+						</Label>
+						<Input
+							id="productDescription"
+							placeholder="Detailed product description"
+							className="col-span-3"
+							// defaultValue={product?.description || ""}
 						/>
 					</div>
-					<div className="mb-3">
-						<label
-							htmlFor="guest"
-							className="mb-3 block text-base font-medium text-[#07074D]"
-						>
-							Image
-						</label>
-						<ImageUploader handleFileUpload={handleFileUpload} image={image} />
-					</div>
-					<div className="mb-3">
-						<label
-							htmlFor="guest"
-							className="mb-3 block text-base font-medium text-[#07074D]"
-						>
+
+					{/* Product Price */}
+					<div className="grid grid-cols-4 items-center gap-4">
+						<Label htmlFor="productPrice" className="text-right">
 							Price
-						</label>
-						<input
+						</Label>
+						<Input
+							id="productPrice"
 							type="number"
-							name="price"
-							value={userInput.price}
-							onChange={(e) => handleChange("price", e)}
-							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+							placeholder="e.g., 99.99"
+							className="col-span-3"
+							// defaultValue={product?.price || ""}
 						/>
 					</div>
-					<div className="mb-3">
-						<label
-							htmlFor="guest"
-							className="mb-3 block text-base font-medium text-[#07074D]"
-						>
-							Type
-						</label>
-						<Select
-							onValueChange={(e) => {
-								handleSelectChange("category", e);
-							}}
-						>
-							<SelectTrigger className="w-full h-[50px] mt-3">
-								<SelectValue placeholder="Select" />
+
+					{/* Product Discount Price */}
+					<div className="grid grid-cols-4 items-center gap-4">
+						<Label htmlFor="productDiscountPrice" className="text-right">
+							Discount Price
+						</Label>
+						<Input
+							id="productDiscountPrice"
+							type="number"
+							placeholder="e.g., 79.99"
+							className="col-span-3"
+							// defaultValue={product?.discountPrice || ""}
+						/>
+					</div>
+
+					{/* Product Stock */}
+					<div className="grid grid-cols-4 items-center gap-4">
+						<Label htmlFor="productStock" className="text-right">
+							Stock
+						</Label>
+						<Input
+							id="productStock"
+							type="number"
+							placeholder="e.g., 100"
+							className="col-span-3"
+							// defaultValue={product?.stock || 0}
+						/>
+					</div>
+
+					{/* Product SKU */}
+					<div className="grid grid-cols-4 items-center gap-4">
+						<Label htmlFor="productSku" className="text-right">
+							SKU
+						</Label>
+						<Input
+							id="productSku"
+							placeholder="e.g., LPT-123-BLK"
+							className="col-span-3"
+							// defaultValue={product?.sku || ""}
+						/>
+					</div>
+
+					{/* Product Category - Placeholder for Select */}
+					<div className="grid grid-cols-4 items-center gap-4">
+						<Label htmlFor="productCategory" className="text-right">
+							Category
+						</Label>
+						<Select /* defaultValue={product?.category?._id || ""} */>
+							<SelectTrigger className="col-span-3">
+								<SelectValue placeholder="Select a category" />
 							</SelectTrigger>
 							<SelectContent>
-								{categories?.result?.map((category) => {
-									return (
-										<SelectItem value={category?._id}>
-											{category.name}
-										</SelectItem>
-									);
-								})}
+								{/* Example categories, these should be dynamically loaded */}
+								<SelectItem value="electronics">Electronics</SelectItem>
+								<SelectItem value="clothing">Clothing</SelectItem>
+								<SelectItem value="books">Books</SelectItem>
+								<SelectItem value="other">Other</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>
-					<div className="mb-3">
-						<label htmlFor="guest" className="mb-3 block text-base font-medium">
-							Manufacture
-						</label>
-						<Select
-							className="relative z-10"
-							onValueChange={(e) => {
-								handleSelectChange("manufacture", e);
-							}}
-						>
-							<SelectTrigger className="w-full h-[50px] mt-3">
-								<SelectValue placeholder="Select" />
-							</SelectTrigger>
-							<SelectContent className="absolute z-50">
-								{manufactures?.map((item) => {
-									return <SelectItem value={item._id}>{item.name}</SelectItem>;
-								})}
-							</SelectContent>
-						</Select>
-					</div>
-					<div className="mb-3">
-						<label
-							htmlFor="guest"
-							className="mb-3 block text-base font-medium text-[#07074D]"
-						>
-							Stock
-						</label>
-						<input
-							type="number"
-							name="stock"
-							value={userInput.stock}
-							onChange={(e) => handleChange("stock", e)}
-							className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+
+					{/* Product Active Status - Placeholder for Switch */}
+					<div className="grid grid-cols-4 items-center gap-4">
+						<Label htmlFor="productIsActive" className="text-right">
+							Active
+						</Label>
+						<Switch
+							id="productIsActive"
+							// checked={product?.isActive || true}
+							className="col-span-3"
 						/>
 					</div>
-					<div>
-						<button
-							onClick={() => {
-								handleSubmit();
-							}}
-							className="text-white bg-[#4F46E5] hover:bg-[#433BCB] rounded-lg text-sm px-4 lg:px-5 py-3 lg:py-3.5 focus:outline-none font-extrabold w-full mt-3 shade mb-3 flex items-center justify-center"
-						>
-							{loading ? (
-								<>
-									<svg
-										class="mr-3 h-5 w-5 animate-spin text-white"
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-									>
-										<circle
-											class="opacity-25"
-											cx="12"
-											cy="12"
-											r="10"
-											stroke="currentColor"
-											strokeWidth="4"
-										></circle>
-										<path
-											class="opacity-75"
-											fill="currentColor"
-											d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-										></path>
-									</svg>
-									<span class="font-medium"> Loading... </span>
-								</>
-							) : (
-								<p>Submit</p>
-							)}
-						</button>
-					</div>
 				</div>
-			</div>
-		</>
+				<DialogFooter>
+					<Button type="submit">Save Product</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
 	);
 }

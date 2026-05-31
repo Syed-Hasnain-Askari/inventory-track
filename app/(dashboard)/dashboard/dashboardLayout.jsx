@@ -5,27 +5,29 @@ import Navbar from "../../../components/Navbar";
 import Sidebar from "../../../components/Sidebar";
 import ChatBotBubble from "../../../components/BubbleChatBot";
 import { useSelector } from "react-redux";
+import { cn } from "@/lib/utils";
+
 const DashboardLayout = ({ children, username }) => {
 	const { isDarkMode, isSidebarCollapsed } = useSelector(
 		(state) => state.global
 	);
 	return (
-		<div
-			// className={`${
-			// 	isDarkMode ? "dark" : "light"
-			// } flex bg-gray-50 text-gray-900 w-full min-h-screen`}
-			className={`flex bg-zinc-50 dark:bg-zinc-950 transition-colors`}
-		>
+		<div className="flex min-h-screen bg-zinc-50 dark:bg-zinc-950 transition-colors">
 			<Sidebar />
-			<main
-				className={`flex flex-col w-full h-full py-7 px-9 ${
-					isSidebarCollapsed ? "md:pl-24" : "md:pl-72"
-				}`}
+			<div
+				className={cn(
+					"flex flex-1 flex-col transition-all duration-300",
+					isSidebarCollapsed ? "pl-[70px]" : "pl-64"
+				)}
 			>
 				<Navbar username={username} />
-				{children}
+				<main className="flex-1 overflow-y-auto p-6 lg:p-8">
+					<div className="mx-auto max-w-7xl space-y-8">
+						{children}
+					</div>
+				</main>
 				<ChatBotBubble />
-			</main>
+			</div>
 		</div>
 	);
 };
