@@ -6,6 +6,7 @@ import { getServerBaseUrl } from "../../lib/server-url";
 async function handleResponse(response) {
 	if (!response.ok) {
 		const errorText = await response.text();
+		console.error(`API Error (${response.status}):`, errorText);
 		throw new Error(`API Error ${response.status}: ${response.statusText}`);
 	}
 
@@ -86,5 +87,72 @@ export async function getOrderStats() {
 	} catch (error) {
 		console.error("getOrderStats failed:", error);
 		return { success: false, message: error.message, data: {} };
+	}
+}
+
+export async function getOrderById(id) {
+	try {
+		const cookieStore = await cookies();
+		const session = cookieStore.get("session")?.value;
+		const baseUrl = await getServerBaseUrl();
+
+		const response = await fetch(`${baseUrl}/api/orders/${id}`, {
+			headers: {
+				"Content-Type": "application/json",
+				Cookie: `session=${session}`
+			},
+			credentials: "include",
+			cache: "no-store"
+		});
+
+		return await handleResponse(response);
+	} catch (error) {
+		console.error("getOrderById failed:", error);
+		return { success: false, message: error.message, data: null };
+	}
+}
+
+export async function updatePaymentStatus(id, paymentStatus) {
+	try {
+		const cookieStore = await cookies();
+		const session = cookieStore.get("session")?.value;
+		const baseUrl = await getServerBaseUrl();
+
+		const response = await fetch(`${baseUrl}/api/orders/payment/${id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				Cookie: `session=${session}`
+			},
+			body: JSON.stringify({ paymentStatus }),
+			credentials: "include"
+		});
+
+		return await handleResponse(response);
+	} catch (error) {
+		console.error("updatePaymentStatus failed:", error);
+		return { success: false, message: error.message };
+	}
+}
+
+export async function cancelOrder(id) {
+	try {
+		const cookieStore = await cookies();
+		const session = cookieStore.get("session")?.value;
+		const baseUrl = await getServerBaseUrl();
+
+		const response = await fetch(`${baseUrl}/api/orders/${id}`, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+				Cookie: `session=${session}`
+			},
+			credentials: "include"
+		});
+
+		return await handleResponse(response);
+	} catch (error) {
+		console.error("cancelOrder failed:", error);
+		return { success: false, message: error.message };
 	}
 }

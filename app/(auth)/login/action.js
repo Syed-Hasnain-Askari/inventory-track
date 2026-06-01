@@ -1,9 +1,9 @@
 "use server";
 import { LoginFormSchema } from "../../../util/validation/form";
-import connectDB from "@/lib/db";
+import connectDB from "../../../lib/db";
 import User from "../../../models/users";
 import bcrypt from "bcrypt";
-import { createSession } from "@/lib/session";
+import { createSession } from "../../../lib/session";
 
 export const loginAction = async (prevState, formData) => {
 	// 1. Validate form fields
