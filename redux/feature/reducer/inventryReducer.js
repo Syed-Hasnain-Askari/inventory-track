@@ -1,5 +1,4 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { BASE_URL } from "@/lib/config";
 export const getInventoryProducts = createAsyncThunk(
 	"InventoryProduct/getInventoryProducts",
 	async (payload, thunkAPI) => {
@@ -14,7 +13,7 @@ export const getInventoryProducts = createAsyncThunk(
 			queryParams.append("limit", limit); // Add limit to query params if needed
 			// Make the request
 			const response = await fetch(
-				`${BASE_URL}/api/products/?${queryParams.toString()}`
+				`${process.env.BASE_URL}/api/products/?${queryParams.toString()}`
 			);
 			// Parse the response
 			return await response.json();
@@ -29,13 +28,16 @@ export const addProduct = createAsyncThunk(
 	async (payload, thunkAPI) => {
 		try {
 			// 1. First, create the product without the image
-			const productResponse = await fetch(`${BASE_URL}/api/products/`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify(payload)
-			});
+			const productResponse = await fetch(
+				`${process.env.BASE_URL}/api/products/`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(payload)
+				}
+			);
 			if (!productResponse.ok) {
 				throw new Error("Failed to save product data. Please try again.");
 			}
@@ -54,10 +56,13 @@ export const updateProductById = createAsyncThunk(
 		try {
 			console.log(payload, "payload");
 			const { _id, userInpt } = payload;
-			const response = await fetch(`${BASE_URL}/api/products/${_id}`, {
-				method: "PATCH",
-				body: JSON.stringify(userInpt)
-			});
+			const response = await fetch(
+				`${process.env.BASE_URL}/api/products/${_id}`,
+				{
+					method: "PATCH",
+					body: JSON.stringify(userInpt)
+				}
+			);
 			return await response.json();
 		} catch (error) {
 			return thunkAPI.rejectWithValue(error.response);
@@ -68,9 +73,12 @@ export const deleteProductById = createAsyncThunk(
 	"InventryProduct/deleteProductById",
 	async (id, thunkAPI) => {
 		try {
-			const response = await fetch(`${BASE_URL}/api/products/${id}`, {
-				method: "DELETE"
-			});
+			const response = await fetch(
+				`${process.env.BASE_URL}/api/products/${id}`,
+				{
+					method: "DELETE"
+				}
+			);
 			if (response.status === 204) {
 				return { id }; // No content, just return the ID that was deleted
 			} else {
@@ -87,7 +95,7 @@ export const generalSearch = createAsyncThunk(
 		try {
 			console.log(payload, "payload");
 			const response = await fetch(
-				`${BASE_URL}/api/products/?search=${search}`
+				`${process.env.BASE_URL}/api/products/?search=${search}`
 			);
 			return await response.json();
 		} catch (error) {

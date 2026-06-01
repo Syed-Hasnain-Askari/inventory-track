@@ -1,7 +1,6 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { getServerBaseUrl } from "../../lib/server-url";
 
 async function handleResponse(response) {
 	if (!response.ok) {
@@ -27,16 +26,18 @@ export async function getOrders(params = {}) {
 		const queryString = new URLSearchParams(params).toString();
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = await getServerBaseUrl();
 
-		const response = await fetch(`${baseUrl}/api/orders/?${queryString}`, {
-			headers: {
-				"Content-Type": "application/json",
-				Cookie: `session=${session}`
-			},
-			credentials: "include",
-			cache: "no-store"
-		});
+		const response = await fetch(
+			`${process.env.BASE_URL}/api/orders/?${queryString}`,
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Cookie: `session=${session}`
+				},
+				credentials: "include",
+				cache: "no-store"
+			}
+		);
 
 		return await handleResponse(response);
 	} catch (error) {
@@ -49,17 +50,19 @@ export async function updateOrderStatus(id, status) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = await getServerBaseUrl();
 
-		const response = await fetch(`${baseUrl}/api/orders/status/${id}`, {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				Cookie: `session=${session}`
-			},
-			body: JSON.stringify({ status }),
-			credentials: "include"
-		});
+		const response = await fetch(
+			`${process.env.BASE_URL}/api/orders/status/${id}`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					Cookie: `session=${session}`
+				},
+				body: JSON.stringify({ status }),
+				credentials: "include"
+			}
+		);
 
 		return await handleResponse(response);
 	} catch (error) {
@@ -72,16 +75,18 @@ export async function getOrderStats() {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = await getServerBaseUrl();
 
-		const response = await fetch(`${baseUrl}/api/orders/dashboard/stats`, {
-			headers: {
-				"Content-Type": "application/json",
-				Cookie: `session=${session}`
-			},
-			credentials: "include",
-			cache: "no-store"
-		});
+		const response = await fetch(
+			`${process.env.BASE_URL}/api/orders/dashboard/stats`,
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Cookie: `session=${session}`
+				},
+				credentials: "include",
+				cache: "no-store"
+			}
+		);
 
 		return await handleResponse(response);
 	} catch (error) {
@@ -94,9 +99,8 @@ export async function getOrderById(id) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = await getServerBaseUrl();
 
-		const response = await fetch(`${baseUrl}/api/orders/${id}`, {
+		const response = await fetch(`${process.env.BASE_URL}/api/orders/${id}`, {
 			headers: {
 				"Content-Type": "application/json",
 				Cookie: `session=${session}`
@@ -116,17 +120,19 @@ export async function updatePaymentStatus(id, paymentStatus) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = await getServerBaseUrl();
 
-		const response = await fetch(`${baseUrl}/api/orders/payment/${id}`, {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				Cookie: `session=${session}`
-			},
-			body: JSON.stringify({ paymentStatus }),
-			credentials: "include"
-		});
+		const response = await fetch(
+			`${process.env.BASE_URL}/api/orders/payment/${id}`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					Cookie: `session=${session}`
+				},
+				body: JSON.stringify({ paymentStatus }),
+				credentials: "include"
+			}
+		);
 
 		return await handleResponse(response);
 	} catch (error) {
@@ -139,9 +145,8 @@ export async function cancelOrder(id) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = await getServerBaseUrl();
 
-		const response = await fetch(`${baseUrl}/api/orders/${id}`, {
+		const response = await fetch(`${process.env.BASE_URL}/api/orders/${id}`, {
 			method: "DELETE",
 			headers: {
 				"Content-Type": "application/json",

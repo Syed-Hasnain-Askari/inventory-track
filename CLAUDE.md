@@ -51,7 +51,7 @@ This is a Next.js application for inventory tracking with user authentication, p
 
 ### 3. API Routes
 - Located in `pages/api/` (legacy pages router)
-- Use `BASE_URL` from `lib/config.js` for internal API calls
+- Use `process.env.BASE_URL` from `lib/config.js` for internal API calls
 - Include session cookie in requests to protected endpoints
 - Handle errors with proper HTTP status codes
 
@@ -117,4 +117,4 @@ This is a Next.js application for inventory tracking with user authentication, p
 - Session issues: Check cookie settings and JWT secret
 - Database errors: Verify `MONGODB_URI` and network connectivity
 - Build failures: Check for TypeScript/JavaScript syntax errors
-- API issues: Verify BASE_URL configuration and route existence
+- API issues: Verify process.env.BASE_URL configuration and route existence

@@ -2,7 +2,6 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { getServerBaseUrl } from "../../lib/server-url";
 
 async function handleResponse(response) {
 	if (!response.ok) {
@@ -21,9 +20,7 @@ async function handleResponse(response) {
 
 export async function getCategories() {
 	try {
-		const baseUrl = await getServerBaseUrl();
-
-		const response = await fetch(`${baseUrl}/api/categories`, {
+		const response = await fetch(`${process.env.BASE_URL}/api/categories`, {
 			headers: {
 				"Content-Type": "application/json"
 			},
@@ -41,9 +38,7 @@ export async function createCategory(data) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = await getServerBaseUrl();
-
-		const response = await fetch(`${baseUrl}/api/categories`, {
+		const response = await fetch(`${process.env.BASE_URL}/api/categories`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -66,17 +61,19 @@ export async function updateCategory(id, data) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = await getServerBaseUrl();
 
-		const response = await fetch(`${baseUrl}/api/categories/${id}`, {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				Cookie: `session=${session}`
-			},
-			body: JSON.stringify(data),
-			credentials: "include"
-		});
+		const response = await fetch(
+			`${process.env.BASE_URL}/api/categories/${id}`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					Cookie: `session=${session}`
+				},
+				body: JSON.stringify(data),
+				credentials: "include"
+			}
+		);
 
 		const result = await handleResponse(response);
 		revalidatePath("/categories");
@@ -91,16 +88,18 @@ export async function deleteCategory(id) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = await getServerBaseUrl();
 
-		const response = await fetch(`${baseUrl}/api/categories/${id}`, {
-			method: "DELETE",
-			headers: {
-				"Content-Type": "application/json",
-				Cookie: `session=${session}`
-			},
-			credentials: "include"
-		});
+		const response = await fetch(
+			`${process.env.BASE_URL}/api/categories/${id}`,
+			{
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+					Cookie: `session=${session}`
+				},
+				credentials: "include"
+			}
+		);
 
 		const result = await handleResponse(response);
 		revalidatePath("/categories");

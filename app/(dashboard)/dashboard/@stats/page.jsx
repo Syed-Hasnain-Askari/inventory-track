@@ -1,13 +1,11 @@
 import DataStatsOne from "../../../../components/DataStats";
 import React from "react";
 import { cookies } from "next/headers";
-import { getServerBaseUrl } from "../../../../lib/server-url";
 
 async function fetchData() {
 	try {
 		const session = (await cookies()).get("session")?.value;
-		const baseUrl = await getServerBaseUrl();
-		const response = await fetch(`${baseUrl}/api/stats`, {
+		const response = await fetch(`${process.env.BASE_URL}/api/stats`, {
 			headers: {
 				"Content-Type": "application/json",
 				Cookie: `session=${session}`

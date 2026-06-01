@@ -16,11 +16,13 @@ async function handleResponse(response) {
 	if (!contentType && response.status === 204) {
 		return { success: true };
 	}
-	
+
 	if (!contentType || !contentType.includes("application/json")) {
 		const text = await response.text();
 		console.error("Non-JSON response received:", text);
-		throw new Error("Expected JSON response but received HTML/Text. This usually means a 404 or server error.");
+		throw new Error(
+			"Expected JSON response but received HTML/Text. This usually means a 404 or server error."
+		);
 	}
 
 	return await response.json();
@@ -31,16 +33,18 @@ export async function getProducts(params = {}) {
 		const queryString = new URLSearchParams(params).toString();
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = await getServerBaseUrl();
 
-		const response = await fetch(`${baseUrl}/api/products/?${queryString}`, {
-			headers: {
-				"Content-Type": "application/json",
-				Cookie: `session=${session}`
-			},
-			credentials: "include",
-			cache: "no-store"
-		});
+		const response = await fetch(
+			`${process.env.BASE_URL}/api/products/?${queryString}`,
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Cookie: `session=${session}`
+				},
+				credentials: "include",
+				cache: "no-store"
+			}
+		);
 
 		return await handleResponse(response);
 	} catch (error) {
@@ -53,9 +57,8 @@ export async function getProductById(id) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = await getServerBaseUrl();
 
-		const response = await fetch(`${baseUrl}/api/products/${id}`, {
+		const response = await fetch(`${process.env.BASE_URL}/api/products/${id}`, {
 			headers: {
 				"Content-Type": "application/json",
 				Cookie: `session=${session}`
@@ -75,7 +78,6 @@ export async function createProduct(data) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = await getServerBaseUrl();
 
 		const isFormData = data instanceof FormData;
 		const headers = {
@@ -86,7 +88,7 @@ export async function createProduct(data) {
 			headers["Content-Type"] = "application/json";
 		}
 
-		const response = await fetch(`${baseUrl}/api/products`, {
+		const response = await fetch(`${process.env.BASE_URL}/api/products`, {
 			method: "POST",
 			headers,
 			body: isFormData ? data : JSON.stringify(data),
@@ -106,7 +108,6 @@ export async function updateProduct(id, data) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = await getServerBaseUrl();
 
 		const isFormData = data instanceof FormData;
 		const headers = {
@@ -117,7 +118,7 @@ export async function updateProduct(id, data) {
 			headers["Content-Type"] = "application/json";
 		}
 
-		const response = await fetch(`${baseUrl}/api/products/${id}`, {
+		const response = await fetch(`${process.env.BASE_URL}/api/products/${id}`, {
 			method: "PATCH",
 			headers,
 			body: isFormData ? data : JSON.stringify(data),
@@ -137,9 +138,7 @@ export async function deleteProduct(id) {
 	try {
 		const cookieStore = await cookies();
 		const session = cookieStore.get("session")?.value;
-		const baseUrl = await getServerBaseUrl();
-
-		const response = await fetch(`${baseUrl}/api/products/${id}`, {
+		const response = await fetch(`${process.env.BASE_URL}/api/products/${id}`, {
 			method: "DELETE",
 			headers: {
 				"Content-Type": "application/json",
