@@ -265,7 +265,9 @@ class ProductService {
 	// Get products by category
 	async getProductsByCategory(slug, page = 1, limit = 10) {
 		try {
-			const category = await Category.findOne({ slug }).select("_id");
+			const category = await Category.findOne({ slug }).select(
+				"_id name slug description"
+			);
 			if (!category) {
 				return {
 					success: true,
@@ -284,7 +286,7 @@ class ProductService {
 				category: category._id,
 				isActive: true
 			})
-				.populate("category", "name slug")
+				.populate("category", "name slug description")
 				.skip(skip)
 				.limit(limit);
 
