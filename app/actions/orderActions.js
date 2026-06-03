@@ -4,9 +4,18 @@ import { cookies } from "next/headers";
 
 async function handleResponse(response) {
 	if (!response.ok) {
-		const errorText = await response.text();
-		console.error(`API Error (${response.status}):`, errorText);
-		throw new Error(`API Error ${response.status}: ${response.statusText}`);
+		let errorMessage = `API Error ${response.status}: ${response.statusText}`;
+		try {
+			const errorData = await response.json();
+			if (errorData && errorData.message) {
+				errorMessage = errorData.message;
+			}
+		} catch (e) {
+			// Fallback if not JSON
+			const errorText = await response.text();
+			console.error(`API Error (${response.status}):`, errorText);
+		}
+		throw new Error(errorMessage);
 	}
 
 	const contentType = response.headers.get("content-type");

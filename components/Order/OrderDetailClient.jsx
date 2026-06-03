@@ -501,7 +501,7 @@ export default function OrderDetailClient({ initialOrder }) {
 									<TableBody className="divide-y divide-zinc-100 dark:divide-zinc-900">
 										{order.items?.map((item) => {
 											const product = item.product || {};
-											const imageSrc = product.images?.[0] || "/placeholder-product.png";
+											const imageSrc = item.image || product.images?.[0] || "/placeholder-product.png";
 											const productPrice = item.price || product.price || 0;
 											const itemSubtotal = productPrice * item.quantity;
 
@@ -511,9 +511,9 @@ export default function OrderDetailClient({ initialOrder }) {
 														<div className="flex items-center gap-4">
 															{/* Image Container with Glass Effects */}
 															<div className="relative w-16 h-16 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-900 overflow-hidden flex items-center justify-center shrink-0">
-																{product.images?.[0] ? (
+																{imageSrc !== "/placeholder-product.png" ? (
 																	<Image
-																		src={product.images[0]}
+																		src={imageSrc}
 																		alt={product.name || "Product image"}
 																		fill
 																		className="object-cover object-center group-hover:scale-105 transition-transform"

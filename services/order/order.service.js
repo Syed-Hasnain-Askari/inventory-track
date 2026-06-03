@@ -61,7 +61,10 @@ class OrderService {
 				.populate("items.product", "name price sku images");
 
 			if (!order) {
-				throw new Error("Order not found");
+				return {
+					success: false,
+					message: "Order not found"
+				};
 			}
 
 			return {
@@ -98,6 +101,12 @@ class OrderService {
 
 			const price = product.discountPrice || product.price;
 			item.price = price;
+
+			// Save product image at the time of order
+			if (!item.image && product.images && product.images.length > 0) {
+				item.image = product.images[0];
+			}
+
 			total += price * item.quantity;
 
 			product.stock -= item.quantity;
@@ -128,7 +137,7 @@ class OrderService {
 			);
 
 			if (!order) {
-				throw new Error("Order not found");
+				return { success: false, message: "Order not found" };
 			}
 
 			return {
@@ -151,7 +160,7 @@ class OrderService {
 			});
 
 			if (!order) {
-				throw new Error("Order not found");
+				return { success: false, message: "Order not found" };
 			}
 
 			return {
@@ -168,11 +177,15 @@ class OrderService {
 		try {
 			const order = await Order.findById(id);
 			if (!order) {
-				throw new Error("Order not found");
+				return { success: false, message: "Order not found" };
 			}
 
 			if (order.status === "delivered") {
-				throw new Error("Cannot cancel delivered order");
+				return { success: false, message: "Cannot cancel delivered order" };
+			}
+
+			if (order.status === "cancelled") {
+				return { success: false, message: "Order is already cancelled" };
 			}
 
 			// Restore stock
