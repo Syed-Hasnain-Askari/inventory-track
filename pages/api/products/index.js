@@ -11,7 +11,11 @@ import { generateSKU } from "../../../util/generateSKU";
 // Configure multer storage
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
-		const dir = path.join(/*turbopackIgnore: true*/ process.cwd(), "public", "uploads");
+		const dir = path.join(
+			/*turbopackIgnore: true*/ process.cwd(),
+			"public",
+			"uploads"
+		);
 		if (!fs.existsSync(dir)) {
 			fs.mkdirSync(dir, { recursive: true });
 		}
@@ -104,6 +108,7 @@ export const createProduct = async (req, res) => {
 		if (req.file) {
 			localFilePath = req.file.path;
 			cloudinaryResponse = await uploadOnCloudinary(localFilePath);
+			console.log(cloudinaryResponse, "cloudinaryResponse===");
 			if (!cloudinaryResponse) {
 				throw new ApiError(500, "Failed to upload image to Cloudinary");
 			}
@@ -141,7 +146,7 @@ export const createProduct = async (req, res) => {
 			status,
 			featured,
 			tags,
-			images: cloudinaryResponse ? [cloudinaryResponse.secure_url] : []
+			image: cloudinaryResponse ? [cloudinaryResponse.secure_url] : []
 		};
 
 		const result = await productService.createProduct(productData);

@@ -1,13 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-	FileDown,
-	Plus,
-	Package,
-	Upload,
-	Loader2
-} from "lucide-react";
+import Image from "next/image";
+import { FileDown, Plus, Package, Upload, Loader2 } from "lucide-react";
 import { getCategories } from "../../app/actions/categoryActions";
 import { Button } from "../ui/button";
 import {
@@ -281,10 +276,12 @@ export const Header = () => {
 								<div className="flex items-center gap-4 p-4 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-lg">
 									{previewUrl ? (
 										<div className="relative h-20 w-20 rounded-md overflow-hidden border border-zinc-200">
-											<img
+											<Image
 												src={previewUrl}
 												alt="Preview"
-												className="h-full w-full object-cover"
+												fill
+												className="object-cover"
+												unoptimized
 											/>
 											<button
 												type="button"

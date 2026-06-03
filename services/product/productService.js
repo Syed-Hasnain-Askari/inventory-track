@@ -75,6 +75,7 @@ class ProductService {
 
 	// Create new product
 	async createProduct(productData) {
+		console.log(productData, "productData in service");
 		try {
 			// Check if SKU already exists
 			const existingProduct = await Product.findOne({ sku: productData.sku });
@@ -311,4 +312,6 @@ class ProductService {
 	}
 }
 
-export default new ProductService();
+const productService = new ProductService();
+
+export default productService;

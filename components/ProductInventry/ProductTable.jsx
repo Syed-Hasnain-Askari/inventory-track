@@ -21,7 +21,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Product } from "@/app/inventory/product";
 import { useToast } from "@/components/ui/use-toast";
-import { deleteProductById } from "@/redux/feature/reducer/inventryReducer";
 import { SkeletonTable } from "@/components/ui/skeleton";
 import { FilterEmptyState } from "@/components/ui/empty-state";
 import { deleteProduct } from "@/app/actions/productActions";
@@ -43,7 +42,6 @@ export function ProductsTable() {
 					variant: "success",
 					description: "Product deleted successfully!"
 				});
-				dispatch(deleteProductById(id));
 			} else {
 				toast({
 					title: "Error!",

@@ -23,87 +23,87 @@ const verifyAuth = async (req) => {
 	}
 };
 
-export const getAllProducts = apiHandler(async (req, res) => {
-	if (req.method !== "GET") {
-		throw new ApiError(405, `Method ${req.method} Not Allowed`);
-	}
+// export const getAllProducts = apiHandler(async (req, res) => {
+// 	if (req.method !== "GET") {
+// 		throw new ApiError(405, `Method ${req.method} Not Allowed`);
+// 	}
 
-	await verifyAuth(req);
-	await connectDB();
+// 	await verifyAuth(req);
+// 	await connectDB();
 
-	const { search, category, page, limit } = req.query;
+// 	const { search, category, page, limit } = req.query;
 
-	const { searchResult, products, pagination } = await fetchProducts({
-		search,
-		category,
-		page,
-		limit
-	});
+// 	const { searchResult, products, pagination } = await fetchProducts({
+// 		search,
+// 		category,
+// 		page,
+// 		limit
+// 	});
 
-	return res.success(
-		products || searchResult,
-		"Catalog items fetched successfully",
-		200,
-		{ pagination } // Note: we might want to adjust res.success to handle extra fields or just include pagination in result
-	);
-});
+// 	return res.success(
+// 		products || searchResult,
+// 		"Catalog items fetched successfully",
+// 		200,
+// 		{ pagination } // Note: we might want to adjust res.success to handle extra fields or just include pagination in result
+// 	);
+// });
 
 // Since I noticed pagination needs to be handled, let's adjust res.success usage or definition
-// For now, I'll pass an object including both result and pagination to match existing structure if needed, 
+// For now, I'll pass an object including both result and pagination to match existing structure if needed,
 // but let's stick to the cleaner way:
 
-export const createProduct = apiHandler(async (req, res) => {
-	if (req.method !== "POST") {
-		throw new ApiError(405, `Method ${req.method} Not Allowed`);
-	}
+// export const createProduct = apiHandler(async (req, res) => {
+// 	if (req.method !== "POST") {
+// 		throw new ApiError(405, `Method ${req.method} Not Allowed`);
+// 	}
 
-	await verifyAuth(req);
-	await connectDB();
+// 	await verifyAuth(req);
+// 	await connectDB();
 
-	const { name, price, stock, category } = req.body || {};
+// 	const { name, price, stock, category } = req.body || {};
 
-	if (!name || price == null || stock == null || !category) {
-		throw new ApiError(400, "Missing required fields: name, price, stock, category");
-	}
+// 	if (!name || price == null || stock == null || !category) {
+// 		throw new ApiError(400, "Missing required fields: name, price, stock, category");
+// 	}
 
-	const product = await createProductService(req.body);
-	
-	return res.success(product, "Catalog item added successfully");
-});
+// 	const product = await createProductService(req.body);
 
-export const getProductById = apiHandler(async (req, res, id) => {
-	if (req.method !== "GET") {
-		throw new ApiError(405, `Method ${req.method} Not Allowed`);
-	}
+// 	return res.success(product, "Catalog item added successfully");
+// });
 
-	await verifyAuth(req);
-	await connectDB();
+// export const getProductById = apiHandler(async (req, res, id) => {
+// 	if (req.method !== "GET") {
+// 		throw new ApiError(405, `Method ${req.method} Not Allowed`);
+// 	}
 
-	const product = await getProductByIdService(id);
-	
-	if (!product) {
-		throw new ApiError(404, "Product not found");
-	}
+// 	await verifyAuth(req);
+// 	await connectDB();
 
-	return res.success(product);
-});
+// 	const product = await getProductByIdService(id);
 
-export const updateProductById = apiHandler(async (req, res, id) => {
-	if (req.method !== "PATCH") {
-		throw new ApiError(405, `Method ${req.method} Not Allowed`);
-	}
+// 	if (!product) {
+// 		throw new ApiError(404, "Product not found");
+// 	}
 
-	await verifyAuth(req);
-	await connectDB();
+// 	return res.success(product);
+// });
 
-	const response = await updateProductByIdService(id, req.body);
-	
-	if (!response) {
-		throw new ApiError(404, "Product not found");
-	}
+// export const updateProductById = apiHandler(async (req, res, id) => {
+// 	if (req.method !== "PATCH") {
+// 		throw new ApiError(405, `Method ${req.method} Not Allowed`);
+// 	}
 
-	return res.success(response, "Updated successfully");
-});
+// 	await verifyAuth(req);
+// 	await connectDB();
+
+// 	const response = await updateProductByIdService(id, req.body);
+
+// 	if (!response) {
+// 		throw new ApiError(404, "Product not found");
+// 	}
+
+// 	return res.success(response, "Updated successfully");
+// });
 
 export const getLatestProduct = apiHandler(async (req, res) => {
 	if (req.method !== "GET") {
@@ -114,10 +114,9 @@ export const getLatestProduct = apiHandler(async (req, res) => {
 	await connectDB();
 
 	const { products } = await getLatestProductsServices();
-	
+
 	return res.success(products);
 });
-
 
 export const deleteProductById = apiHandler(async (req, res) => {
 	if (req.method !== "DELETE") {
@@ -125,7 +124,7 @@ export const deleteProductById = apiHandler(async (req, res) => {
 	}
 
 	await verifyAuth(req);
-	
+
 	const { id } = req.query;
 	if (!id) {
 		throw new ApiError(400, "Product ID is required");
@@ -136,4 +135,3 @@ export const deleteProductById = apiHandler(async (req, res) => {
 
 	return res.status(204).end();
 });
-

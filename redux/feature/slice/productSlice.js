@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { deleteProduct, getProducts } from "../reducer/productReducer";
+import { getProducts } from "../reducer/productReducer";
 const initialState = {
 	products: [],
 	pagination: {
@@ -49,22 +49,6 @@ export const productSlice = createSlice({
 			state.isError = true;
 			state.error = action.payload;
 		});
-		// Delete Product cases
-		builder
-			.addCase(deleteProduct.pending, (state) => {
-				state.isLoading = true;
-			})
-			.addCase(deleteProduct.fulfilled, (state, action) => {
-				state.isLoading = false;
-				state.isSuccess = true;
-				state.items = state.items.filter((item) => item._id !== action.payload);
-				state.pagination.totalProducts -= 1;
-			})
-			.addCase(deleteProduct.rejected, (state, action) => {
-				state.isLoading = false;
-				state.isError = true;
-				state.error = action.payload;
-			});
 	}
 });
 

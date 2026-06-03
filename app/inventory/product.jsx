@@ -64,7 +64,8 @@ export function Product({ id, product, handleDeleteProduct }) {
 						alt={`${product.name} image`}
 						className="object-cover group-hover:scale-110 transition-transform duration-300"
 						fill
-						src={product.images ? product.images[0] : thumbnail}
+						loading="lazy"
+						src={product.image ? product.image[0] : thumbnail}
 						sizes="48px"
 					/>
 				</div>

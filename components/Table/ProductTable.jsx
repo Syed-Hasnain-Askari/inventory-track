@@ -55,13 +55,13 @@ const ProductTable = ({ data }) => {
 							) : (
 								data.map((item) => (
 									<TableRow
-										key={item.id}
+										key={item._id}
 										className="group hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
 									>
 										<TableCell>
 											<div className="relative h-10 w-10 overflow-hidden rounded-md border dark:border-zinc-800">
 												<Image
-													src={item?.image || "/images/no-image.jpg"}
+													src={item?.image[0] || "/images/no-image.jpg"}
 													alt={item?.name}
 													fill
 													className="object-cover"

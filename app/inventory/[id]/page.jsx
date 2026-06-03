@@ -4,6 +4,7 @@ import Link from "next/link";
 import React from "react";
 import { cookies } from "next/headers";
 import { getServerBaseUrl } from "../../../lib/server-url";
+import thumbnail from "../../../public/images/no-image.jpg";
 async function fetchData(id) {
 	const session = (await cookies()).get("session")?.value;
 	const baseUrl = await getServerBaseUrl();
@@ -27,6 +28,7 @@ export default async function Page({ params }) {
 	console.log(id, "id");
 	console.log(response, "response");
 	const { name, description, price, image, stock } = response;
+
 	return (
 		<div>
 			<section className="text-gray-700 body-font overflow-hidden bg-white">
@@ -36,9 +38,10 @@ export default async function Page({ params }) {
 							height={300}
 							width={300}
 							className="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200"
-							src={image}
+							src={image && image.length > 0 ? image[0] : thumbnail}
 							alt="Product Image"
 						/>
+
 						<div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
 							<h2 className="text-sm title-font text-gray-500 tracking-widest">
 								{name}
