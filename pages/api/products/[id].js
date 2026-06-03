@@ -1,3 +1,4 @@
+import os from "os";
 import productService from "../../../services/product/productService";
 import { uploadOnCloudinary } from "../../../util/fileuploader";
 import { v2 as cloudinary } from "cloudinary";
@@ -10,11 +11,7 @@ import { apiHandler, ApiError } from "../../../util/errorMiddleware";
 // Configure multer storage
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
-		const dir = path.join(
-			/* turbopackIgnore: true */ process.cwd(),
-			"public",
-			"uploads"
-		);
+		const dir = path.join(os.tmpdir(), "uploads");
 		if (!fs.existsSync(dir)) {
 			fs.mkdirSync(dir, { recursive: true });
 		}
