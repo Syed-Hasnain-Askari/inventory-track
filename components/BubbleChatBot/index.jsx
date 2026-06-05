@@ -1,218 +1,412 @@
 "use client";
-import { useState } from "react";
-import ReactMarkdown from "react-markdown";
+
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+	Bot,
+	CheckCircle2,
+	Database,
+	Loader2,
+	Send,
+	ShieldAlert,
+	Sparkles,
+	X
+} from "lucide-react";
 import "./chatbot.css";
 
-const BubbleChatBot = () => {
-	const [messages, setMessages] = useState([]);
-	const [input, setInput] = useState("");
-	const [isChatVisible, setIsChatVisible] = useState(false);
+const initialMessages = [
+	{
+		id: "welcome",
+		sender: "ai",
+		kind: "info",
+		title: "AI Admin Console",
+		text:
+			"I can safely parse inventory, product, category, and order commands. Try asking me to update stock, change prices, or inspect order analytics."
+	}
+];
 
-	const toggleChat = () => {
-		setIsChatVisible(!isChatVisible);
+const BubbleChatBot = () => {
+	const router = useRouter();
+	const [messages, setMessages] = useState(initialMessages);
+	const [input, setInput] = useState("");
+	const [isOpen, setIsOpen] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const [pendingAction, setPendingAction] = useState(null);
+	const [error, setError] = useState("");
+
+	const isBusy = isLoading;
+	const isInputBlocked = isLoading || Boolean(pendingAction);
+
+	const appendMessage = (message) => {
+		setMessages((prev) => [
+			...prev,
+			{
+				id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+				...message
+			}
+		]);
 	};
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		if (!input.trim()) return;
+	const sendCommand = async ({
+		commandText,
+		confirmed = false,
+		structuredCommand = null
+	}) => {
+		setError("");
+		setIsLoading(true);
 
-		// Add the user's message to the chat
-		setMessages((prev) => [...prev, { sender: "user", text: input }]);
-		setInput("");
+		try {
+			const requestPayload = {
+				command: commandText,
+				confirmed
+			};
 
-		// Send the user's message to the backend
-		const response = await fetch("http://localhost:8000/chat", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({
-				user_question: input
-				// max_token: 1000,
-				// temperature: 0.5
-			})
+			if (structuredCommand) {
+				requestPayload.structuredCommand = structuredCommand;
+			}
+
+			const response = await fetch("/api/ai-command", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				credentials: "include",
+				body: JSON.stringify(requestPayload)
+			});
+
+			const payload = await response.json();
+
+			if (!response.ok || !payload?.success) {
+				throw new Error(payload?.message || "Failed to process command.");
+			}
+
+			return payload.result;
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const handleSubmit = async (event) => {
+		event.preventDefault();
+
+		const commandText = input.trim();
+		if (!commandText || isInputBlocked) return;
+
+		appendMessage({
+			sender: "user",
+			kind: "text",
+			text: commandText
 		});
 
-		// Handle the response
-		const data = await response.json();
-		const aiMessage = data.reply; // Extract the AI's reply from the response
+		setInput("");
+		setPendingAction(null);
 
-		// Add the AI's message to the chat
-		setMessages((prev) => [...prev, { sender: "ai", text: aiMessage }]);
+		try {
+			const result = await sendCommand({ commandText });
+
+			if (result.requiresConfirmation) {
+				setPendingAction({
+					commandText,
+					command: result.command,
+					preview: result.preview,
+					intent: result.intent,
+					entity: result.entity,
+					operation: result.operation,
+					matchedCount: result.matchedCount || 0
+				});
+
+				appendMessage({
+					sender: "ai",
+					kind: "preview",
+					title: "Confirmation required",
+					text: result.preview || "Please confirm this database action.",
+					meta: {
+						intent: result.intent,
+						entity: result.entity,
+						operation: result.operation,
+						matchedCount: result.matchedCount || 0
+					}
+				});
+				return;
+			}
+
+			appendMessage({
+				sender: "ai",
+				kind: "success",
+				title: "Command executed",
+				text: result.preview || "The operation completed successfully.",
+				meta: {
+					intent: result.intent,
+					entity: result.entity,
+					operation: result.operation
+				}
+			});
+
+			router.refresh();
+		} catch (submitError) {
+			const message =
+				submitError instanceof Error
+					? submitError.message
+					: "Something went wrong while handling the command.";
+
+			setError(message);
+			appendMessage({
+				sender: "ai",
+				kind: "error",
+				title: "Request failed",
+				text: message
+			});
+		}
 	};
-	console.log(input);
 
-	console.log(messages);
+	const handleConfirm = async () => {
+		if (!pendingAction || isLoading) return;
+
+		try {
+			const result = await sendCommand({
+				commandText: pendingAction.commandText,
+				confirmed: true,
+				structuredCommand: pendingAction.command
+			});
+
+			appendMessage({
+				sender: "ai",
+				kind: "success",
+				title: "Action completed",
+				text: result.preview || "The database action completed successfully.",
+				meta: {
+					intent: result.intent,
+					entity: result.entity,
+					operation: result.operation
+				}
+			});
+
+			setPendingAction(null);
+			router.refresh();
+		} catch (confirmError) {
+			const message =
+				confirmError instanceof Error
+					? confirmError.message
+					: "Failed to execute the confirmed command.";
+			setError(message);
+			appendMessage({
+				sender: "ai",
+				kind: "error",
+				title: "Execution failed",
+				text: message
+			});
+		}
+	};
+
+	const headerSummary = useMemo(() => {
+		if (pendingAction) {
+			return `${pendingAction.entity} - ${pendingAction.operation}`;
+		}
+		return "AI command center";
+	}, [pendingAction]);
+
 	return (
 		<>
-			{/* component */}
 			<button
-				className="fixed bottom-4 right-4 inline-flex items-center justify-center text-sm font-medium disabled:pointer-events-none disabled:opacity-50 border rounded-full w-16 h-16 bg-black hover:bg-gray-700 m-0 cursor-pointer border-gray-200 bg-none p-0 normal-case leading-5 hover:text-gray-900"
+				className="fixed bottom-4 right-4 z-50 inline-flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-zinc-950 text-white shadow-2xl shadow-black/30 transition hover:scale-105 hover:bg-zinc-900"
 				type="button"
-				aria-haspopup="dialog"
-				aria-expanded="false"
-				data-state="closed"
-				onClick={toggleChat}
+				aria-label={isOpen ? "Close AI command console" : "Open AI command console"}
+				aria-expanded={isOpen}
+				onClick={() => setIsOpen((prev) => !prev)}
 			>
-				{isChatVisible ? (
-					<svg
-						className="w-6 h-6 text-gray-800 dark:text-white"
-						aria-hidden="true"
-						xmlns="http://www.w3.org/2000/svg"
-						width="24"
-						height="24"
-						fill="none"
-						viewBox="0 0 24 24"
-					>
-						<path
-							stroke="currentColor"
-							strokeLinecap="round"
-							stroke-linejoin="round"
-							strokeWidth="2"
-							d="M6 18 17.94 6M18 18 6.06 6"
-							className="text-white block border-gray-200 align-middle"
-						/>
-					</svg>
-				) : (
-					<svg
-						xmlns=" http://www.w3.org/2000/svg"
-						width={30}
-						height={40}
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						strokeWidth={2}
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						className="text-white block border-gray-200 align-middle"
-					>
-						<path
-							d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"
-							className="border-gray-200"
-						></path>
-					</svg>
-				)}
+				{isOpen ? <X className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
 			</button>
-			{isChatVisible ? (
-				<div
-					style={{
-						boxShadow: "0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgb(0 0 0 / 0.05)"
-					}}
-					className="fixed bottom-[calc(4rem+1.5rem)] right-0 mr-16 bg-white p-6 rounded-lg border border-[#e5e7eb] w-[440px] h-[500px] z-50"
-				>
-					{/* Heading */}
-					<div className="flex flex-col space-y-1.5 pb-6">
-						<h2 className="font-semibold text-lg tracking-tight">Chatbot</h2>
-						<p className="text-sm text-[#6b7280] leading-3">
-							Powered by Mendable and Vercel
-						</p>
-					</div>
-					{/* Chat Container */}
-					<div className="flex flex-col h-[calc(100%-7.5rem)] overflow-y overflow-x-auto scrollbar-custom">
-						{/* Chat Message AI */}
-						<div className="flex gap-3 my-2 text-gray-600 text-sm flex-1">
-							<span className="relative flex shrink-0 overflow-hidden rounded-full w-8 h-8">
-								<div className="rounded-full bg-gray-100 border p-1">
-									<svg
-										stroke="none"
-										fill="black"
-										strokeWidth="1.5"
-										viewBox="0 0 24 24"
-										aria-hidden="true"
-										height={20}
-										width={20}
-										xmlns="http://www.w3.org/2000/svg"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
-										></path>
-									</svg>
+
+			{isOpen ? (
+				<div className="fixed bottom-[5.5rem] right-4 top-4 z-50 flex w-[min(92vw,32rem)] max-h-[calc(100dvh-7rem)] flex-col overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 text-zinc-100 shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
+					<div className="border-b border-white/10 bg-gradient-to-r from-zinc-900 via-zinc-950 to-zinc-900 px-5 py-4">
+						<div className="flex items-start justify-between gap-4">
+							<div>
+								<div className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-300">
+									<Sparkles className="h-3.5 w-3.5" />
+									Admin AI Control
 								</div>
-							</span>
-							<p className="leading-relaxed">
-								<span className="block font-bold text-gray-700">AI </span>Hi,
-								how can I help you today?
-							</p>
-						</div>
-						{messages.map((msg, index) => (
-							<div
-								key={index}
-								className="flex gap-3 my-4 text-gray-600 text-sm flex-1"
-							>
-								<span className="relative flex shrink-0 overflow-hidden rounded-full w-8 h-8">
-									<div className="rounded-full bg-gray-100 border p-1">
-										{msg.sender === "ai" ? (
-											<svg
-												stroke="none"
-												fill="black"
-												strokeWidth="1.5"
-												viewBox="0 0 24 24"
-												aria-hidden="true"
-												height={20}
-												width={20}
-												xmlns="http://www.w3.org/2000/svg"
-											>
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
-												></path>
-											</svg>
-										) : (
-											<svg
-												stroke="none"
-												fill="black"
-												strokeWidth={0}
-												viewBox="0 0 16 16"
-												height={20}
-												width={20}
-												xmlns="http://www.w3.org/2000/svg"
-											>
-												<path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"></path>
-											</svg>
-										)}
-									</div>
-								</span>
-								<p className="leading-relaxed">
-									<span className="block font-bold text-gray-700">
-										{msg.sender === "ai" ? "AI" : "You"}
-									</span>
-									{msg.sender === "ai" ? (
-										<ReactMarkdown>{msg.text}</ReactMarkdown> // Render markdown for AI messages
-									) : (
-										msg.text // Render plain text for user messages
-									)}
-								</p>
+								<h2 className="text-lg font-semibold tracking-tight">
+									Natural Language Database Control
+								</h2>
+								<p className="mt-1 text-sm text-zinc-400">{headerSummary}</p>
 							</div>
-						))}
+							<div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-zinc-300">
+								<Database className="h-5 w-5" />
+							</div>
+						</div>
 					</div>
 
-					{/* Input box */}
-					<div className="absolute bottom-0 right-0 w-full p-4 border-t border-[#e5e7eb]">
-						<form
-							onSubmit={handleSubmit}
-							className="flex items-center justify-center w-full space-x-2"
-						>
+					<div className="flex-1 overflow-y-auto scrollbar-custom px-4 py-4">
+						{messages.map((message) => (
+							<div
+								key={message.id}
+								className={`mb-4 flex gap-3 ${
+									message.sender === "user" ? "justify-end" : "justify-start"
+								}`}
+							>
+								{message.sender === "ai" ? (
+									<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-zinc-200">
+										<Bot className="h-4.5 w-4.5" />
+									</div>
+								) : null}
+
+								<div
+									className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+										message.sender === "user"
+											? "rounded-br-md bg-emerald-500/15 text-emerald-50"
+											: message.kind === "error"
+												? "border border-rose-500/20 bg-rose-500/10 text-rose-50"
+												: message.kind === "preview"
+													? "border border-amber-400/20 bg-amber-400/10 text-amber-50"
+													: message.kind === "success"
+														? "border border-emerald-400/20 bg-emerald-400/10 text-emerald-50"
+														: "border border-white/10 bg-white/5 text-zinc-100"
+									}`}
+								>
+									{message.title ? (
+										<div className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-400">
+											{message.kind === "preview" ? (
+												<ShieldAlert className="h-3.5 w-3.5 text-amber-300" />
+											) : message.kind === "success" ? (
+												<CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" />
+											) : null}
+											{message.title}
+										</div>
+									) : null}
+
+									<p>{message.text}</p>
+
+									{message.meta ? (
+										<div className="mt-3 grid gap-2 rounded-xl border border-white/10 bg-black/20 p-3 text-xs text-zinc-300">
+											<div className="flex items-center justify-between gap-3">
+												<span className="text-zinc-400">Intent</span>
+												<span className="font-medium text-zinc-100">
+													{message.meta.intent}
+												</span>
+											</div>
+											<div className="flex items-center justify-between gap-3">
+												<span className="text-zinc-400">Entity</span>
+												<span className="font-medium text-zinc-100">
+													{message.meta.entity}
+												</span>
+											</div>
+											<div className="flex items-center justify-between gap-3">
+												<span className="text-zinc-400">Operation</span>
+												<span className="font-medium text-zinc-100">
+													{message.meta.operation}
+												</span>
+											</div>
+											{typeof message.meta.matchedCount === "number" ? (
+												<div className="flex items-center justify-between gap-3">
+													<span className="text-zinc-400">Matches</span>
+													<span className="font-medium text-zinc-100">
+														{message.meta.matchedCount}
+													</span>
+												</div>
+											) : null}
+										</div>
+									) : null}
+								</div>
+
+								{message.sender === "user" ? (
+									<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-500/15 text-emerald-200">
+										You
+									</div>
+								) : null}
+							</div>
+						))}
+
+						{pendingAction ? (
+							<div className="mb-4 rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4 text-sm text-amber-50">
+								<div className="mb-2 flex items-center gap-2 font-semibold">
+									<ShieldAlert className="h-4 w-4" />
+									Confirmation required
+								</div>
+								<p className="text-amber-50/90">
+									{pendingAction.preview ||
+										"This action needs confirmation before it runs."}
+								</p>
+								<div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-amber-100/90">
+									<span className="rounded-full border border-amber-300/20 px-2 py-1">
+										{pendingAction.entity}
+									</span>
+									<span className="rounded-full border border-amber-300/20 px-2 py-1">
+										{pendingAction.operation}
+									</span>
+									<span className="rounded-full border border-amber-300/20 px-2 py-1">
+										{pendingAction.matchedCount} match(es)
+									</span>
+								</div>
+								<div className="mt-4 flex gap-2">
+									<button
+										type="button"
+										disabled={isBusy}
+										onClick={handleConfirm}
+										className="inline-flex items-center gap-2 rounded-xl bg-amber-300 px-4 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-amber-200 disabled:cursor-not-allowed disabled:opacity-60"
+									>
+										{isLoading ? (
+											<Loader2 className="h-4 w-4 animate-spin" />
+										) : (
+											<CheckCircle2 className="h-4 w-4" />
+										)}
+										Confirm
+									</button>
+									<button
+										type="button"
+										disabled={isBusy}
+										onClick={() => setPendingAction(null)}
+										className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-zinc-100 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+									>
+										Cancel
+									</button>
+								</div>
+							</div>
+						) : null}
+
+						{isLoading ? (
+							<div className="mb-4 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-zinc-300">
+								<Loader2 className="h-4 w-4 animate-spin text-emerald-300" />
+								AI is thinking about the safest action...
+							</div>
+						) : null}
+
+						{error ? (
+							<div className="mb-4 rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
+								{error}
+							</div>
+						) : null}
+					</div>
+
+					<div className="border-t border-white/10 bg-zinc-950 px-4 py-4">
+						<form onSubmit={handleSubmit} className="flex items-center gap-2">
 							<input
-								className="flex h-10 w-full rounded-md border border-[#e5e7eb] px-3 py-2 text-sm placeholder-[#6b7280] focus:outline-none focus:ring-2 focus:ring-[#9ca3af] disabled:cursor-not-allowed disabled:opacity-50 text-[#030712] focus-visible:ring-offset-2"
-								placeholder="Type your message"
+								className="h-11 flex-1 rounded-2xl border border-white/10 bg-white/5 px-4 text-sm text-zinc-100 placeholder:text-zinc-500 outline-none transition focus:border-emerald-400/40 focus:bg-white/10"
+								placeholder="Ask me to update inventory, review orders, or change products..."
 								value={input}
-								onChange={(e) => setInput(e.target.value)}
+								onChange={(event) => setInput(event.target.value)}
+								disabled={isInputBlocked}
 							/>
 							<button
 								type="submit"
-								className="inline-flex items-center justify-center rounded-md text-sm font-medium text-[#f9fafb] disabled:pointer-events-none disabled:opacity-50 bg-black hover:bg-[#111827E6] h-10 px-4 py-2"
+								disabled={isInputBlocked || !input.trim()}
+								className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-emerald-400 px-4 text-sm font-semibold text-zinc-950 transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-50"
 							>
+								{isLoading ? (
+									<Loader2 className="h-4 w-4 animate-spin" />
+								) : (
+									<Send className="h-4 w-4" />
+								)}
 								Send
 							</button>
 						</form>
+						<div className="mt-2 flex items-center justify-between text-[11px] text-zinc-500">
+							<span>Only admin users can execute commands.</span>
+							<span>Destructive actions always require confirmation.</span>
+						</div>
 					</div>
 				</div>
-			) : (
-				<></>
-			)}
+			) : null}
 		</>
 	);
 };
