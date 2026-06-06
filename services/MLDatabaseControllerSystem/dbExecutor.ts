@@ -90,7 +90,7 @@ function mapStatusAlias(value: unknown) {
 
 async function resolveCategoryFilter(filter: Record<string, unknown>) {
 	if (typeof filter.category !== "string") {
-		return filter;
+		return { filter, categoryNotFound: null };
 	}
 
 	const categoryValue = String(filter.category);
@@ -114,15 +114,15 @@ async function resolveCategoryFilter(filter: Record<string, unknown>) {
 	}).select("_id");
 
 	if (!category) {
-		return {
-			...filter,
-			category: "__no_match__"
-		};
+		return { filter, categoryNotFound: categoryValue };
 	}
 
 	return {
-		...filter,
-		category: category._id
+		filter: {
+			...filter,
+			category: category._id
+		},
+		categoryNotFound: null
 	};
 }
 
@@ -303,13 +303,16 @@ function buildTimeWindowFilter(
 
 async function buildProductFilter(command: AiCommand) {
 	let filter = { ...(command.filter || {}) };
+	let categoryNotFound: string | null = null;
 
 	if ("category" in filter) {
-		filter = await resolveCategoryFilter(filter);
+		const resolved = await resolveCategoryFilter(filter);
+		filter = resolved.filter;
+		categoryNotFound = resolved.categoryNotFound;
 	}
 
 	filter = buildTimeWindowFilter(filter, command.timeWindowDays);
-	return filter;
+	return { filter, categoryNotFound };
 }
 
 function buildOrderAnalyticsPipeline(command: AiCommand) {
@@ -509,7 +512,26 @@ export async function executeAiCommand(
 
 	try {
 		if (collectionName === "products") {
-			const filter = await buildProductFilter(command);
+			const { filter, categoryNotFound } = await buildProductFilter(command);
+
+			if (categoryNotFound) {
+				await logAiAction({
+					userId: context.userId || null,
+					command: commandText,
+					intent: command.intent,
+					stage: "executed",
+					result: {
+						preview: `Category "${categoryNotFound}" was not found. No product records matched.`,
+						result: []
+					}
+				});
+
+				return {
+					...previewBase,
+					preview: `Category "${categoryNotFound}" was not found. No product records matched.`,
+					result: []
+				};
+			}
 
 			if (command.operation === "find" || command.operation === "findOne") {
 				const query =
